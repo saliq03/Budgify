@@ -1,5 +1,5 @@
 class Constants {
-  static const String appTitle = 'Chat App';
+  static const String appTitle = 'Budgify — Expense & Budget';
   static const String brandName = 'Mysterious Coder';
 
   //All apps titles:
