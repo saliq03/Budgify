@@ -1,0 +1,75 @@
+name: budgify
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  flutter_icon_snackbar: ^1.1.4              # For showing animated snackbar with icons
+  icons_launcher: ^3.0.0                     # For setting app launcher icon in ios and android
+  font_awesome_flutter: ^10.5.0              # For using More icons
+  google_fonts: 6.2.1                        # For using Google Fonts
+  flutter_native_splash: ^2.4.4              # For setting splash screen
+
+  url_launcher: ^6.3.1                       # For launching URLs
+  flutter_carousel_widget: ^3.1.0            # For using carousel widget
+
+  internet_connection_checker: ^3.0.1        # For checking internet connectivity
+  youtube_player_flutter: ^9.1.1             # For playing youtube videos
+  share_plus: ^10.1.4                        # For sharing content
+  riverpod: ^2.6.1
+  salomon_bottom_bar: ^3.3.2
+#  change_app_package_name: ^1.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
+    - assets/icons/
+    - assets/icons/my_app_icons/
+    - assets/images/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+
+#icons_launcher:
+#  image_path: "assets/icons/my_app_icons/brain_booster_icon.jpg"
+#  adaptive_icon_background: "#FFFFFF"
+#  adaptive_icon_maskable: true
+#  platforms:
+#    android:
+#      enable: true
+#    ios:
+#      enable: true
+#
+#flutter_native_splash:
+#  color: "#F5F5F5"
+#  image: assets/icons/splash_before_android_12.png
+#  branding: assets/icons/mysterious_coder_branding_icon.png
+#  #  color_dark: "#000000"
+#  #  image_dark: assets/icons/splash_screen.jpg
+#
+#  android: true
+#  ios: true
+#  android_12:
+#    color: "#F5F5F5"
+#    image: assets/icons/splash_screen_icon.jpg
+#    branding: assets/icons/mysterious_coder_branding_icon.png
+##    color_dark: "#000000"
+##    image_dark: assets/icons/splash_screen.jpg
