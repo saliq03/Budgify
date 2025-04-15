@@ -41,7 +41,7 @@ class CustomDrawer extends StatelessWidget {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: AppGradients.blueMyAppGradient),
+                        colors: AppGradients.skyBlueMyAppGradient),
                 ),
                 // padding: const EdgeInsets.,
                 child: Column(

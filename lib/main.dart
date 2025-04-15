@@ -14,6 +14,7 @@ Future<void> main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.dark,
+    systemNavigationBarColor: Color.fromRGBO(37, 146, 166, 1),
   ));
   runApp(const MyApp());
 }

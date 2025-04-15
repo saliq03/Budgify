@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors{
   // static const Color themeLight= Colors.green;
-  static const Color themeLight= Color(0xFF0F61A4);
+  static const Color themeLight= Color.fromRGBO(37, 146, 166, 1);
   // static const Color themeLightLighter = Color.fromRGBO(92, 182, 197, 1);
-  static const Color themeDark = Color(0xFF3871df);
+  static const Color themeDark = Color.fromRGBO(92, 182, 197, 1);
   // static const Color themeDark = Color.fromRGBO(26, 131, 147, 1.0);
   // static const Color themeDark = Color(0xFF25D366);
   static const Color sendMessageColor = Color(0xffDCF8C6);
@@ -31,4 +31,5 @@ class AppColors{
   static const Color redPink = Color(0xfff48fb1);
   static const Color violet = Color(0xffcf94da);
   static const Color deepPurple = Color(0xFF673AB7);
+
 }
