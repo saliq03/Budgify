@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../../../../features/expense_tracker/view/pages/expense_management_page.dart';
 import '../../../../features/my_budget/view/pages/my_budget_page.dart';
+import '../../../../features/profile/view/pages/profile_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -21,10 +22,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     bottomBarPages = [
-      ExpenseManagementPage(),
+      // ExpenseManagementPage(),
       ExpenseTrackerPage(),
       MyBudgetPage(),
-      // ProfilePage(),
+      ProfilePage(),
     ];
   }
 

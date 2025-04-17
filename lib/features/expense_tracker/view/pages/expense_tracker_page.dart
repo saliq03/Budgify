@@ -1,10 +1,13 @@
+import 'package:budgify/core/local/db_helper.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
+import 'package:budgify/features/expense_tracker/model/tracker_model.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sqflite/sqflite.dart';
 import '../widgets/drawer/custom_drawer.dart';
 
 class ExpenseTrackerPage extends StatefulWidget {
@@ -16,6 +19,26 @@ class ExpenseTrackerPage extends StatefulWidget {
 
 class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  DBHelper dbHelper = DBHelper();
+  Database? database;
+  List<TrackerModel> trackerList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getDB();
+    insertData();
+  }
+
+  void getDB() async {
+    database = await dbHelper.getDB();
+  }
+
+  void insertData() async {
+    trackerList = await dbHelper.fetchTrackerData();
+    setState(() {});
+    print("Tracker List: $trackerList");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +72,10 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                 width: w,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                   gradient: LinearGradient(colors: AppGradients.skyBlueMyAppGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight),
+                    gradient: LinearGradient(
+                        colors: AppGradients.skyBlueMyAppGradient,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
                     borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +98,6 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                             size: 20,
                           ),
                         ),
-
                         Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Icon(
@@ -86,16 +109,17 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                         spacerW(2),
                         Flexible(
                             child: Text(
-                              "1,0007773.00",
-                              style: AppStyles.headingPrimary(
-                                  context: context,
-                                  fontSize: 30,
-                                  color: Colors.white),)),
+                          "1,0007773.00",
+                          style: AppStyles.headingPrimary(
+                              context: context,
+                              fontSize: 30,
+                              color: Colors.white),
+                        )),
                       ],
                     ),
 
                     spacerH(),
-      
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -118,7 +142,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                         ),
                       ],
                     )
-      
+
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     //   children: [
@@ -153,18 +177,22 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(bottom: 100),
-                itemBuilder: (context,index) {
-                  var income= index%2==0;
-                 return  ListTile(
+                itemBuilder: (context, index) {
+                  var tl = trackerList[index];
+
+                  return ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(
-                          income?
-                          Icons.arrow_circle_up_outlined
-                          :Icons.arrow_circle_down_outlined,
-                          color: income? Colors.green :Colors.red, size: 40),
-                      title: Text("Phone Installments",
+                          tl.isExpense
+                              ? Icons.arrow_circle_down_outlined
+                              : Icons.arrow_circle_up_outlined,
+                          color: tl.isExpense ? Colors.red : Colors.green,
+                          size: 40),
+                      title: Text(
+                        tl.title,
                         style: AppStyles.headingPrimary(
-                            context: context, fontSize: 18),),
+                            context: context, fontSize: 18),
+                      ),
                       subtitle: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -172,35 +200,35 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 3),
                             child: Icon(
-                             income? Icons.add :Icons.remove,
-                              color: income? Colors.green :Colors.red,
+                              tl.isExpense ? Icons.remove : Icons.add,
+                              color: tl.isExpense ? Colors.red : Colors.green,
                               size: 20,
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.only(top: 3),
                             child: Icon(
                               Icons.attach_money,
-                              color: income? Colors.green :Colors.red,
+                              color: tl.isExpense ? Colors.red : Colors.green,
                               size: 20,
                             ),
                           ),
                           spacerW(2),
                           Flexible(
                               child: Text(
-                                "1,000777433.00",
-                                style: AppStyles.headingPrimary(
-                                    context: context,
-                                    fontSize: 18,
-                                  color: income? Colors.green :Colors.red),
-                              )),
+                            tl.amount.toString(),
+                            style: AppStyles.headingPrimary(
+                              context: context,
+                              fontSize: 18,
+                              color: tl.isExpense ? Colors.red : Colors.green,
+                            ),
+                          )),
                         ],
                       ),
                       trailing: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("12/10/2023",
+                          Text(tl.date,
                               style: AppStyles.descriptionPrimary(
                                   context: context, fontSize: 14)),
                           spacerH(5),
@@ -213,36 +241,47 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                 size: 25,
                               ),
                               spacerW(10),
-                              Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                                size: 25,
+                              InkWell(
+                                onTap: (){
+
+                                },
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                  size: 25,
+                                ),
                               ),
                             ],
                           )
-
                         ],
-                      )
-                  );
+                      ));
                 },
-              itemCount: 20,),
+                itemCount: trackerList.length,
+              ),
             )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-
-          showModalBottomSheet(context: context, builder: (context){
-            return Column(
-              children:[
-                spacerH(10),
-                Text("Add Income",style: AppStyles.headingPrimary(context: context,fontSize: 20),),
-                spacerH(10),
-                ReusableTextField(controller: TextEditingController(), hintText: "Enter Amount"),
-              ],
-            );
-          });
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Column(
+                  children: [
+                    spacerH(10),
+                    Text(
+                      "Add Income",
+                      style: AppStyles.headingPrimary(
+                          context: context, fontSize: 20),
+                    ),
+                    spacerH(10),
+                    ReusableTextField(
+                        controller: TextEditingController(),
+                        hintText: "Enter Amount"),
+                  ],
+                );
+              });
         },
         backgroundColor: theme.primary,
         child: const Icon(
@@ -298,7 +337,6 @@ class ReusableCardDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,

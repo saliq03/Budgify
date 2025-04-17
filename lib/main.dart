@@ -1,6 +1,7 @@
 import 'package:budgify/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/routes/app_routes.dart';
 import 'core/routes/paths.dart';
 import 'core/theme/app_theme.dart';
@@ -16,7 +17,10 @@ Future<void> main() async {
     statusBarBrightness: Brightness.dark,
     systemNavigationBarColor: Color.fromRGBO(37, 146, 166, 1),
   ));
-  runApp(const MyApp());
+
+  runApp(
+    ProviderScope(child: const MyApp()),
+  );
 }
 
 Future<void> _loadFonts() async {
@@ -34,7 +38,6 @@ Future<void> _loadFonts() async {
     fontLoaderMontserrat.load(),
   ]);
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
