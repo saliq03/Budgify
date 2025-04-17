@@ -51,28 +51,28 @@ flutter:
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
 
-#icons_launcher:
-#  image_path: "assets/icons/my_app_icons/brain_booster_icon.jpg"
-#  adaptive_icon_background: "#FFFFFF"
-#  adaptive_icon_maskable: true
-#  platforms:
-#    android:
-#      enable: true
-#    ios:
-#      enable: true
-#
-#flutter_native_splash:
-#  color: "#F5F5F5"
-#  image: assets/icons/splash_before_android_12.png
-#  branding: assets/icons/mysterious_coder_branding_icon.png
-#  #  color_dark: "#000000"
-#  #  image_dark: assets/icons/splash_screen.jpg
-#
-#  android: true
-#  ios: true
-#  android_12:
-#    color: "#F5F5F5"
-#    image: assets/icons/splash_screen_icon.jpg
-#    branding: assets/icons/mysterious_coder_branding_icon.png
-##    color_dark: "#000000"
-##    image_dark: assets/icons/splash_screen.jpg
+icons_launcher:
+  image_path: "assets/icons/my_app_icons/budgify_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_maskable: true
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+
+flutter_native_splash:
+  color: "#F5F5F5"
+  image: assets/icons/splash_before_android_12.png
+  branding: assets/icons/mysterious_coder_branding_icon.png
+  #  color_dark: "#000000"
+  #  image_dark: assets/icons/splash_screen.jpg
+
+  android: true
+  ios: true
+  android_12:
+    color: "#F5F5F5"
+    image: assets/icons/splash_screen_icon.png
+    branding: assets/icons/mysterious_coder_branding_icon.png
+#    color_dark: "#000000"
+#    image_dark: assets/icons/splash_screen.jpg

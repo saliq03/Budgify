@@ -5,7 +5,7 @@ import '../../../../shared/view/widgets/containers/reusable_stylish_container.da
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
 import '../../../../shared/view/widgets/text_view/reusable_text_field.dart';
-import '../../viewmodel/riverpod/more_apps_riverpod.dart';
+import '../../viewmodel/riverpod/more_apps_notifier.dart';
 
 class MoreAppsPage extends ConsumerStatefulWidget {
   const MoreAppsPage({super.key});

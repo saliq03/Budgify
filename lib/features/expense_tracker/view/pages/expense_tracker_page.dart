@@ -1,47 +1,58 @@
-import 'package:budgify/core/local/db_helper.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
-import 'package:budgify/features/expense_tracker/model/tracker_model.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/drawer/custom_drawer.dart';
 
-class ExpenseTrackerPage extends StatefulWidget {
+class ExpenseTrackerPage extends ConsumerStatefulWidget {
   const ExpenseTrackerPage({super.key});
 
   @override
-  State<ExpenseTrackerPage> createState() => _ExpenseTrackerPageState();
+  ConsumerState<ExpenseTrackerPage> createState() => _ExpenseTrackerPageState();
 }
 
-class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
+class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  DBHelper dbHelper = DBHelper();
-  Database? database;
-  List<TrackerModel> trackerList = [];
 
   @override
   void initState() {
     super.initState();
-    getDB();
-    insertData();
+    // Initialize the data when the widget is first created
+    Future.microtask(() {
+      ref.read(expenseTrackerProvider.notifier).init();
+    });
   }
 
-  void getDB() async {
-    database = await dbHelper.getDB();
-  }
-
-  void insertData() async {
-    trackerList = await dbHelper.fetchTrackerData();
-    setState(() {});
-    print("Tracker List: $trackerList");
-  }
+  // DBHelper dbHelper = DBHelper();
+  // Database? database;
+  // List<TrackerModel> trackerList = [];
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getDB();
+  //   insertData();
+  // }
+  //
+  // void getDB() async {
+  //   database = await dbHelper.getDB();
+  // }
+  //
+  // void insertData() async {
+  //   trackerList = await dbHelper.fetchTrackerData();
+  //   setState(() {});
+  //   print("Tracker List: $trackerList");
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final trackerList = ref.watch(expenseTrackerProvider);
+    final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
+
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     final theme = Theme.of(context).colorScheme;
@@ -175,89 +186,108 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
             ),
             spacerH(10),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 100),
-                itemBuilder: (context, index) {
-                  var tl = trackerList[index];
-
-                  return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                          tl.isExpense
-                              ? Icons.arrow_circle_down_outlined
-                              : Icons.arrow_circle_up_outlined,
-                          color: tl.isExpense ? Colors.red : Colors.green,
-                          size: 40),
-                      title: Text(
-                        tl.title,
-                        style: AppStyles.headingPrimary(
-                            context: context, fontSize: 18),
-                      ),
-                      subtitle: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Icon(
-                              tl.isExpense ? Icons.remove : Icons.add,
-                              color: tl.isExpense ? Colors.red : Colors.green,
-                              size: 20,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Icon(
-                              Icons.attach_money,
-                              color: tl.isExpense ? Colors.red : Colors.green,
-                              size: 20,
-                            ),
-                          ),
-                          spacerW(2),
-                          Flexible(
-                              child: Text(
-                            tl.amount.toString(),
-                            style: AppStyles.headingPrimary(
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : trackerList.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No transactions found',
+                            style: AppStyles.descriptionPrimary(
                               context: context,
-                              fontSize: 18,
-                              color: tl.isExpense ? Colors.red : Colors.green,
                             ),
-                          )),
-                        ],
-                      ),
-                      trailing: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(tl.date,
-                              style: AppStyles.descriptionPrimary(
-                                  context: context, fontSize: 14)),
-                          spacerH(5),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.edit,
-                                color: theme.primary,
-                                size: 25,
-                              ),
-                              spacerW(10),
-                              InkWell(
-                                onTap: (){
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          itemBuilder: (context, index) {
+                            var tl = trackerList[index];
 
-                                },
-                                child: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                  size: 25,
+                            return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: Icon(
+                                    tl.isExpense
+                                        ? Icons.arrow_circle_down_outlined
+                                        : Icons.arrow_circle_up_outlined,
+                                    color: tl.isExpense
+                                        ? Colors.red
+                                        : Colors.green,
+                                    size: 40),
+                                title: Text(
+                                  tl.title,
+                                  style: AppStyles.headingPrimary(
+                                      context: context, fontSize: 18),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ));
-                },
-                itemCount: trackerList.length,
-              ),
+                                subtitle: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 3),
+                                      child: Icon(
+                                        tl.isExpense ? Icons.remove : Icons.add,
+                                        color: tl.isExpense
+                                            ? Colors.red
+                                            : Colors.green,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 3),
+                                      child: Icon(
+                                        Icons.attach_money,
+                                        color: tl.isExpense
+                                            ? Colors.red
+                                            : Colors.green,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    spacerW(2),
+                                    Flexible(
+                                        child: Text(
+                                      tl.amount.toString(),
+                                      style: AppStyles.headingPrimary(
+                                        context: context,
+                                        fontSize: 18,
+                                        color: tl.isExpense
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
+                                    )),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(tl.date,
+                                        style: AppStyles.descriptionPrimary(
+                                            context: context, fontSize: 14)),
+                                    spacerH(5),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.edit,
+                                          color: theme.primary,
+                                          size: 25,
+                                        ),
+                                        spacerW(10),
+                                        InkWell(
+                                          onTap: () {},
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ));
+                          },
+                          itemCount: trackerList.length,
+                        ),
             )
           ],
         ),
