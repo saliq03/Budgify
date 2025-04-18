@@ -3,18 +3,19 @@ import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:table_calendar/table_calendar.dart';
-
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class ExpenseManagementPage extends ConsumerStatefulWidget {
   const ExpenseManagementPage({super.key});
 
   @override
-  ConsumerState<ExpenseManagementPage> createState() => _ExpenseManagementPageState();
+  ConsumerState<ExpenseManagementPage> createState() =>
+      _ExpenseManagementPageState();
 }
 
 class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
@@ -23,7 +24,12 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedValue = ref.watch(selectedValueProvider);
+
+    final String selectedText =
+        selectedValue == "Income" ? "Add Income" : "Add Expense";
     final double w = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: ReusableAppBar(
         text: 'Expense Management',
@@ -54,12 +60,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                   child: Column(
                     children: [
                       Text(
-                        "Add Income",
+                        selectedText,
                         style: AppStyles.headingPrimary(
                             context: context, color: Colors.white),
                       ),
                       spacerH(15),
-
                       ReusableTextField(
                         controller: titleController,
                         hintText: "Enter Title",
@@ -73,175 +78,39 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         hintText: "Enter Amount",
                         keyboardType: TextInputType.number,
                         prefixIcon: Icons.monetization_on_outlined,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
+                        // inputFormatters: [
+                        //   FilteringTextInputFormatter.digitsOnly,
+                        //
+                        // ],
                       ),
-
-                      // TableCalendar(
-                      //   firstDay: DateTime.utc(2020, 1, 1),
-                      //   lastDay: DateTime.utc(2030, 12, 31),
-                      //   focusedDay: DateTime.now(),
-                      //   // focusedDay: _focusedDay,
-                      //   selectedDayPredicate: (day) {
-                      //     return false;
-                      //     // return isSameDay(_selectedDay, day);
-                      //   },
-                      //   onDaySelected: (selectedDay, focusedDay) {
-                      //     setState(() {
-                      //       // _selectedDay = selectedDay;
-                      //       // _focusedDay = focusedDay; // update focused day as well
-                      //     });
-                      //   },
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Expanded(
-                      //         child: InkWell(
-                      //           onTap: () {
-                      //             if (true) {
-                      //               showCustomDateRangePicker(
-                      //                 context,
-                      //                 dismissible: true,
-                      //                 minimumDate: DateTime.now()
-                      //                     .subtract(const Duration(days: 3000)),
-                      //                 maximumDate:
-                      //                 DateTime.now().add(const Duration(days: 0)),
-                      //                 // endDate: endDate,
-                      //                 // startDate: startDate,
-                      //                 // backgroundColor: bgColor,
-                      //                 // primaryColor: customColor,
-                      //                 onApplyClick: (start, end) {
-                      //                   // setState(() {
-                      //                   //   endDate = end;
-                      //                   //   startDate = start;
-                      //                   // });
-                      //                 },
-                      //                 onCancelClick: () {},
-                      //               );
-                      //             }
-                      //           },
-                      //           child: Card(
-                      //             elevation: 4,
-                      //             shape: RoundedRectangleBorder(
-                      //                 borderRadius: BorderRadius.circular(5)),
-                      //             child: Container(
-                      //               height: 40,
-                      //               decoration: BoxDecoration(
-                      //                 borderRadius: BorderRadius.circular(5),
-                      //                 // color: selectDate == null
-                      //                 //     ? startDate == null
-                      //                 //     ? customColor
-                      //                 //     : secondaryThemeColor
-                      //                 //     : Color.fromARGB(255, 114, 114, 114),
-                      //               ),
-                      //               padding:
-                      //               const EdgeInsets.only(left: 10, right: 10),
-                      //               child: Center(
-                      //                   child: FittedBox(
-                      //                       child: Text(
-                      //                         // (startDate == null)
-                      //                         //     ?
-                      //                       "Start Date",
-                      //                             // : "${getMonth(startDate!.month)} ${startDate!.day},${startDate!.year}",
-                      //                         style: const TextStyle(
-                      //                             color: Colors.white,
-                      //                             fontSize: 14,
-                      //                             fontWeight: FontWeight.w700),
-                      //                       ))),
-                      //             ),
-                      //           ),
-                      //         )),
-                      //     const Text(
-                      //       " - ",
-                      //       style: TextStyle(
-                      //           fontSize: 20,
-                      //           fontWeight: FontWeight.w700,
-                      //           color: Colors.black),
-                      //     ),
-                      //     Expanded(
-                      //         child: InkWell(
-                      //           onTap: () {
-                      //             if (true) {
-                      //               showCustomDateRangePicker(
-                      //                 context,
-                      //                 dismissible: true,
-                      //                 minimumDate: DateTime.now()
-                      //                     .subtract(const Duration(days: 3000)),
-                      //                 maximumDate:
-                      //                 DateTime.now().add(const Duration(days: 0)),
-                      //                 // endDate: endDate,
-                      //                 // startDate: startDate,
-                      //                 // backgroundColor: bgColor,
-                      //                 // primaryColor: customColor,
-                      //                 onApplyClick: (start, end) {
-                      //                   // setState(() {
-                      //                   //   endDate = end;
-                      //                   //   startDate = start;
-                      //                   // });
-                      //                 },
-                      //                 onCancelClick: () {},
-                      //               );
-                      //             }
-                      //           },
-                      //           child: Card(
-                      //             elevation: 4,
-                      //             shape: RoundedRectangleBorder(
-                      //                 borderRadius: BorderRadius.circular(5)),
-                      //             child: Container(
-                      //               height: 40,
-                      //               decoration: BoxDecoration(
-                      //                 borderRadius: BorderRadius.circular(5),
-                      //                 color:
-                      //                 // selectDate == null
-                      //                 //     ? endDate == null
-                      //                 //     ? customColor
-                      //                 //     : secondaryThemeColor
-                      //                 //     :
-                      //                   Color.fromARGB(255, 114, 114, 114),
-                      //               ),
-                      //               padding:
-                      //               const EdgeInsets.only(left: 10, right: 10),
-                      //               child: Center(
-                      //                   child: FittedBox(
-                      //                       child: Text(
-                      //                         // endDate == null
-                      //                         //     ?
-                      //                       "End Date",
-                      //                             // : "${getMonth(endDate!.month)} ${endDate!.day},${endDate!.year}",
-                      //                         style: const TextStyle(
-                      //                             color: Colors.white,
-                      //                             fontSize: 14,
-                      //                             fontWeight: FontWeight.w700),
-                      //                       ))),
-                      //             ),
-                      //           ),
-                      //         )),
-                      //   ],
-                      // ),
-
-
-
-
-                      // SfDateRangePicker(
-                      //   selectionMode: DateRangePickerSelectionMode.range,
-                      //   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                      //     print("Selected range: ${args.value}");
-                      //   },
-                      // ),
-
+                      spacerH(),
+                      SizedBox(
+                        height: 55,
+                        // height: 40,
+                        child: CustomDropDown(
+                            icon: Icons.arrow_drop_down_rounded,
+                            categories: const [
+                              "Income",
+                              "Expense",
+                            ],
+                            onChanged: (newValue) {
+                              if (newValue != null) {
+                                ref.read(selectedValueProvider.notifier).state =
+                                    newValue;
+                              }
+                            },
+                            selectedValue: selectedValue),
+                      ),
                       spacerH(),
                       ElevatedButton(
                           onPressed: () {
-                            ref.read(expenseTrackerProvider.notifier)
-                                .addData(
-                              title: titleController.text,
-                              date: DateTime.now().toString().split(" ")[0],
-                              amount: double.parse(amountController.text),
-                              isExpense: false,
-                            );
+                            ref.read(expenseTrackerProvider.notifier).addData(
+                                  title: titleController.text,
+                                  date: DateTime.now().toString().split(" ")[0],
+                                  amount: double.parse(amountController.text),
+                                  isExpense: selectedValue == "Expense",
+                                );
                             Navigator.pop(context);
-
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(w, 40),
@@ -251,7 +120,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             ),
                           ),
                           child: Text(
-                            "Add Income",
+                            selectedText,
                             style: AppStyles.descriptionPrimary(
                                 context: context, color: Colors.white),
                           ))
@@ -266,6 +135,242 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     );
   }
 }
+
+class CustomDropDown extends StatefulWidget {
+  const CustomDropDown(
+      {super.key,
+      required this.categories,
+      required this.onChanged,
+      required this.icon,
+      required this.selectedValue});
+
+  final List<String> categories;
+  final String selectedValue;
+  final IconData icon;
+  final void Function(String?)? onChanged;
+
+  @override
+  State<CustomDropDown> createState() => _CustomDropDownState();
+}
+
+class _CustomDropDownState extends State<CustomDropDown> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    final double w = MediaQuery.of(context).size.width;
+    final bool isExpense = widget.selectedValue == "Expense";
+    final color = isExpense ? Colors.red : Colors.green;
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2(
+        customButton: Container(
+            width: w,
+            height: 45,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black38,
+                ),
+                color: theme.surface,
+                borderRadius: BorderRadius.circular(15)),
+            child: Row(
+              children: [
+                spacerW(5),
+                Icon(
+                  isExpense
+                      ? Icons.arrow_circle_down_outlined
+                      : Icons.arrow_circle_up_outlined,
+                  color: color,
+                ),
+                spacerW(15),
+                Text(widget.selectedValue,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.descriptionPrimary(
+                        context: context, color: color)),
+                Spacer(),
+                Icon(
+                  widget.icon,
+                )
+              ],
+            )),
+        dropdownStyleData: DropdownStyleData(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: theme.primary, width: .5),
+              color: theme.surface),
+        ),
+        items: widget.categories
+            .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 1),
+                    child: Text(
+                      item,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(
+                          height: 0,
+                          color: theme.onSurface,
+                          letterSpacing: 1.5,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ))
+            .toList(),
+        onChanged: widget.onChanged,
+      ),
+    );
+  }
+}
+
+// TableCalendar(
+//   firstDay: DateTime.utc(2020, 1, 1),
+//   lastDay: DateTime.utc(2030, 12, 31),
+//   focusedDay: DateTime.now(),
+//   // focusedDay: _focusedDay,
+//   selectedDayPredicate: (day) {
+//     return false;
+//     // return isSameDay(_selectedDay, day);
+//   },
+//   onDaySelected: (selectedDay, focusedDay) {
+//     setState(() {
+//       // _selectedDay = selectedDay;
+//       // _focusedDay = focusedDay; // update focused day as well
+//     });
+//   },
+// ),
+// Row(
+//   children: [
+//     Expanded(
+//         child: InkWell(
+//           onTap: () {
+//             if (true) {
+//               showCustomDateRangePicker(
+//                 context,
+//                 dismissible: true,
+//                 minimumDate: DateTime.now()
+//                     .subtract(const Duration(days: 3000)),
+//                 maximumDate:
+//                 DateTime.now().add(const Duration(days: 0)),
+//                 // endDate: endDate,
+//                 // startDate: startDate,
+//                 // backgroundColor: bgColor,
+//                 // primaryColor: customColor,
+//                 onApplyClick: (start, end) {
+//                   // setState(() {
+//                   //   endDate = end;
+//                   //   startDate = start;
+//                   // });
+//                 },
+//                 onCancelClick: () {},
+//               );
+//             }
+//           },
+//           child: Card(
+//             elevation: 4,
+//             shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(5)),
+//             child: Container(
+//               height: 40,
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(5),
+//                 // color: selectDate == null
+//                 //     ? startDate == null
+//                 //     ? customColor
+//                 //     : secondaryThemeColor
+//                 //     : Color.fromARGB(255, 114, 114, 114),
+//               ),
+//               padding:
+//               const EdgeInsets.only(left: 10, right: 10),
+//               child: Center(
+//                   child: FittedBox(
+//                       child: Text(
+//                         // (startDate == null)
+//                         //     ?
+//                       "Start Date",
+//                             // : "${getMonth(startDate!.month)} ${startDate!.day},${startDate!.year}",
+//                         style: const TextStyle(
+//                             color: Colors.white,
+//                             fontSize: 14,
+//                             fontWeight: FontWeight.w700),
+//                       ))),
+//             ),
+//           ),
+//         )),
+//     const Text(
+//       " - ",
+//       style: TextStyle(
+//           fontSize: 20,
+//           fontWeight: FontWeight.w700,
+//           color: Colors.black),
+//     ),
+//     Expanded(
+//         child: InkWell(
+//           onTap: () {
+//             if (true) {
+//               showCustomDateRangePicker(
+//                 context,
+//                 dismissible: true,
+//                 minimumDate: DateTime.now()
+//                     .subtract(const Duration(days: 3000)),
+//                 maximumDate:
+//                 DateTime.now().add(const Duration(days: 0)),
+//                 // endDate: endDate,
+//                 // startDate: startDate,
+//                 // backgroundColor: bgColor,
+//                 // primaryColor: customColor,
+//                 onApplyClick: (start, end) {
+//                   // setState(() {
+//                   //   endDate = end;
+//                   //   startDate = start;
+//                   // });
+//                 },
+//                 onCancelClick: () {},
+//               );
+//             }
+//           },
+//           child: Card(
+//             elevation: 4,
+//             shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(5)),
+//             child: Container(
+//               height: 40,
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(5),
+//                 color:
+//                 // selectDate == null
+//                 //     ? endDate == null
+//                 //     ? customColor
+//                 //     : secondaryThemeColor
+//                 //     :
+//                   Color.fromARGB(255, 114, 114, 114),
+//               ),
+//               padding:
+//               const EdgeInsets.only(left: 10, right: 10),
+//               child: Center(
+//                   child: FittedBox(
+//                       child: Text(
+//                         // endDate == null
+//                         //     ?
+//                       "End Date",
+//                             // : "${getMonth(endDate!.month)} ${endDate!.day},${endDate!.year}",
+//                         style: const TextStyle(
+//                             color: Colors.white,
+//                             fontSize: 14,
+//                             fontWeight: FontWeight.w700),
+//                       ))),
+//             ),
+//           ),
+//         )),
+//   ],
+// ),
+
+// SfDateRangePicker(
+//   selectionMode: DateRangePickerSelectionMode.range,
+//   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+//     print("Selected range: ${args.value}");
+//   },
+// ),
 
 //
 // void showCustomDateRangePicker(
@@ -300,8 +405,6 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 //     ),
 //   );
 // }
-
-
 
 // class CustomDateRangePicker extends StatefulWidget {
 //   /// The minimum date that can be selected in the calendar.
@@ -628,7 +731,3 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 //   }
 //
 // }
-
-
-
-

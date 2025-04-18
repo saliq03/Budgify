@@ -1,3 +1,4 @@
+import 'package:budgify/features/expense_tracker/model/currency_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
@@ -9,11 +10,14 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
   bool isLoading = true;
   DBHelper dbHelper = DBHelper();
   Database? database;
+  double totalIncome = 0.0;
+  double totalExpense = 0.0;
+  double totalBalance = 0.0;
 
   // Asynchronous init method for initializing the state
   Future<void> init() async {
     await getDB();
-    await insertData();
+    await fetchData();
     isLoading = false;
   }
 
@@ -30,19 +34,52 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
     bool isValueAdded = await dbHelper.addTrackerData(TrackerModel(
         title: title, date: date, amount: amount, isExpense: isExpense));
     if (isValueAdded) {
-      insertData();
+      fetchData();
+    }
+  }
+
+
+  Future<void> deleteData(int id) async {
+    bool isValueDeleted = await dbHelper.deleteTrackerData(id);
+    if (isValueDeleted) {
+      fetchData();
     }
   }
 
   // Fetch data from the database and update the state
-  Future<void> insertData() async {
-    state = await dbHelper
-        .fetchTrackerData(); // Creating a new list to ensure state is updated properly
+  Future<void> fetchData() async {
+    totalIncome = 0.0;
+    totalExpense = 0.0;
+    totalBalance = 0.0;
+
+    state = await dbHelper.fetchTrackerData(); // First, fetch data.
+
+    for (var tracker in state) {
+      if (tracker.isExpense) {
+        totalExpense += tracker.amount;
+      } else {
+        totalIncome += tracker.amount;
+      }
+    }
+
+    totalBalance = totalIncome - totalExpense;
   }
-}
+  }
 
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProvider =
     StateNotifierProvider<ExpenseTrackerNotifier, List<TrackerModel>>(
   (ref) => ExpenseTrackerNotifier(),
 );
+
+
+final selectedValueProvider = StateProvider<String>((ref) => "Income");
+
+
+final currencyProvider = StateProvider<CurrencyModel>((ref) {
+  return CurrencyModel(
+    name: 'United States Dollar',
+    code: 'USD',
+    symbol: '\$',
+  );
+});

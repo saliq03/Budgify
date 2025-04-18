@@ -1,13 +1,17 @@
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
+import 'package:budgify/features/expense_tracker/model/currency_model.dart';
+import 'package:budgify/features/expense_tracker/view/widgets/dialog/reusable_dialog_class.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
-import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/routes/paths.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../widgets/buttons/reusable_outlined_button.dart';
 import '../widgets/drawer/custom_drawer.dart';
+import '../widgets/reusable_card_details.dart';
 
 class ExpenseTrackerPage extends ConsumerStatefulWidget {
   const ExpenseTrackerPage({super.key});
@@ -22,41 +26,19 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize the data when the widget is first created
     Future.microtask(() {
       ref.read(expenseTrackerProvider.notifier).init();
     });
   }
 
-  // DBHelper dbHelper = DBHelper();
-  // Database? database;
-  // List<TrackerModel> trackerList = [];
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getDB();
-  //   insertData();
-  // }
-  //
-  // void getDB() async {
-  //   database = await dbHelper.getDB();
-  // }
-  //
-  // void insertData() async {
-  //   trackerList = await dbHelper.fetchTrackerData();
-  //   setState(() {});
-  //   print("Tracker List: $trackerList");
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final trackerList = ref.watch(expenseTrackerProvider);
-    final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
-
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     final theme = Theme.of(context).colorScheme;
+
+    final rProvider=ref.read(currencyProvider.notifier);
+    final currency = ref.watch(currencyProvider);
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: CustomDrawer(h: h, w: w * 0.7),
@@ -75,221 +57,49 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             spacerH(),
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
+            Container(
+              width: w,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
+                color: theme.surface,
+                border: Border.all(
+                  width: 1,
+                  color: theme.onSurface,
+                ),
               ),
-              child: Container(
-                width: w,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: AppGradients.skyBlueMyAppGradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: InkWell(
+                onTap: (){
+                  showCurrencyPicker(
+                    context: context,
+                    showFlag: true,
+                    showCurrencyName: true,
+                    showCurrencyCode: true,
+                    onSelect: (Currency currency) {
+                      rProvider.state=CurrencyModel.fromJson(currency);
+                      print(currency.name);
+                    },
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Total Balance",
-                      style: AppStyles.descriptionPrimary(
-                          context: context, color: Colors.white),
-                    ),
-                    spacerH(5),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Icon(
-                            Icons.remove,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Icon(
-                            Icons.attach_money,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                        spacerW(2),
-                        Flexible(
-                            child: Text(
-                          "1,0007773.00",
-                          style: AppStyles.headingPrimary(
-                              context: context,
-                              fontSize: 30,
-                              color: Colors.white),
-                        )),
-                      ],
-                    ),
-
-                    spacerH(),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ReusableCardDetails(
-                            text: "Income",
-                            icon: Icons.arrow_circle_up_outlined,
-                            currencySymbol: Icons.attach_money,
-                            amount: "1,000777433.00",
-                          ),
-                        ),
-                        spacerW(),
-                        Expanded(
-                          child: ReusableCardDetails(
-                            text: "Expense",
-                            icon: Icons.arrow_circle_down_outlined,
-                            currencySymbol: Icons.attach_money,
-                            amount: "23,0007433.00",
-                          ),
-                        ),
-                      ],
+                    Text("${currency.name}-${currency.code}-${currency.symbol}",style: AppStyles.descriptionPrimary(context: context),),
+                    Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: theme.onSurface,
                     )
 
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text("Change Currency",style: AppStyles.headingPrimary(context: context,fontSize: 15,color: Colors.white),),
-                    //     spacerW(10),
-                    //     const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white,size: 15,),
-                    //
-                    //   ],
-                    // ),
                   ],
                 ),
               ),
             ),
             spacerH(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    "Recent Transactions",
-                    style: AppStyles.headingPrimary(
-                        context: context, fontSize: 19),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-                spacerW(),
-                ReusableOutlinedButton(onPressed: () {})
-              ],
-            ),
+            cardSection(w, context,currency.symbol),
+            spacerH(),
+            transactionSection(),
             spacerH(10),
-            Expanded(
-              child: isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : trackerList.isEmpty
-                      ? Center(
-                          child: Text(
-                            'No transactions found',
-                            style: AppStyles.descriptionPrimary(
-                              context: context,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          itemBuilder: (context, index) {
-                            var tl = trackerList[index];
-
-                            return ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: Icon(
-                                    tl.isExpense
-                                        ? Icons.arrow_circle_down_outlined
-                                        : Icons.arrow_circle_up_outlined,
-                                    color: tl.isExpense
-                                        ? Colors.red
-                                        : Colors.green,
-                                    size: 40),
-                                title: Text(
-                                  tl.title,
-                                  style: AppStyles.headingPrimary(
-                                      context: context, fontSize: 18),
-                                ),
-                                subtitle: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 3),
-                                      child: Icon(
-                                        tl.isExpense ? Icons.remove : Icons.add,
-                                        color: tl.isExpense
-                                            ? Colors.red
-                                            : Colors.green,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 3),
-                                      child: Icon(
-                                        Icons.attach_money,
-                                        color: tl.isExpense
-                                            ? Colors.red
-                                            : Colors.green,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    spacerW(2),
-                                    Flexible(
-                                        child: Text(
-                                      tl.amount.toString(),
-                                      style: AppStyles.headingPrimary(
-                                        context: context,
-                                        fontSize: 18,
-                                        color: tl.isExpense
-                                            ? Colors.red
-                                            : Colors.green,
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(tl.date,
-                                        style: AppStyles.descriptionPrimary(
-                                            context: context, fontSize: 14)),
-                                    spacerH(5),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.edit,
-                                          color: theme.primary,
-                                          size: 25,
-                                        ),
-                                        spacerW(10),
-                                        InkWell(
-                                          onTap: () {},
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 25,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ));
-                          },
-                          itemCount: trackerList.length,
-                        ),
-            )
+            transactionInfo(theme,currency.symbol),
           ],
         ),
       ),
@@ -305,92 +115,211 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
       ),
     );
   }
-}
 
-class ReusableOutlinedButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
+  Widget cardSection(final double w, final BuildContext context,final currency) {
+    final wProvider =ref.watch(expenseTrackerProvider.notifier);
+    final positiveBalance = wProvider.totalBalance >= 0;
+    final zeroBalance = wProvider.totalBalance == 0;
+    final totalBalanceColor= zeroBalance? Colors.white :positiveBalance ? Colors.greenAccent : Colors.red;
+    // Reverse the list to show latest items first
 
-  const ReusableOutlinedButton(
-      {super.key, this.text = "View all >>", required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onPressed,
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+        width: w,
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-            color: theme.surface,
-            border: Border.all(color: theme.onSurface, width: 0.8),
-            borderRadius: BorderRadius.circular(5)),
-        child: Text(
-          text,
-          style: AppStyles.descriptionPrimary(context: context, fontSize: 14),
+            gradient: LinearGradient(
+                colors: AppGradients.skyBlueMyAppGradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight),
+            borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Total Balance",
+              style: AppStyles.descriptionPrimary(
+                  context: context, color: Colors.white),
+            ),
+            spacerH(5),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if(!zeroBalance)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Icon(
+                    positiveBalance
+                        ? Icons.add
+                        : Icons.remove,
+                    color:totalBalanceColor,
+                    size: 20,
+                  ),
+                ),
+                spacerW(2),
+                Flexible(
+                    child: Text("$currency ${wProvider.totalBalance.abs()}",
+                  style: AppStyles.headingPrimary(
+                      context: context, fontSize: 30, color: totalBalanceColor),
+                )),
+              ],
+            ),
+            spacerH(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ReusableCardDetails(
+                    text: "Income",
+                    icon: Icons.arrow_circle_up_outlined,
+                    currencySymbol: Icons.attach_money,
+                    amount: wProvider.totalIncome.toString(),
+                  ),
+                ),
+                spacerW(),
+                Expanded(
+                  child: ReusableCardDetails(
+                    text: "Expense",
+                    icon: Icons.arrow_circle_down_outlined,
+                    currencySymbol: Icons.attach_money,
+                    amount: wProvider.totalExpense.toString(),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
   }
-}
 
-class ReusableCardDetails extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final IconData currencySymbol;
-  final String amount;
-
-  const ReusableCardDetails(
-      {super.key,
-      required this.text,
-      required this.icon,
-      required this.currencySymbol,
-      required this.amount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget transactionSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 20,
-            ),
-            spacerW(5),
-            Text(
-              text,
-              style: AppStyles.descriptionPrimary(
-                  context: context, fontSize: 16, color: Colors.white),
-            ),
-          ],
+        Flexible(
+          child: Text(
+            "Recent Transactions",
+            style: AppStyles.headingPrimary(context: context, fontSize: 19),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         ),
-        spacerH(5),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Icon(
-                currencySymbol,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            spacerW(2),
-            Flexible(
-                child: Text(
-              amount,
-              style: AppStyles.headingPrimary(
-                  context: context, fontSize: 18, color: Colors.white),
-            )),
-          ],
-        ),
+        spacerW(),
+        ReusableOutlinedButton(onPressed: () {})
       ],
+    );
+  }
+
+  Widget transactionInfo(final ColorScheme theme,final currency) {
+    final trackerList = ref.watch(expenseTrackerProvider).reversed.toList();
+    final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
+    final rProvider = ref.read(expenseTrackerProvider.notifier);
+    return Expanded(
+      child: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : trackerList.isEmpty
+              ? Center(
+                  child: Text(
+                    'No transactions found',
+                    style: AppStyles.descriptionPrimary(
+                      context: context,
+                    ),
+                  ),
+                )
+              : ListView.builder(
+        // reverse: true,
+                  padding: const EdgeInsets.only(bottom: 100),
+                  itemBuilder: (context, index) {
+                    var tl = trackerList[index];
+
+                    return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                            tl.isExpense
+                                ? Icons.arrow_circle_down_outlined
+                                : Icons.arrow_circle_up_outlined,
+                            color: tl.isExpense ? Colors.red : Colors.green,
+                            size: 40),
+                        title: Text(
+                          tl.title,
+                          style: AppStyles.headingPrimary(
+                              context: context, fontSize: 18),
+                        ),
+                        subtitle: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Icon(
+                                tl.isExpense ? Icons.remove : Icons.add,
+                                color: tl.isExpense ? Colors.red : Colors.green,
+                                size: 20,
+                              ),
+                            ),
+                            spacerW(2),
+                            Flexible(
+                                child: Text("$currency ${tl.amount}",
+                              style: AppStyles.headingPrimary(
+                                context: context,
+                                fontSize: 18,
+                                color: tl.isExpense ? Colors.red : Colors.green,
+                              ),
+                            )),
+                          ],
+                        ),
+                        trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(tl.date,
+                                style: AppStyles.descriptionPrimary(
+                                    context: context, fontSize: 14)),
+                            spacerH(5),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, Paths.expenseManagementPage,
+                                        arguments: tl);
+                                  },
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: theme.primary,
+                                    size: 25,
+                                  ),
+                                ),
+                                spacerW(10),
+                                InkWell(
+                                  onTap: () async {
+                                    await ReusableDialogClass
+                                        .deletedTransactionDialog(context, () {
+                                      rProvider.deleteData(tl.id!);
+                                      Navigator.of(context).pop();
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 25,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ));
+                  },
+                  itemCount: trackerList.length,
+                ),
     );
   }
 }

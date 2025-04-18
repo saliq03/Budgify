@@ -88,4 +88,18 @@ class DBHelper {
       return [];
     }
   }
+
+
+  Future<bool> deleteTrackerData(int id) async {
+    try {
+      Database mDB = await getDB();
+      int rowsEffected= await mDB.delete(trackerTableName,where: "$columnTrackerId = ?",whereArgs: [id]);
+      return rowsEffected > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in deleting data: $e");
+      }
+      return false;
+    }
+  }
 }

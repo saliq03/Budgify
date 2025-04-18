@@ -4,11 +4,7 @@ class StaticAssets {
 
   // Icons
   static const String appIcon =
-      'assets/icons/my_app_icons/brain_booster_icon.jpg';
-  static const String soothingMusicIcon =
-      'assets/icons/soothing_music_icon.png';
-  static const String binauralBeatsIcon =
-      'assets/icons/binaural_beats_icon.png';
+      'assets/icons/my_app_icons/budgify_icon.png';
   static const String crossCloseIcon = 'assets/icons/cross_close_icon.png';
 
   //All apps Icons

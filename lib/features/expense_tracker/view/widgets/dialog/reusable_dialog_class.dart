@@ -35,6 +35,30 @@ class ReusableDialogClass {
     );
   }
 
+  static Future<bool> deletedTransactionDialog(BuildContext context,VoidCallback onClick) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => ReusableDialog(
+        dialogTitle:  "Are you sure you want to delete transaction?",
+        dialogRowItem1: DialogYesNoButton(
+          text: 'Yes',
+          fontSize: 16,
+          onTapFun: onClick ,
+          color: Colors.redAccent,
+        ),
+        dialogRowItem2: DialogYesNoButton(
+          text: 'No',
+          fontSize: 16,
+          onTapFun: () {
+            Navigator.of(context).pop();
+          },
+          color: Colors.green,
+        ),
+      ),
+    );
+  }
+
   static Future<bool> connectUsDialog(BuildContext context) async {
     return await showDialog(
       context: context,
