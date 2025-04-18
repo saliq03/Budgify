@@ -1,3 +1,4 @@
+import 'package:budgify/core/theme/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +13,8 @@ class ReusableTextField extends StatefulWidget {
   final double? radius;
   final Function(String)? onChanged;
   final FocusNode? focusNode;
+  final String? prefixText;
+  final VoidCallback? onTapPrefix;
 
   const ReusableTextField({
     super.key,
@@ -21,7 +24,7 @@ class ReusableTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.inputFormatters,
     this.prefixIcon,
-    this.isPassword = false, this.radius, this.onChanged, this.focusNode,
+    this.isPassword = false, this.radius, this.onChanged, this.focusNode, this.prefixText, this.onTapPrefix,
   });
 
   @override
@@ -72,14 +75,29 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
       inputFormatters: widget.inputFormatters,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
-        prefixIcon: widget.prefixIcon == null
-            ? null
-            : Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Icon(widget.prefixIcon,
-              color: _isFocused ? theme.primary : theme.onSurface.withValues(alpha: 0.8),
-              size: 25),
+        prefixIcon:
+        InkWell(
+          onTap: widget.onTapPrefix,
+          child: widget.prefixText !=null ?
+              Padding(
+                padding: const EdgeInsets.only(top: 12,left: 18),
+                child: Text(
+                  widget.prefixText!,
+                  style: AppStyles.headingPrimary(context: context),
+                ),
+              )
+              :
+          widget.prefixIcon == null
+              ? null
+              : Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Icon(widget.prefixIcon,
+                color: _isFocused ? theme.primary : theme.onSurface.withValues(alpha: 0.8),
+                size: 25),
+          ),
         ),
+
+
         suffixIcon:  (!widget.isPassword)? null:
         IconButton(
           icon: Icon(

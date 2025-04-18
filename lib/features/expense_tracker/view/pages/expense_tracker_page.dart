@@ -1,3 +1,4 @@
+import 'package:budgify/core/theme/app_colors.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/features/expense_tracker/model/currency_model.dart';
@@ -36,7 +37,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     final theme = Theme.of(context).colorScheme;
-
     final rProvider=ref.read(currencyProvider.notifier);
     final currency = ref.watch(currencyProvider);
     return Scaffold(
@@ -77,14 +77,14 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     showCurrencyCode: true,
                     onSelect: (Currency currency) {
                       rProvider.state=CurrencyModel.fromJson(currency);
-                      print(currency.name);
+                      // print(currency.name);
                     },
                   );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("${currency.name}-${currency.code}-${currency.symbol}",style: AppStyles.descriptionPrimary(context: context),),
+                    Flexible(child: Text("${currency.name} - ${currency.code} - ${currency.symbol}",style: AppStyles.descriptionPrimary(context: context),)),
                     Icon(
                       Icons.arrow_drop_down_rounded,
                       color: theme.onSurface,
@@ -120,7 +120,11 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     final wProvider =ref.watch(expenseTrackerProvider.notifier);
     final positiveBalance = wProvider.totalBalance >= 0;
     final zeroBalance = wProvider.totalBalance == 0;
-    final totalBalanceColor= zeroBalance? Colors.white :positiveBalance ? Colors.greenAccent : Colors.red;
+    final zeroIncome = wProvider.totalIncome == 0;
+    final zeroExpense = wProvider.totalExpense == 0;
+    final totalBalanceColor= zeroBalance? Colors.white :positiveBalance ? AppColors.lightGreen : AppColors.lightRed;
+    final incomeColor=zeroIncome ?Colors.white: AppColors.lightGreen;
+    final expenseColor=zeroExpense ?Colors.white: AppColors.lightRed;
     // Reverse the list to show latest items first
 
     return Card(
@@ -143,7 +147,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             Text(
               "Total Balance",
               style: AppStyles.descriptionPrimary(
-                  context: context, color: Colors.white),
+                  context: context, color: totalBalanceColor),
             ),
             spacerH(5),
             Row(
@@ -175,19 +179,20 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
               children: [
                 Expanded(
                   child: ReusableCardDetails(
+                    color: incomeColor,
                     text: "Income",
                     icon: Icons.arrow_circle_up_outlined,
-                    currencySymbol: Icons.attach_money,
-                    amount: wProvider.totalIncome.toString(),
+                    amount: "$currency ${wProvider.totalIncome}", isShow: !zeroIncome,
                   ),
                 ),
                 spacerW(),
                 Expanded(
                   child: ReusableCardDetails(
+                    color: expenseColor,
                     text: "Expense",
                     icon: Icons.arrow_circle_down_outlined,
-                    currencySymbol: Icons.attach_money,
-                    amount: wProvider.totalExpense.toString(),
+                    amount: "$currency ${wProvider.totalExpense}", isShow: !zeroExpense,
+                    isExpense: true,
                   ),
                 ),
               ],
@@ -281,7 +286,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                           children: [
                             Text(tl.date,
                                 style: AppStyles.descriptionPrimary(
-                                    context: context, fontSize: 14)),
+                                    context: context, fontSize: 13)),
                             spacerH(5),
                             Row(
                               mainAxisSize: MainAxisSize.min,

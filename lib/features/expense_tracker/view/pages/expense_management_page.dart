@@ -7,6 +7,7 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../model/currency_model.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -25,11 +26,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   @override
   Widget build(BuildContext context) {
     final selectedValue = ref.watch(selectedValueProvider);
-
+    final rProvider=ref.read(currencyProvider.notifier);
+    final currency = ref.watch(currencyProvider).symbol;
     final String selectedText =
         selectedValue == "Income" ? "Add Income" : "Add Expense";
     final double w = MediaQuery.of(context).size.width;
-    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: ReusableAppBar(
         text: 'Expense Management',
@@ -74,14 +75,26 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                       ),
                       spacerH(),
                       ReusableTextField(
+                        prefixText: currency,
+                        onTapPrefix: () {
+                          showCurrencyPicker(
+                            context: context,
+                            showFlag: true,
+                            showCurrencyName: true,
+                            showCurrencyCode: true,
+                            onSelect: (Currency currency) {
+                              rProvider.state=CurrencyModel.fromJson(currency);
+                              // print(currency.name);
+                            },
+                          );
+                        },
                         controller: amountController,
                         hintText: "Enter Amount",
                         keyboardType: TextInputType.number,
-                        prefixIcon: Icons.monetization_on_outlined,
-                        // inputFormatters: [
-                        //   FilteringTextInputFormatter.digitsOnly,
-                        //
-                        // ],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          // FilteringTextInputFormatter.digitsOnly,
+                        ],
                       ),
                       spacerH(),
                       SizedBox(
@@ -105,7 +118,9 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                       ElevatedButton(
                           onPressed: () {
                             ref.read(expenseTrackerProvider.notifier).addData(
-                                  title: titleController.text,
+                                  title: titleController.text.isEmpty
+                                      ? "Reason unavailable"
+                                      : titleController.text,
                                   date: DateTime.now().toString().split(" ")[0],
                                   amount: double.parse(amountController.text),
                                   isExpense: selectedValue == "Expense",
