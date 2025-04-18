@@ -21,7 +21,7 @@ dependencies:
   flutter_carousel_widget: ^3.1.0            # For using carousel widget
 
   share_plus: ^10.1.4                        # For sharing content
-  flutter_riverpod: ^2.6.1                           # For state management
+  flutter_riverpod: ^2.6.1                   # For state management
   salomon_bottom_bar: ^3.3.2                 # For using salomon bottom bar
   table_calendar: ^3.2.0                     # For using table calendar
   syncfusion_flutter_datepicker: ^29.1.38

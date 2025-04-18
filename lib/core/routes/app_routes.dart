@@ -1,4 +1,5 @@
 import 'package:budgify/core/routes/paths.dart';
+import 'package:budgify/features/expense_tracker/view/pages/expense_management_page.dart';
 import 'package:flutter/material.dart';
 import '../../features/expense_tracker/view/pages/more_apps_page.dart';
 import '../../features/profile/view/pages/profile_page.dart';
@@ -12,6 +13,10 @@ class AppRoutes {
 
       case Paths.moreAppsPage:
         return MaterialPageRoute(builder: (context) => MoreAppsPage());
+
+      case Paths.expenseManagementPage:
+        return MaterialPageRoute(
+            builder: (context) => const ExpenseManagementPage());
 
        default:
         return MaterialPageRoute(builder: (context) => const ProfilePage());

@@ -5,17 +5,19 @@ import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class ExpenseManagementPage extends StatefulWidget {
+import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+
+class ExpenseManagementPage extends ConsumerStatefulWidget {
   const ExpenseManagementPage({super.key});
 
   @override
-  State<ExpenseManagementPage> createState() => _ExpenseManagementPageState();
+  ConsumerState<ExpenseManagementPage> createState() => _ExpenseManagementPageState();
 }
 
-class _ExpenseManagementPageState extends State<ExpenseManagementPage> {
+class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
 
@@ -76,22 +78,22 @@ class _ExpenseManagementPageState extends State<ExpenseManagementPage> {
                         ],
                       ),
 
-                      TableCalendar(
-                        firstDay: DateTime.utc(2020, 1, 1),
-                        lastDay: DateTime.utc(2030, 12, 31),
-                        focusedDay: DateTime.now(),
-                        // focusedDay: _focusedDay,
-                        selectedDayPredicate: (day) {
-                          return false;
-                          // return isSameDay(_selectedDay, day);
-                        },
-                        onDaySelected: (selectedDay, focusedDay) {
-                          setState(() {
-                            // _selectedDay = selectedDay;
-                            // _focusedDay = focusedDay; // update focused day as well
-                          });
-                        },
-                      ),
+                      // TableCalendar(
+                      //   firstDay: DateTime.utc(2020, 1, 1),
+                      //   lastDay: DateTime.utc(2030, 12, 31),
+                      //   focusedDay: DateTime.now(),
+                      //   // focusedDay: _focusedDay,
+                      //   selectedDayPredicate: (day) {
+                      //     return false;
+                      //     // return isSameDay(_selectedDay, day);
+                      //   },
+                      //   onDaySelected: (selectedDay, focusedDay) {
+                      //     setState(() {
+                      //       // _selectedDay = selectedDay;
+                      //       // _focusedDay = focusedDay; // update focused day as well
+                      //     });
+                      //   },
+                      // ),
                       // Row(
                       //   children: [
                       //     Expanded(
@@ -230,7 +232,17 @@ class _ExpenseManagementPageState extends State<ExpenseManagementPage> {
 
                       spacerH(),
                       ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            ref.read(expenseTrackerProvider.notifier)
+                                .addData(
+                              title: titleController.text,
+                              date: DateTime.now().toString().split(" ")[0],
+                              amount: double.parse(amountController.text),
+                              isExpense: false,
+                            );
+                            Navigator.pop(context);
+
+                          },
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(w, 40),
                             backgroundColor: Color.fromARGB(255, 34, 95, 216),

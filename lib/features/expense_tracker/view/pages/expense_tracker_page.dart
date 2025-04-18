@@ -5,6 +5,7 @@ import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/routes/paths.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/drawer/custom_drawer.dart';
 
@@ -294,24 +295,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Column(
-                  children: [
-                    spacerH(10),
-                    Text(
-                      "Add Income",
-                      style: AppStyles.headingPrimary(
-                          context: context, fontSize: 20),
-                    ),
-                    spacerH(10),
-                    ReusableTextField(
-                        controller: TextEditingController(),
-                        hintText: "Enter Amount"),
-                  ],
-                );
-              });
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
         },
         backgroundColor: theme.primary,
         child: const Icon(
