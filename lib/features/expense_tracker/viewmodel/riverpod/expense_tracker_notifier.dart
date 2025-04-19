@@ -38,7 +38,6 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
     }
   }
 
-
   Future<void> deleteData(int id) async {
     bool isValueDeleted = await dbHelper.deleteTrackerData(id);
     if (isValueDeleted) {
@@ -52,7 +51,7 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
     totalExpense = 0.0;
     totalBalance = 0.0;
 
-    state = await dbHelper.fetchTrackerData(); // First, fetch data.
+    state = await dbHelper.fetchTrackerData();
 
     for (var tracker in state) {
       if (tracker.isExpense) {
@@ -64,16 +63,13 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
 
     totalBalance = totalIncome - totalExpense;
   }
-  }
+}
 
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProvider =
     StateNotifierProvider<ExpenseTrackerNotifier, List<TrackerModel>>(
   (ref) => ExpenseTrackerNotifier(),
 );
-
-
-
 
 final currencyProvider = StateProvider<CurrencyModel>((ref) {
   return CurrencyModel(
@@ -85,4 +81,78 @@ final currencyProvider = StateProvider<CurrencyModel>((ref) {
 
 final selectedValueProvider = StateProvider<String>((ref) => "Income");
 
-final transactionProvider= StateProvider<String>((ref) => "Latest Transaction");
+final transactionProvider = StateProvider<String>(
+    (ref) => TransactionType.transactionsNewestToOldest.value);
+
+final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
+  final filter = ref.watch(transactionProvider);
+  final allData = ref.watch(expenseTrackerProvider);
+
+  List<TrackerModel> filteredList = [];
+
+  // if (filter == TransactionType.onlyIncome.value) {
+  //   filteredList = allData.where((tracker) => !tracker.isExpense).toList();
+  // } else if (filter == TransactionType.onlyExpense.value) {
+  //   filteredList = allData.where((tracker) => tracker.isExpense).toList();
+  // }
+
+  if (filter == TransactionType.mostExpensive.value) {
+    filteredList = allData.where((tracker) => tracker.isExpense).toList()
+      ..sort((a, b) => b.amount.compareTo(a.amount));
+  } else if (filter == TransactionType.leastExpensive.value) {
+    filteredList = allData.where((tracker) => tracker.isExpense).toList()
+      ..sort((a, b) => a.amount.compareTo(b.amount));
+  } else if (filter == TransactionType.transactionsNewestToOldest.value) {
+    filteredList = allData.reversed.toList();
+  } else if (filter == TransactionType.mostIncome.value) {
+    filteredList = allData.where((tracker) => !tracker.isExpense).toList()
+      ..sort((a, b) => b.amount.compareTo(a.amount));
+  } else if (filter == TransactionType.leastIncome.value) {
+    filteredList = allData.where((tracker) => !tracker.isExpense).toList()
+      ..sort((a, b) => a.amount.compareTo(b.amount));
+  } else {
+    filteredList = allData;
+  }
+  return filteredList;
+});
+
+enum TransactionType {
+  transactionsNewestToOldest,
+  transactionsOldestToNewest,
+  mostExpensive,
+  leastExpensive,
+  // onlyIncome,
+  // onlyExpense,
+  mostIncome,
+  leastIncome;
+
+
+  String get value {
+    switch (this) {
+      case TransactionType.transactionsNewestToOldest:
+        return 'Transactions: Latest First';
+      case TransactionType.transactionsOldestToNewest:
+        return 'Transactions: Oldest First';
+      case TransactionType.mostExpensive:
+        return 'Most Expensive First';
+      case TransactionType.mostIncome:
+        return 'Highest Income First';
+      case TransactionType.leastExpensive:
+        return 'Least Expensive First';
+      case TransactionType.leastIncome:
+        return 'Lowest Income First';
+      // case TransactionType.mostExpensive:
+      //   return 'Most to Least Expensive';
+      // case TransactionType.mostIncome:
+      //   return 'Most to Least Income';
+      // case TransactionType.leastExpensive:
+      //   return 'Least to Most Expensive';
+      // case TransactionType.leastIncome:
+      //   return 'Least to Most Income';
+      // case TransactionType.onlyIncome:
+      //   return 'Only Income';
+      // case TransactionType.onlyExpense:
+      //   return 'Only Expense';
+    }
+  }
+}

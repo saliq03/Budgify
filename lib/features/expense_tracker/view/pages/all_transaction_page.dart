@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../../core/routes/paths.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import 'expense_management_page.dart';
 
@@ -31,8 +32,18 @@ class AllTransactionPage extends StatelessWidget {
             spacerH(10),
             DateFilter(),
             spacerH(10),
-            TransactionInfo(),
+            TransactionInfo(isTransactionPage: true,),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
+        },
+        backgroundColor: theme.primary,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
     );
@@ -44,20 +55,11 @@ class AllTransactionPage extends StatelessWidget {
 
       return CustomDropDown(
         icon: Icons.arrow_drop_down_rounded,
-        categories: const [
-          "Latest Transaction",
-          "Oldest Transaction",
-          "Most Expensive",
-          "Least Expensive",
-          'Only Income',
-          'Only Expense',
-        ],
+        categories: TransactionType.values.map((e)=> e.value).toList(),
         leadingIconSize: 20,
         onChanged: (newValue) {
           if (newValue != null) {
-            ref
-                .read(transactionProvider.notifier)
-                .state = newValue;
+            ref.read(transactionProvider.notifier).state = newValue;
           }
         },
         selectedValue: selectedValue,
