@@ -73,7 +73,6 @@ final expenseTrackerProvider =
 );
 
 
-final selectedValueProvider = StateProvider<String>((ref) => "Income");
 
 
 final currencyProvider = StateProvider<CurrencyModel>((ref) {
@@ -83,3 +82,7 @@ final currencyProvider = StateProvider<CurrencyModel>((ref) {
     symbol: '\$',
   );
 });
+
+final selectedValueProvider = StateProvider<String>((ref) => "Income");
+
+final transactionProvider= StateProvider<String>((ref) => "Latest Transaction");

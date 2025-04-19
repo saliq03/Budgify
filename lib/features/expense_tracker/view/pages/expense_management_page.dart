@@ -6,6 +6,7 @@ import 'package:budgify/shared/view/widgets/text_view/reusable_text_field.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../model/currency_model.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
@@ -26,11 +27,12 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   @override
   Widget build(BuildContext context) {
     final selectedValue = ref.watch(selectedValueProvider);
-    final rProvider=ref.read(currencyProvider.notifier);
+    final rProvider = ref.read(currencyProvider.notifier);
     final currency = ref.watch(currencyProvider).symbol;
     final String selectedText =
         selectedValue == "Income" ? "Add Income" : "Add Expense";
     final double w = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: ReusableAppBar(
         text: 'Expense Management',
@@ -41,7 +43,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              spacerH(),
+              spacerH(40),
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -83,7 +85,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             showCurrencyName: true,
                             showCurrencyCode: true,
                             onSelect: (Currency currency) {
-                              rProvider.state=CurrencyModel.fromJson(currency);
+                              rProvider.state =
+                                  CurrencyModel.fromJson(currency);
                               // print(currency.name);
                             },
                           );
@@ -92,7 +95,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         hintText: "Enter Amount",
                         keyboardType: TextInputType.number,
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d*')),
                           // FilteringTextInputFormatter.digitsOnly,
                         ],
                       ),
@@ -115,8 +119,19 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             selectedValue: selectedValue),
                       ),
                       spacerH(),
+                      datePicker(w, context, theme),
+                      spacerH(),
                       ElevatedButton(
                           onPressed: () {
+                            if (amountController.text.isEmpty) {
+                              IconSnackBar.show(
+                                context,
+                                label: "Please enter amount!",
+                                snackBarType: SnackBarType.alert,
+                              );
+                              return;
+                            }
+
                             ref.read(expenseTrackerProvider.notifier).addData(
                                   title: titleController.text.isEmpty
                                       ? "Reason unavailable"
@@ -149,6 +164,45 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
       ),
     );
   }
+
+  Widget datePicker(double w, BuildContext context, final theme) {
+    return Container(
+      width: w,
+      height: 55,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: theme.surface,
+        border: Border.all(
+          width: 1,
+          color: theme.onSurface,
+        ),
+      ),
+      child: InkWell(
+        onTap: () {},
+        child: Row(
+          children: [
+            spacerW(10),
+            Icon(
+              Icons.calendar_month_outlined,
+              color: theme.onSurface,
+              size: 20,
+            ),
+            spacerW(10),
+            Text(
+              "19-04-2025",
+              style: AppStyles.descriptionPrimary(context: context),
+            ),
+            Spacer(),
+            Icon(
+              Icons.arrow_drop_down_rounded,
+              color: theme.onSurface,
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class CustomDropDown extends StatefulWidget {
@@ -157,12 +211,21 @@ class CustomDropDown extends StatefulWidget {
       required this.categories,
       required this.onChanged,
       required this.icon,
-      required this.selectedValue});
+      required this.selectedValue,
+      this.color,
+      this.leadingIcon,
+      this.leadingIconSize,
+      this.borderColor,
+      });
 
   final List<String> categories;
   final String selectedValue;
   final IconData icon;
   final void Function(String?)? onChanged;
+  final Color? color;
+  final IconData? leadingIcon;
+  final double? leadingIconSize;
+  final Color? borderColor;
 
   @override
   State<CustomDropDown> createState() => _CustomDropDownState();
@@ -174,7 +237,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
     final theme = Theme.of(context).colorScheme;
     final double w = MediaQuery.of(context).size.width;
     final bool isExpense = widget.selectedValue == "Expense";
-    final color = isExpense ? Colors.red : Colors.green;
+    final color = widget.color ?? (isExpense ? Colors.red : Colors.green);
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         customButton: Container(
@@ -183,7 +246,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black38,
+                  color:widget.borderColor ??color,
                 ),
                 color: theme.surface,
                 borderRadius: BorderRadius.circular(15)),
@@ -191,10 +254,12 @@ class _CustomDropDownState extends State<CustomDropDown> {
               children: [
                 spacerW(5),
                 Icon(
-                  isExpense
-                      ? Icons.arrow_circle_down_outlined
-                      : Icons.arrow_circle_up_outlined,
+                  widget.leadingIcon ??
+                      (isExpense
+                          ? Icons.arrow_circle_down_outlined
+                          : Icons.arrow_circle_up_outlined),
                   color: color,
+                  size: widget.leadingIconSize,
                 ),
                 spacerW(15),
                 Text(widget.selectedValue,

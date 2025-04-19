@@ -1,4 +1,5 @@
 import 'package:budgify/core/routes/paths.dart';
+import 'package:budgify/features/expense_tracker/view/pages/all_transaction_page.dart';
 import 'package:budgify/features/expense_tracker/view/pages/expense_management_page.dart';
 import 'package:flutter/material.dart';
 import '../../features/expense_tracker/view/pages/more_apps_page.dart';
@@ -18,11 +19,15 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (context) => const ExpenseManagementPage());
 
-       default:
+      case Paths.allTransactionPage:
+        return MaterialPageRoute(
+            builder: (context) => const AllTransactionPage());
+
+      default:
         return MaterialPageRoute(builder: (context) => const ProfilePage());
 
-    // case Paths.bottomNavBar:
-    //   return MaterialPageRoute(builder: (context) => BottomNavBar());
+      // case Paths.bottomNavBar:
+      //   return MaterialPageRoute(builder: (context) => BottomNavBar());
     }
   }
 }
