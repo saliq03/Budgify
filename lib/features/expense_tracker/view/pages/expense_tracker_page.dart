@@ -68,8 +68,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             spacerH(),
             CurrencyPicker(),
             spacerH(10),
-            transactionFilter(theme),
-            spacerH(10),
             DateFilter(),
             spacerH(10),
             cardSection(w, context, currency.symbol),
@@ -91,37 +89,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         ),
       ),
     );
-  }
-
-
-  Widget transactionFilter(final theme) {
-    return Consumer(builder: (context, ref, child) {
-      final selectedValue = ref.watch(transactionProvider);
-
-      return CustomDropDown(
-        icon: Icons.arrow_drop_down_rounded,
-        categories: const [
-          "Latest Transaction",
-          "Oldest Transaction",
-          "Most Expensive",
-          "Least Expensive",
-          'Only Income',
-          'Only Expense',
-        ],
-        leadingIconSize: 20,
-        onChanged: (newValue) {
-          if (newValue != null) {
-            ref
-                .read(transactionProvider.notifier)
-                .state = newValue;
-          }
-        },
-        selectedValue: selectedValue,
-        leadingIcon: FontAwesomeIcons.receipt,
-        color: theme.onSurface,
-        borderColor: theme.onSurface,
-      );
-    });
   }
 
   Widget cardSection(final double w, final BuildContext context,
