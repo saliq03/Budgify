@@ -51,7 +51,8 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
     totalExpense = 0.0;
     totalBalance = 0.0;
 
-    state = await dbHelper.fetchTrackerData();
+    List<TrackerModel> list = await dbHelper.fetchTrackerData();
+    state = list.reversed.toList();
 
     for (var tracker in state) {
       if (tracker.isExpense) {
@@ -60,7 +61,6 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
         totalIncome += tracker.amount;
       }
     }
-
     totalBalance = totalIncome - totalExpense;
   }
 }
@@ -82,19 +82,13 @@ final currencyProvider = StateProvider<CurrencyModel>((ref) {
 final selectedValueProvider = StateProvider<String>((ref) => "Income");
 
 final transactionProvider = StateProvider<String>(
-    (ref) => TransactionType.transactionsNewestToOldest.value);
+    (ref) => TransactionType.allTransactions.value);
 
 final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   final filter = ref.watch(transactionProvider);
   final allData = ref.watch(expenseTrackerProvider);
 
   List<TrackerModel> filteredList = [];
-
-  // if (filter == TransactionType.onlyIncome.value) {
-  //   filteredList = allData.where((tracker) => !tracker.isExpense).toList();
-  // } else if (filter == TransactionType.onlyExpense.value) {
-  //   filteredList = allData.where((tracker) => tracker.isExpense).toList();
-  // }
 
   if (filter == TransactionType.mostExpensive.value) {
     filteredList = allData.where((tracker) => tracker.isExpense).toList()
@@ -103,20 +97,33 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
     filteredList = allData.where((tracker) => tracker.isExpense).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsNewestToOldest.value) {
-    filteredList = allData.reversed.toList();
+    filteredList = allData.toList()..sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date))); // Newest to Oldest
   } else if (filter == TransactionType.mostIncome.value) {
     filteredList = allData.where((tracker) => !tracker.isExpense).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
   } else if (filter == TransactionType.leastIncome.value) {
     filteredList = allData.where((tracker) => !tracker.isExpense).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
+  } else if (filter == TransactionType.transactionsOldestToNewest.value) {
+    filteredList = allData.toList()
+      ..sort((a, b) => parseDate(a.date).compareTo(parseDate(b.date))); // Oldest to Newest
   } else {
     filteredList = allData;
   }
   return filteredList;
 });
 
+DateTime parseDate(String date) {
+  final parts = date.split('/');
+  return DateTime(
+    int.parse(parts[2]), // Year
+    int.parse(parts[1]), // Month
+    int.parse(parts[0]), // Day
+  );
+}
+
 enum TransactionType {
+  allTransactions,
   transactionsNewestToOldest,
   transactionsOldestToNewest,
   mostExpensive,
@@ -126,9 +133,10 @@ enum TransactionType {
   mostIncome,
   leastIncome;
 
-
   String get value {
     switch (this) {
+      case TransactionType.allTransactions:
+        return 'All Transactions';
       case TransactionType.transactionsNewestToOldest:
         return 'Transactions: Latest First';
       case TransactionType.transactionsOldestToNewest:

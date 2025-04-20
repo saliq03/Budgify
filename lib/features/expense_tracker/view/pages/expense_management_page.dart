@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
@@ -136,7 +138,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                   title: titleController.text.isEmpty
                                       ? "Reason unavailable"
                                       : titleController.text,
-                                  date: DateTime.now().toString().split(" ")[0],
+                                  date: "${Random().nextInt(32)}/03/200${Random().nextInt(10)}",
                                   amount: double.parse(amountController.text),
                                   isExpense: selectedValue == "Expense",
                                 );

@@ -10,12 +10,13 @@ class ReusableCardDetails extends StatelessWidget {
   final String amount;
   final bool isShow;
   final bool isExpense;
+  final VoidCallback? onTap;
 
   const ReusableCardDetails(
       {super.key,
         required this.text,
         required this.icon,
-        required this.amount, required this.color, required this.isShow, this.isExpense= false});
+        required this.amount, required this.color, required this.isShow, this.isExpense= false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +57,13 @@ class ReusableCardDetails extends StatelessWidget {
               ),
             spacerW(2),
             Flexible(
-              child: Text(
-                amount,
-                style: AppStyles.headingPrimary(
-                    context: context, fontSize: 18, color: color),
+              child: InkWell(
+                onTap: onTap,
+                child: Text(
+                  amount,
+                  style: AppStyles.headingPrimary(
+                      context: context, fontSize: 18, color: color),
+                ),
               ),
             ),
           ],

@@ -2,7 +2,6 @@ import 'package:budgify/features/expense_tracker/view/pages/expense_tracker_page
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:budgify/features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../../../../core/theme/app_colors.dart';
