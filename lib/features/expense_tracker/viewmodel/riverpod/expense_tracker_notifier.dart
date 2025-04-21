@@ -1,8 +1,11 @@
 import 'package:budgify/features/expense_tracker/model/currency_model.dart';
+import 'package:budgify/features/expense_tracker/model/date_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
+import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
+import '../../utils/transaction_type.dart';
 
 class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
   ExpenseTrackerNotifier()
@@ -81,8 +84,8 @@ final currencyProvider = StateProvider<CurrencyModel>((ref) {
 
 final selectedValueProvider = StateProvider<String>((ref) => "Income");
 
-final transactionProvider = StateProvider<String>(
-    (ref) => TransactionType.allTransactions.value);
+final transactionProvider =
+    StateProvider<String>((ref) => TransactionType.allTransactions.value);
 
 final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   final filter = ref.watch(transactionProvider);
@@ -97,7 +100,9 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
     filteredList = allData.where((tracker) => tracker.isExpense).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsNewestToOldest.value) {
-    filteredList = allData.toList()..sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date))); // Newest to Oldest
+    filteredList = allData.toList()
+      ..sort((a, b) =>
+          parseDate(b.date).compareTo(parseDate(a.date))); // Newest to Oldest
   } else if (filter == TransactionType.mostIncome.value) {
     filteredList = allData.where((tracker) => !tracker.isExpense).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
@@ -106,61 +111,20 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsOldestToNewest.value) {
     filteredList = allData.toList()
-      ..sort((a, b) => parseDate(a.date).compareTo(parseDate(b.date))); // Oldest to Newest
+      ..sort((a, b) =>
+          parseDate(a.date).compareTo(parseDate(b.date))); // Oldest to Newest
   } else {
     filteredList = allData;
   }
   return filteredList;
 });
 
-DateTime parseDate(String date) {
-  final parts = date.split('/');
-  return DateTime(
-    int.parse(parts[2]), // Year
-    int.parse(parts[1]), // Month
-    int.parse(parts[0]), // Day
+final dateProvider = StateProvider<DateModel>((ref) {
+  return DateModel(
+    startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
+    endDateFilter: formatDate(DateTime.now()),
+    selectedDate: formatDate(DateTime.now()),
   );
-}
+});
 
-enum TransactionType {
-  allTransactions,
-  transactionsNewestToOldest,
-  transactionsOldestToNewest,
-  mostExpensive,
-  leastExpensive,
-  // onlyIncome,
-  // onlyExpense,
-  mostIncome,
-  leastIncome;
 
-  String get value {
-    switch (this) {
-      case TransactionType.allTransactions:
-        return 'All Transactions';
-      case TransactionType.transactionsNewestToOldest:
-        return 'Transactions: Latest First';
-      case TransactionType.transactionsOldestToNewest:
-        return 'Transactions: Oldest First';
-      case TransactionType.mostExpensive:
-        return 'Most Expensive First';
-      case TransactionType.mostIncome:
-        return 'Highest Income First';
-      case TransactionType.leastExpensive:
-        return 'Least Expensive First';
-      case TransactionType.leastIncome:
-        return 'Lowest Income First';
-      // case TransactionType.mostExpensive:
-      //   return 'Most to Least Expensive';
-      // case TransactionType.mostIncome:
-      //   return 'Most to Least Income';
-      // case TransactionType.leastExpensive:
-      //   return 'Least to Most Expensive';
-      // case TransactionType.leastIncome:
-      //   return 'Least to Most Income';
-      // case TransactionType.onlyIncome:
-      //   return 'Only Income';
-      // case TransactionType.onlyExpense:
-      //   return 'Only Expense';
-    }
-  }
-}

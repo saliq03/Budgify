@@ -1,5 +1,6 @@
 import 'dart:math';
-
+import 'package:budgify/features/expense_tracker/model/date_model.dart';
+import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
@@ -12,7 +13,7 @@ import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../model/currency_model.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import '../widgets/custom_drop_down.dart';
 
 class ExpenseManagementPage extends ConsumerStatefulWidget {
   const ExpenseManagementPage({super.key});
@@ -31,6 +32,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final selectedValue = ref.watch(selectedValueProvider);
     final rProvider = ref.read(currencyProvider.notifier);
     final currency = ref.watch(currencyProvider).symbol;
+    final selectedDate = ref.watch(dateProvider).selectedDate;
+
     final String selectedText =
         selectedValue == "Income" ? "Add Income" : "Add Expense";
     final double w = MediaQuery.of(context).size.width;
@@ -121,7 +124,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             selectedValue: selectedValue),
                       ),
                       spacerH(),
-                      datePicker(w, context, theme),
+                      datePicker(w, context, theme,selectedDate),
                       spacerH(),
                       ElevatedButton(
                           onPressed: () {
@@ -167,7 +170,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     );
   }
 
-  Widget datePicker(double w, BuildContext context, final theme) {
+  Widget datePicker(double w, BuildContext context, final theme, final selectedDate) {
     return Container(
       width: w,
       height: 55,
@@ -181,7 +184,114 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
         ),
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  title: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Select Date'),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
+                      )
+                    ],
+                  ),
+                  content: Container(
+                    decoration: BoxDecoration(
+                        color: theme.surface,
+                        borderRadius:
+                        BorderRadius.circular(10)),
+                    height: 200,
+                    width: w,
+                    child: ScrollDatePicker(
+                      selectedDate: parseDate(selectedDate),
+                      // selectedDate: DateTime.now(),
+                      locale: const Locale('en', 'US'),
+                      onDateTimeChanged: (DateTime value) {
+                        ref.read(dateProvider.notifier).state = DateModel( selectedDate: formatDate(value));
+                      },
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(5)),
+                              child: Container(
+                                height: 40,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(5),
+                                  color: theme.primary,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Today",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight:
+                                        FontWeight.w400,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              )),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(5)),
+                              child: Container(
+                                height: 40,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(5),
+                                  color: theme.primary,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Apply",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight:
+                                        FontWeight.w400,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              });
+
+        },
         child: Row(
           children: [
             spacerW(10),
@@ -192,7 +302,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
             ),
             spacerW(10),
             Text(
-              "19-04-2025",
+              selectedDate,
               style: AppStyles.descriptionPrimary(context: context),
             ),
             Spacer(),
@@ -207,103 +317,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   }
 }
 
-class CustomDropDown extends StatefulWidget {
-  const CustomDropDown(
-      {super.key,
-      required this.categories,
-      required this.onChanged,
-      required this.icon,
-      required this.selectedValue,
-      this.color,
-      this.leadingIcon,
-      this.leadingIconSize,
-      this.borderColor,
-      });
 
-  final List<String> categories;
-  final String selectedValue;
-  final IconData icon;
-  final void Function(String?)? onChanged;
-  final Color? color;
-  final IconData? leadingIcon;
-  final double? leadingIconSize;
-  final Color? borderColor;
-
-  @override
-  State<CustomDropDown> createState() => _CustomDropDownState();
-}
-
-class _CustomDropDownState extends State<CustomDropDown> {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    final double w = MediaQuery.of(context).size.width;
-    final bool isExpense = widget.selectedValue == "Expense";
-    final color = widget.color ?? (isExpense ? Colors.red : Colors.green);
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        customButton: Container(
-            width: w,
-            height: 45,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color:widget.borderColor ??color,
-                ),
-                color: theme.surface,
-                borderRadius: BorderRadius.circular(15)),
-            child: Row(
-              children: [
-                spacerW(5),
-                Icon(
-                  widget.leadingIcon ??
-                      (isExpense
-                          ? Icons.arrow_circle_down_outlined
-                          : Icons.arrow_circle_up_outlined),
-                  color: color,
-                  size: widget.leadingIconSize,
-                ),
-                spacerW(15),
-                Text(widget.selectedValue,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.descriptionPrimary(
-                        context: context, color: color)),
-                Spacer(),
-                Icon(
-                  widget.icon,
-                )
-              ],
-            )),
-        dropdownStyleData: DropdownStyleData(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: theme.primary, width: .5),
-              color: theme.surface),
-        ),
-        items: widget.categories
-            .map((item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 1),
-                    child: Text(
-                      item,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                          height: 0,
-                          color: theme.onSurface,
-                          letterSpacing: 1.5,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ))
-            .toList(),
-        onChanged: widget.onChanged,
-      ),
-    );
-  }
-}
 
 // TableCalendar(
 //   firstDay: DateTime.utc(2020, 1, 1),
@@ -453,363 +467,3 @@ class _CustomDropDownState extends State<CustomDropDown> {
 //     print("Selected range: ${args.value}");
 //   },
 // ),
-
-//
-// void showCustomDateRangePicker(
-//     BuildContext context, {
-//       required bool dismissible,
-//       required DateTime minimumDate,
-//       required DateTime maximumDate,
-//       DateTime? startDate,
-//       DateTime? endDate,
-//       required Function(DateTime startDate, DateTime endDate) onApplyClick,
-//       required Function() onCancelClick,
-//       required Color backgroundColor,
-//       required Color primaryColor,
-//       String? fontFamily,
-//     }) {
-//   /// Request focus to take it away from any input field that might be in focus
-//   FocusScope.of(context).requestFocus(FocusNode());
-//
-//   /// Show the CustomDateRangePicker dialog box
-//   showDialog<dynamic>(
-//     context: context,
-//     builder: (BuildContext context) => CustomDateRangePicker(
-//       barrierDismissible: true,
-//       backgroundColor: backgroundColor,
-//       primaryColor: primaryColor,
-//       minimumDate: minimumDate,
-//       maximumDate: maximumDate,
-//       initialStartDate: startDate,
-//       initialEndDate: endDate,
-//       onApplyClick: onApplyClick,
-//       onCancelClick: onCancelClick,
-//     ),
-//   );
-// }
-
-// class CustomDateRangePicker extends StatefulWidget {
-//   /// The minimum date that can be selected in the calendar.
-//   final DateTime minimumDate;
-//
-//   /// The maximum date that can be selected in the calendar.
-//   final DateTime maximumDate;
-//
-//   /// Whether the widget can be dismissed by tapping outside of it.
-//   final bool barrierDismissible;
-//
-//   /// The initial start date for the date range picker. If not provided, the calendar will default to the minimum date.
-//   final DateTime? initialStartDate;
-//
-//   /// The initial end date for the date range picker. If not provided, the calendar will default to the maximum date.
-//   final DateTime? initialEndDate;
-//
-//   /// The primary color used for the date range picker.
-//   final Color primaryColor;
-//
-//   /// The background color used for the date range picker.
-//   final Color backgroundColor;
-//
-//   /// A callback function that is called when the user applies the selected date range.
-//   final Function(DateTime, DateTime) onApplyClick;
-//
-//   /// A callback function that is called when the user cancels the selection of the date range.
-//   final Function() onCancelClick;
-//
-//   const CustomDateRangePicker({
-//     Key? key,
-//     this.initialStartDate,
-//     this.initialEndDate,
-//     required this.primaryColor,
-//     required this.backgroundColor,
-//     required this.onApplyClick,
-//     this.barrierDismissible = true,
-//     required this.minimumDate,
-//     required this.maximumDate,
-//     required this.onCancelClick,
-//   }) : super(key: key);
-//
-//   @override
-//   CustomDateRangePickerState createState() => CustomDateRangePickerState();
-// }
-//
-// class CustomDateRangePickerState extends State<CustomDateRangePicker>
-//     with TickerProviderStateMixin {
-//   AnimationController? animationController;
-//
-//   DateTime? startDate;
-//
-//   DateTime? endDate;
-//
-//   @override
-//   void initState() {
-//     animationController = AnimationController(
-//         duration: const Duration(milliseconds: 400), vsync: this);
-//     startDate = widget.initialStartDate;
-//     endDate = widget.initialEndDate;
-//     animationController?.forward();
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose() {
-//     animationController?.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Scaffold(
-//         backgroundColor: Colors.transparent,
-//         body: InkWell(
-//           splashColor: Colors.transparent,
-//           focusColor: Colors.transparent,
-//           highlightColor: Colors.transparent,
-//           hoverColor: Colors.transparent,
-//           onTap: () {
-//             if (widget.barrierDismissible) {
-//               Navigator.pop(context);
-//             }
-//           },
-//           child: Center(
-//             child: Padding(
-//               padding: const EdgeInsets.all(24.0),
-//               child: Container(
-//                 decoration: BoxDecoration(
-//                   color: widget.backgroundColor,
-//                   borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-//                   boxShadow: <BoxShadow>[
-//                     BoxShadow(
-//                         color: Colors.grey.withOpacity(0.2),
-//                         offset: const Offset(4, 4),
-//                         blurRadius: 8.0),
-//                   ],
-//                 ),
-//                 child: InkWell(
-//                   borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-//                   onTap: () {},
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     mainAxisSize: MainAxisSize.min,
-//                     children: <Widget>[
-//                       Row(
-//                         children: <Widget>[
-//                           Expanded(
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               crossAxisAlignment: CrossAxisAlignment.center,
-//                               children: <Widget>[
-//                                 Text(
-//                                   'From',
-//                                   textAlign: TextAlign.left,
-//                                   style: TextStyle(
-//                                     fontWeight: FontWeight.w400,
-//                                     fontSize: 16,
-//                                     color: Colors.grey.shade700,
-//                                   ),
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 4,
-//                                 ),
-//                                 Text(
-//                                   startDate != null
-//                                       ? DateFormat('EEE, dd MMM')
-//                                       .format(startDate!)
-//                                       : '--/-- ',
-//                                   style: TextStyle(
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                     color: Colors.grey.shade700,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                           Container(
-//                             height: 74,
-//                             width: 1,
-//                             color: Theme.of(context).dividerColor,
-//                           ),
-//                           Expanded(
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               crossAxisAlignment: CrossAxisAlignment.center,
-//                               children: <Widget>[
-//                                 Text(
-//                                   'To',
-//                                   style: TextStyle(
-//                                     fontWeight: FontWeight.w400,
-//                                     fontSize: 16,
-//                                     color: Colors.grey.shade700,
-//                                   ),
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 4,
-//                                 ),
-//                                 Text(
-//                                   endDate != null
-//                                       ? DateFormat('EEE, dd MMM')
-//                                       .format(endDate!)
-//                                       : '--/-- ',
-//                                   style: TextStyle(
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                     color: Colors.grey.shade700,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           )
-//                         ],
-//                       ),
-//                       const Divider(
-//                         height: 1,
-//                       ),
-//                       CustomCalendar(
-//                         minimumDate: widget.minimumDate,
-//                         maximumDate: widget.maximumDate,
-//                         initialEndDate: widget.initialEndDate,
-//                         initialStartDate: widget.initialStartDate,
-//                         primaryColor: widget.primaryColor,
-//                         startEndDateChange:
-//                             (DateTime startDateData, DateTime endDateData) {
-//                           setState(() {
-//                             startDate = startDateData;
-//                             endDate = endDateData;
-//                           });
-//                         },
-//                       ),
-//                       Padding(
-//                         padding: const EdgeInsets.only(
-//                             left: 16, right: 16, bottom: 16, top: 8),
-//                         child: Row(
-//                           children: [
-//                             Expanded(
-//                               child: Container(
-//                                 height: 48,
-//                                 decoration: const BoxDecoration(
-//                                   borderRadius:
-//                                   BorderRadius.all(Radius.circular(24.0)),
-//                                 ),
-//                                 child: OutlinedButton(
-//                                   style: ButtonStyle(
-//                                     side: MaterialStateProperty.all(
-//                                         BorderSide(color: widget.primaryColor)),
-//                                     shape: MaterialStateProperty.all(
-//                                       const RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(
-//                                             Radius.circular(24.0)),
-//                                       ),
-//                                     ),
-//                                     backgroundColor: MaterialStateProperty.all(
-//                                         widget.primaryColor),
-//                                   ),
-//                                   onPressed: () {
-//                                     try {
-//                                       widget.onCancelClick();
-//                                       Navigator.pop(context);
-//                                     } catch (_) {}
-//                                   },
-//                                   child: const Center(
-//                                     child: Text(
-//                                       'Cancel',
-//                                       style: TextStyle(
-//                                         fontWeight: FontWeight.w500,
-//                                         fontSize: 18,
-//                                         color: Colors.white,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                             const SizedBox(width: 16),
-//                             Expanded(
-//                               child: Container(
-//                                 height: 48,
-//                                 decoration: const BoxDecoration(
-//                                   borderRadius:
-//                                   BorderRadius.all(Radius.circular(24.0)),
-//                                 ),
-//                                 child: OutlinedButton(
-//                                   style: ButtonStyle(
-//                                     side: MaterialStateProperty.all(
-//                                         BorderSide(color: widget.primaryColor)),
-//                                     shape: MaterialStateProperty.all(
-//                                       const RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.all(
-//                                             Radius.circular(24.0)),
-//                                       ),
-//                                     ),
-//                                     backgroundColor: MaterialStateProperty.all(
-//                                         widget.primaryColor),
-//                                   ),
-//                                   onPressed: () {
-//                                     try {
-//                                       widget.onApplyClick(startDate!, endDate!);
-//                                       Navigator.pop(context);
-//                                     } catch (_) {}
-//                                   },
-//                                   child: const Center(
-//                                     child: Text(
-//                                       'Apply',
-//                                       style: TextStyle(
-//                                         fontWeight: FontWeight.w500,
-//                                         fontSize: 18,
-//                                         color: Colors.white,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//
-//   }
-//   void showCustomDateRangePicker(
-//       BuildContext context, {
-//         required bool dismissible,
-//         required DateTime minimumDate,
-//         required DateTime maximumDate,
-//         DateTime? startDate,
-//         DateTime? endDate,
-//         required Function(DateTime startDate, DateTime endDate) onApplyClick,
-//         required Function() onCancelClick,
-//         required Color backgroundColor,
-//         required Color primaryColor,
-//         String? fontFamily,
-//       }) {
-//     /// Request focus to take it away from any input field that might be in focus
-//     FocusScope.of(context).requestFocus(FocusNode());
-//
-//     /// Show the CustomDateRangePicker dialog box
-//     showDialog<dynamic>(
-//       context: context,
-//       builder: (BuildContext context) => CustomDateRangePicker(
-//         barrierDismissible: true,
-//         backgroundColor: backgroundColor,
-//         primaryColor: primaryColor,
-//         minimumDate: minimumDate,
-//         maximumDate: maximumDate,
-//         initialStartDate: startDate,
-//         initialEndDate: endDate,
-//         onApplyClick: onApplyClick,
-//         onCancelClick: onCancelClick,
-//       ),
-//     );
-//   }
-//
-// }

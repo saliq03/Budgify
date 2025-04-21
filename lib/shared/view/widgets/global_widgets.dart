@@ -45,3 +45,20 @@ Image staticImage(
 SizedBox spacerH([double height = 20]) => SizedBox(height: height);
 
 SizedBox spacerW([double width = 20]) => SizedBox(width: width);
+
+
+String formatDate(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final year = date.year.toString();
+  return "$day/$month/$year";
+}
+
+DateTime parseDate(String date) {
+  final parts = date.split('/');
+  return DateTime(
+    int.parse(parts[2]), // Year
+    int.parse(parts[1]), // Month
+    int.parse(parts[0]), // Day
+  );
+}
