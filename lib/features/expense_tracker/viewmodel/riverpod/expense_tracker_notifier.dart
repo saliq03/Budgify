@@ -5,11 +5,12 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
+import '../../model/tracker_summary.dart';
 import '../../utils/transaction_type.dart';
 
-class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
+class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
   ExpenseTrackerNotifier(this.ref)
-      : super([]); // Start with an empty list as the initial state
+      : super(TrackerSummary(trackers: [], totalIncome: 0.0, totalExpense: 0.0, totalBalance: 0.0));
   Ref ref;
   bool isLoading = true;
   DBHelper dbHelper = DBHelper();
@@ -51,63 +52,49 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
 
   // Fetch data from the database and update the state
   Future<void> fetchData() async {
-    totalIncome = 0.0;
-    totalExpense = 0.0;
-    totalBalance = 0.0;
+    double totalIncome = 0.0;
+    double totalExpense = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-
     final wProvider = ref.watch(dateProvider.notifier).state;
 
+    List<TrackerModel> filteredList=[];
     if (wProvider.startDateFilter == null) {
-
-
-      // final startDate = DateTime.now()
-      //     .subtract(const Duration(days: 30))
-      //     .toString()
-      //     .substring(0, 10);
-      // final endDate = DateTime.now().toString().substring(0, 10);
-
-      // print("Start Date: ${wProvider.startDateFilter}");
-      // print("End Date: ${wProvider.endDateFilter}");
-      // List<TrackerModel> filteredList = list.where((tracker) {
-      //   DateTime trackerDate = DateTime.parse(tracker.date); // Assuming tracker.date is in 'yyyy-MM-dd' format
-      //   return trackerDate.isAfter(DateTime.parse(startDate).subtract(Duration(days: 1))) && trackerDate.isBefore(DateTime.parse(endDate).add(Duration(days: 1)));
-      // }).toList();
-
-      state = list.reversed.toList();
-    }
-    else{
-      DateTime startDate = parseDate(wProvider.startDateFilter!);
+      // filteredList = list.reversed.toList();
+    // } else {
+      DateTime startDate = DateTime.now().subtract(Duration(days: 30));
       DateTime endDate = parseDate(wProvider.endDateFilter!);
-      // state = list.where((tracker) {
-      //   DateTime trackerDate = parseDate(tracker.date);
-      //   return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
-      //       trackerDate.isBefore(endDate.add(Duration(days: 1)));
-      // }).toList()
-      //   ..sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date)));
 
-      // print("Start Date: ${wProvider.startDateFilter}");
-      // print("End Date: ${wProvider.endDateFilter}");
-      state =[];
+      filteredList = list.where((tracker) {
+        DateTime trackerDate = parseDate(tracker.date);
+        return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+            trackerDate.isBefore(endDate.add(Duration(days: 1)));
+      }).toList();
     }
 
-    for (var tracker in state) {
+    for (var tracker in filteredList) {
       if (tracker.isExpense) {
         totalExpense += tracker.amount;
       } else {
         totalIncome += tracker.amount;
       }
     }
-    totalBalance = totalIncome - totalExpense;
+
+    state = TrackerSummary(
+      trackers: filteredList,
+      totalIncome: totalIncome,
+      totalExpense: totalExpense,
+      totalBalance: totalIncome - totalExpense,
+    );
   }
 }
 
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProvider =
-    StateNotifierProvider<ExpenseTrackerNotifier, List<TrackerModel>>(
-  (ref) => ExpenseTrackerNotifier(ref),
+StateNotifierProvider<ExpenseTrackerNotifier, TrackerSummary>(
+      (ref) => ExpenseTrackerNotifier(ref),
 );
+
 
 final currencyProvider = StateProvider<CurrencyModel>((ref) {
   return CurrencyModel(
@@ -124,7 +111,7 @@ final transactionProvider =
 
 final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   final filter = ref.watch(transactionProvider);
-  final allData = ref.watch(expenseTrackerProvider);
+  final allData = ref.watch(expenseTrackerProvider).trackers;
 
   List<TrackerModel> filteredList = [];
 

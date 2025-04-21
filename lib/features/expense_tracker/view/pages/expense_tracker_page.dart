@@ -14,9 +14,9 @@ import '../../utils/transaction_type.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/buttons/reusable_outlined_button.dart';
 import '../widgets/custom_drop_down.dart';
-import '../widgets/dialog/reusable_dialog_class.dart';
 import '../widgets/drawer/custom_drawer.dart';
 import '../widgets/reusable_card_details.dart';
+import '../widgets/transaction_info.dart';
 
 //
 class ExpenseTrackerPage extends ConsumerStatefulWidget {
@@ -84,7 +84,10 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             spacerH(),
             transactionSection(),
             spacerH(10),
-            transactionInfo(theme, currency)
+            TransactionInfo(
+              isTransactionPage: true,
+            ),
+            // transactionInfo(theme, currency)
 
             // TransactionInfo(),
           ],
@@ -126,7 +129,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
 
   Widget cardSection(
       final double w, final BuildContext context, final currency) {
-    final wProvider = ref.watch(expenseTrackerProvider.notifier);
+    final wProvider = ref.watch(expenseTrackerProvider);
     final positiveBalance = wProvider.totalBalance >= 0;
     final zeroBalance = wProvider.totalBalance == 0;
     final zeroIncome = wProvider.totalIncome == 0;
@@ -243,112 +246,113 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
       ],
     );
   }
-
-  Widget transactionInfo(final ColorScheme theme, final currency) {
-    final trackerList = ref.watch(filteredTransactionProvider);
-    final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
-    final rProvider = ref.read(expenseTrackerProvider.notifier);
-    return Expanded(
-      child: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : trackerList.isEmpty
-              ? Center(
-                  child: Text(
-                    'No transactions found',
-                    style: AppStyles.descriptionPrimary(
-                      context: context,
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  // reverse: true,
-                  padding: const EdgeInsets.only(bottom: 100),
-                  itemBuilder: (context, index) {
-                    var tl = trackerList[index];
-
-                    return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                            tl.isExpense
-                                ? Icons.arrow_circle_down_outlined
-                                : Icons.arrow_circle_up_outlined,
-                            color: tl.isExpense ? Colors.red : Colors.green,
-                            size: 40),
-                        title: Text(
-                          tl.title,
-                          style: AppStyles.headingPrimary(
-                              context: context, fontSize: 18),
-                        ),
-                        subtitle: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: Icon(
-                                tl.isExpense ? Icons.remove : Icons.add,
-                                color: tl.isExpense ? Colors.red : Colors.green,
-                                size: 20,
-                              ),
-                            ),
-                            spacerW(2),
-                            Flexible(
-                                child: Text(
-                              "$currency ${tl.amount}",
-                              style: AppStyles.headingPrimary(
-                                context: context,
-                                fontSize: 18,
-                                color: tl.isExpense ? Colors.red : Colors.green,
-                              ),
-                            )),
-                          ],
-                        ),
-                        trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(tl.date,
-                                style: AppStyles.descriptionPrimary(
-                                    context: context, fontSize: 13)),
-                            spacerH(5),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, Paths.expenseManagementPage,
-                                        arguments: tl);
-                                  },
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: theme.primary,
-                                    size: 25,
-                                  ),
-                                ),
-                                spacerW(10),
-                                InkWell(
-                                  onTap: () async {
-                                    await ReusableDialogClass
-                                        .deletedTransactionDialog(context, () {
-                                      rProvider.deleteData(tl.id!);
-                                      Navigator.of(context).pop();
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                    size: 25,
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ));
-                  },
-                  itemCount: trackerList.length,
-                ),
-    );
-  }
 }
+
+
+// Widget transactionInfo(final ColorScheme theme, final currency) {
+//     final trackerList = ref.watch(filteredTransactionProvider);
+//     final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
+//     final rProvider = ref.read(expenseTrackerProvider.notifier);
+//     return Expanded(
+//       child: isLoading
+//           ? const Center(
+//               child: CircularProgressIndicator(),
+//             )
+//           : trackerList.isEmpty
+//               ? Center(
+//                   child: Text(
+//                     'No transactions found',
+//                     style: AppStyles.descriptionPrimary(
+//                       context: context,
+//                     ),
+//                   ),
+//                 )
+//               : ListView.builder(
+//                   // reverse: true,
+//                   padding: const EdgeInsets.only(bottom: 100),
+//                   itemBuilder: (context, index) {
+//                     var tl = trackerList[index];
+//
+//                     return ListTile(
+//                         contentPadding: EdgeInsets.zero,
+//                         leading: Icon(
+//                             tl.isExpense
+//                                 ? Icons.arrow_circle_down_outlined
+//                                 : Icons.arrow_circle_up_outlined,
+//                             color: tl.isExpense ? Colors.red : Colors.green,
+//                             size: 40),
+//                         title: Text(
+//                           tl.title,
+//                           style: AppStyles.headingPrimary(
+//                               context: context, fontSize: 18),
+//                         ),
+//                         subtitle: Row(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           mainAxisSize: MainAxisSize.min,
+//                           children: [
+//                             Padding(
+//                               padding: const EdgeInsets.only(top: 3),
+//                               child: Icon(
+//                                 tl.isExpense ? Icons.remove : Icons.add,
+//                                 color: tl.isExpense ? Colors.red : Colors.green,
+//                                 size: 20,
+//                               ),
+//                             ),
+//                             spacerW(2),
+//                             Flexible(
+//                                 child: Text(
+//                               "$currency ${tl.amount}",
+//                               style: AppStyles.headingPrimary(
+//                                 context: context,
+//                                 fontSize: 18,
+//                                 color: tl.isExpense ? Colors.red : Colors.green,
+//                               ),
+//                             )),
+//                           ],
+//                         ),
+//                         trailing: Column(
+//                           mainAxisSize: MainAxisSize.min,
+//                           children: [
+//                             Text(tl.date,
+//                                 style: AppStyles.descriptionPrimary(
+//                                     context: context, fontSize: 13)),
+//                             spacerH(5),
+//                             Row(
+//                               mainAxisSize: MainAxisSize.min,
+//                               children: [
+//                                 InkWell(
+//                                   onTap: () {
+//                                     Navigator.pushNamed(
+//                                         context, Paths.expenseManagementPage,
+//                                         arguments: tl);
+//                                   },
+//                                   child: Icon(
+//                                     Icons.edit,
+//                                     color: theme.primary,
+//                                     size: 25,
+//                                   ),
+//                                 ),
+//                                 spacerW(10),
+//                                 InkWell(
+//                                   onTap: () async {
+//                                     await ReusableDialogClass
+//                                         .deletedTransactionDialog(context, () {
+//                                       rProvider.deleteData(tl.id!);
+//                                       Navigator.of(context).pop();
+//                                     });
+//                                   },
+//                                   child: Icon(
+//                                     Icons.delete,
+//                                     color: Colors.red,
+//                                     size: 25,
+//                                   ),
+//                                 ),
+//                               ],
+//                             )
+//                           ],
+//                         ));
+//                   },
+//                   itemCount: trackerList.length,
+//                 ),
+//     );
+//   }

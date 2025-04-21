@@ -16,7 +16,7 @@ class TransactionInfo extends ConsumerWidget {
     final theme = Theme.of(context).colorScheme;
     final trackerList = isTransactionPage
         ? ref.watch(filteredTransactionProvider)
-        : ref.watch(expenseTrackerProvider).reversed.toList();
+        : ref.watch(expenseTrackerProvider).trackers;
     final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
     final currency = ref.watch(currencyProvider).symbol;
     final rProvider = ref.read(expenseTrackerProvider.notifier);
