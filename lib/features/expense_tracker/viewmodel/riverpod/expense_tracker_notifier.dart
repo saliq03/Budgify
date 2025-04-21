@@ -8,8 +8,9 @@ import '../../model/tracker_model.dart';
 import '../../utils/transaction_type.dart';
 
 class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
-  ExpenseTrackerNotifier()
+  ExpenseTrackerNotifier(this.ref)
       : super([]); // Start with an empty list as the initial state
+  Ref ref;
   bool isLoading = true;
   DBHelper dbHelper = DBHelper();
   Database? database;
@@ -55,7 +56,41 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
     totalBalance = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    state = list.reversed.toList();
+
+    final wProvider = ref.watch(dateProvider.notifier).state;
+
+    if (wProvider.startDateFilter == null) {
+
+
+      // final startDate = DateTime.now()
+      //     .subtract(const Duration(days: 30))
+      //     .toString()
+      //     .substring(0, 10);
+      // final endDate = DateTime.now().toString().substring(0, 10);
+
+      // print("Start Date: ${wProvider.startDateFilter}");
+      // print("End Date: ${wProvider.endDateFilter}");
+      // List<TrackerModel> filteredList = list.where((tracker) {
+      //   DateTime trackerDate = DateTime.parse(tracker.date); // Assuming tracker.date is in 'yyyy-MM-dd' format
+      //   return trackerDate.isAfter(DateTime.parse(startDate).subtract(Duration(days: 1))) && trackerDate.isBefore(DateTime.parse(endDate).add(Duration(days: 1)));
+      // }).toList();
+
+      state = list.reversed.toList();
+    }
+    else{
+      DateTime startDate = parseDate(wProvider.startDateFilter!);
+      DateTime endDate = parseDate(wProvider.endDateFilter!);
+      // state = list.where((tracker) {
+      //   DateTime trackerDate = parseDate(tracker.date);
+      //   return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+      //       trackerDate.isBefore(endDate.add(Duration(days: 1)));
+      // }).toList()
+      //   ..sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date)));
+
+      // print("Start Date: ${wProvider.startDateFilter}");
+      // print("End Date: ${wProvider.endDateFilter}");
+      state =[];
+    }
 
     for (var tracker in state) {
       if (tracker.isExpense) {
@@ -71,7 +106,7 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProvider =
     StateNotifierProvider<ExpenseTrackerNotifier, List<TrackerModel>>(
-  (ref) => ExpenseTrackerNotifier(),
+  (ref) => ExpenseTrackerNotifier(ref),
 );
 
 final currencyProvider = StateProvider<CurrencyModel>((ref) {
@@ -121,10 +156,8 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
 
 final dateProvider = StateProvider<DateModel>((ref) {
   return DateModel(
-    startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
+    // startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
     endDateFilter: formatDate(DateTime.now()),
     selectedDate: formatDate(DateTime.now()),
   );
 });
-
-

@@ -13,22 +13,38 @@ class DateFilter extends ConsumerWidget {
     final wProvider = ref.watch(dateProvider);
     return Row(
       children: [
-        Expanded(child: ShowDate(date: wProvider.startDateFilter!)),
+        Expanded(
+            child: ShowDate(
+          date: wProvider.startDateFilter ?? "Start Date",
+          startDate: wProvider.startDateFilter ?? wProvider.endDateFilter!,
+          endDate: wProvider.endDateFilter ?? "End Date",
+        )),
         spacerW(8),
         Icon(Icons.remove),
         spacerW(8),
-        Expanded(child: ShowDate(date: wProvider.endDateFilter!)),
+        Expanded(
+            child: ShowDate(
+          date: wProvider.endDateFilter ?? "End Date",
+          startDate: wProvider.startDateFilter ?? wProvider.endDateFilter!,
+          endDate: wProvider.endDateFilter ?? "End Date",
+        )),
       ],
     );
   }
 }
 
-
 // final wDateProvider =ref.watch(dateProvider);
 
 class ShowDate extends StatelessWidget {
   final String date;
-  const ShowDate({super.key, required this.date});
+  final String startDate;
+  final String endDate;
+
+  const ShowDate(
+      {super.key,
+      required this.date,
+      required this.startDate,
+      required this.endDate});
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +67,13 @@ class ShowDate extends StatelessWidget {
                 context,
                 dismissible: true,
                 minimumDate:
-                DateTime.now().subtract(const Duration(days: 3000)),
+                    DateTime.now().subtract(const Duration(days: 3000)),
                 maximumDate: DateTime.now().add(const Duration(days: 0)),
-                endDate: DateTime.now(),
-                startDate: DateTime.now(),
+                endDate: parseDate(endDate),
+                startDate: parseDate(startDate),
                 backgroundColor: theme.surface,
                 primaryColor: theme.primary,
-                onApplyClick: (start, end) {
-                },
+                onApplyClick: (start, end) {},
                 onCancelClick: () {},
               );
             },

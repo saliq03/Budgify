@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 void openUrl(
     {required String url,
@@ -52,6 +53,12 @@ String formatDate(DateTime date) {
   final month = date.month.toString().padLeft(2, '0');
   final year = date.year.toString();
   return "$day/$month/$year";
+}
+
+String formatCalendarDate(DateTime date) {
+  final month = DateFormat('MMMM').format(date);
+  final year = date.year.toString();
+  return "$month, $year";
 }
 
 DateTime parseDate(String date) {

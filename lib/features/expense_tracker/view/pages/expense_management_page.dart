@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:budgify/features/expense_tracker/model/date_model.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
@@ -32,7 +31,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final selectedValue = ref.watch(selectedValueProvider);
     final rProvider = ref.read(currencyProvider.notifier);
     final currency = ref.watch(currencyProvider).symbol;
-    final selectedDate = ref.watch(dateProvider).selectedDate;
+    final dateRef = ref.watch(dateProvider);
 
     final String selectedText =
         selectedValue == "Income" ? "Add Income" : "Add Expense";
@@ -124,7 +123,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             selectedValue: selectedValue),
                       ),
                       spacerH(),
-                      datePicker(w, context, theme,selectedDate),
+                      selectDate(w, context, theme, dateRef),
                       spacerH(),
                       ElevatedButton(
                           onPressed: () {
@@ -141,7 +140,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                   title: titleController.text.isEmpty
                                       ? "Reason unavailable"
                                       : titleController.text,
-                                  date: "${Random().nextInt(32)}/03/200${Random().nextInt(10)}",
+                                  date:
+                                      dateRef.selectedDate?? "Today's date",
                                   amount: double.parse(amountController.text),
                                   isExpense: selectedValue == "Expense",
                                 );
@@ -170,7 +170,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     );
   }
 
-  Widget datePicker(double w, BuildContext context, final theme, final selectedDate) {
+  Widget selectDate(
+      double w, BuildContext context, final theme, final dateRef) {
     return Container(
       width: w,
       height: 55,
@@ -192,8 +193,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   title: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Select Date'),
                       InkWell(
@@ -210,38 +210,40 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                   content: Container(
                     decoration: BoxDecoration(
                         color: theme.surface,
-                        borderRadius:
-                        BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10)),
                     height: 200,
                     width: w,
                     child: ScrollDatePicker(
-                      selectedDate: parseDate(selectedDate),
+                      selectedDate: parseDate(dateRef.selectedDate),
+                      // maximumDate:
+                      //     DateTime.now().add(const Duration(days: 365 * 30)),
                       // selectedDate: DateTime.now(),
                       locale: const Locale('en', 'US'),
                       onDateTimeChanged: (DateTime value) {
-                        ref.read(dateProvider.notifier).state = DateModel( selectedDate: formatDate(value));
+                        ref.read(dateProvider.notifier).state = dateRef.copyWith(
+                            selectedDate: formatDate(value));
                       },
                     ),
                   ),
                   actions: <Widget>[
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
                           onTap: () {
                             Navigator.of(context).pop();
+                            ref.read(dateProvider.notifier).state =
+                                DateModel(selectedDate: formatDate(DateTime.now()));
                           },
                           child: Card(
                               elevation: 4,
                               shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(5)),
+                                  borderRadius: BorderRadius.circular(5)),
                               child: Container(
                                 height: 40,
                                 width: 100,
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(5),
                                   color: theme.primary,
                                 ),
                                 child: const Center(
@@ -249,13 +251,13 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                     "Today",
                                     style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight:
-                                        FontWeight.w400,
+                                        fontWeight: FontWeight.w400,
                                         color: Colors.white),
                                   ),
                                 ),
                               )),
                         ),
+                        spacerW(),
                         InkWell(
                           onTap: () {
                             Navigator.of(context).pop();
@@ -263,14 +265,12 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           child: Card(
                               elevation: 4,
                               shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(5)),
+                                  borderRadius: BorderRadius.circular(5)),
                               child: Container(
                                 height: 40,
                                 width: 100,
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(5),
                                   color: theme.primary,
                                 ),
                                 child: const Center(
@@ -278,8 +278,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                     "Apply",
                                     style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight:
-                                        FontWeight.w400,
+                                        fontWeight: FontWeight.w400,
                                         color: Colors.white),
                                   ),
                                 ),
@@ -290,7 +289,6 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                   ],
                 );
               });
-
         },
         child: Row(
           children: [
@@ -302,7 +300,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
             ),
             spacerW(10),
             Text(
-              selectedDate,
+              dateRef.selectedDate,
               style: AppStyles.descriptionPrimary(context: context),
             ),
             Spacer(),
@@ -316,8 +314,6 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     );
   }
 }
-
-
 
 // TableCalendar(
 //   firstDay: DateTime.utc(2020, 1, 1),
