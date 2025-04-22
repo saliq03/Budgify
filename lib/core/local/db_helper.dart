@@ -79,7 +79,8 @@ class DBHelper {
   Future<List<TrackerModel>> fetchTrackerData() async {
     try {
       Database mDB = await getDB();
-      List<Map<String, dynamic>> trackerData = await mDB.query(trackerTableName);
+      List<Map<String, dynamic>> trackerData =
+          await mDB.query(trackerTableName);
       return trackerData.map((e) => TrackerModel.fromMap(e)).toList();
     } catch (e) {
       if (kDebugMode) {
@@ -89,11 +90,25 @@ class DBHelper {
     }
   }
 
+  Future<bool> updateTrackerData(TrackerModel tracker) async {
+    try {
+      Database mDB = await getDB();
+      int rowsEffected = await mDB.update(trackerTableName, tracker.toMap(),
+          where: "$columnTrackerId = ?", whereArgs: [tracker.id]);
+      return rowsEffected > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in updating data: $e");
+      }
+      return false;
+    }
+  }
 
   Future<bool> deleteTrackerData(int id) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected= await mDB.delete(trackerTableName,where: "$columnTrackerId = ?",whereArgs: [id]);
+      int rowsEffected = await mDB.delete(trackerTableName,
+          where: "$columnTrackerId = ?", whereArgs: [id]);
       return rowsEffected > 0;
     } catch (e) {
       if (kDebugMode) {

@@ -1,5 +1,6 @@
 import 'package:budgify/features/expense_tracker/model/currency_model.dart';
 import 'package:budgify/features/expense_tracker/model/date_model.dart';
+import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
@@ -43,6 +44,20 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     }
   }
 
+  Future<void> updateData(
+      {required int id,
+      required String title,
+      required String date,
+      required double amount,
+      required bool isExpense}) async {
+    bool isValueUpdated = await dbHelper.updateTrackerData(TrackerModel(
+        id: id, title: title, date: date, amount: amount, isExpense: isExpense));
+    if (isValueUpdated) {
+      fetchData();
+    }
+  }
+
+
   Future<void> deleteData(int id) async {
     bool isValueDeleted = await dbHelper.deleteTrackerData(id);
     if (isValueDeleted) {
@@ -56,13 +71,14 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     double totalExpense = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    final wProvider = ref.watch(dateProvider.notifier).state;
+    final wProvider = ref.watch(dateProvider);
 
     List<TrackerModel> filteredList=[];
     if (wProvider.startDateFilter == null) {
-      // filteredList = list.reversed.toList();
-    // } else {
+      filteredList = list.reversed.toList();
+    } else {
       DateTime startDate = DateTime.now().subtract(Duration(days: 30));
+      // DateTime startDate = DateTime.now().subtract(Duration(days: 30));
       DateTime endDate = parseDate(wProvider.endDateFilter!);
 
       filteredList = list.where((tracker) {
@@ -104,7 +120,7 @@ final currencyProvider = StateProvider<CurrencyModel>((ref) {
   );
 });
 
-final selectedValueProvider = StateProvider<String>((ref) => "Income");
+final selectedValueProvider = StateProvider<String>((ref) => ExpenseType.income.value);
 
 final transactionProvider =
     StateProvider<String>((ref) => TransactionType.allTransactions.value);

@@ -1,3 +1,5 @@
+import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
+import 'package:budgify/features/expense_tracker/utils/transaction_type.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +37,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     final double w = MediaQuery.of(context).size.width;
-    final bool isExpense = widget.selectedValue == "Expense";
+    final bool isExpense = widget.selectedValue == ExpenseType.expense.value || widget.selectedValue == ExpenseType.tax.value;
     final color = widget.color ?? (isExpense ? Colors.red : Colors.green);
     return DropdownButtonHideUnderline(
       child: DropdownButton2(

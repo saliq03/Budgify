@@ -33,7 +33,7 @@ class AllTransactionPage extends StatelessWidget {
             spacerH(10),
             DateFilter(),
             spacerH(10),
-            TransactionInfo(isTransactionPage: true,),
+            TransactionInfo(),
           ],
         ),
       ),

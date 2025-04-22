@@ -11,11 +11,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../model/currency_model.dart';
+import '../../model/tracker_model.dart';
+import '../../utils/expense_type.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/custom_drop_down.dart';
 
 class ExpenseManagementPage extends ConsumerStatefulWidget {
-  const ExpenseManagementPage({super.key});
+  final TrackerModel? trackerModel;
+
+  const ExpenseManagementPage({this.trackerModel, super.key});
 
   @override
   ConsumerState<ExpenseManagementPage> createState() =>
@@ -25,6 +29,32 @@ class ExpenseManagementPage extends ConsumerStatefulWidget {
 class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
+  final TextEditingController returnController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    updateValues();
+  }
+
+  void updateValues() {
+    if (widget.trackerModel != null) {
+      // final dateRef = ref.watch(dateProvider);
+
+      titleController.text = widget.trackerModel!.title;
+      amountController.text = widget.trackerModel!.amount.toString();
+      // ref.read(dateProvider.notifier).state =
+      //     dateRef.copyWith(selectedDate: widget.trackerModel!.date);
+    }
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    amountController.dispose();
+    returnController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +63,20 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final currency = ref.watch(currencyProvider).symbol;
     final dateRef = ref.watch(dateProvider);
 
-    final String selectedText =
-        selectedValue == "Income" ? "Add Income" : "Add Expense";
+    final isShowReturn = selectedValue == ExpenseType.investment.value ||
+        selectedValue == ExpenseType.tax.value;
+
+    final String selectedText;
+    if (selectedValue == ExpenseType.income.value) {
+      selectedText = "Add Income";
+    } else if (selectedValue == ExpenseType.expense.value) {
+      selectedText = "Add Expense";
+    } else if (selectedValue == ExpenseType.investment.value) {
+      selectedText = "Add Investment";
+    } else {
+      selectedText = "Add Tax";
+    }
+    final trackerRProvider = ref.read(expenseTrackerProvider.notifier);
     final double w = MediaQuery.of(context).size.width;
     final theme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -110,10 +152,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         // height: 40,
                         child: CustomDropDown(
                             icon: Icons.arrow_drop_down_rounded,
-                            categories: const [
-                              "Income",
-                              "Expense",
-                            ],
+                            categories:
+                                ExpenseType.values.map((e) => e.value).toList(),
                             onChanged: (newValue) {
                               if (newValue != null) {
                                 ref.read(selectedValueProvider.notifier).state =
@@ -123,6 +163,20 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             selectedValue: selectedValue),
                       ),
                       spacerH(),
+                      if (isShowReturn)
+                        ReusableTextField(
+                          prefixIcon: Icons.percent,
+                          controller: returnController,
+                          hintText: "0",
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^-?\d*\.?\d*'),
+                            ),
+                            // FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                      if (isShowReturn) spacerH(),
                       selectDate(w, context, theme, dateRef),
                       spacerH(),
                       ElevatedButton(
@@ -135,16 +189,28 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                               );
                               return;
                             }
-
-                            ref.read(expenseTrackerProvider.notifier).addData(
-                                  title: titleController.text.isEmpty
-                                      ? "Reason unavailable"
-                                      : titleController.text,
-                                  date:
-                                      dateRef.selectedDate?? "Today's date",
-                                  amount: double.parse(amountController.text),
-                                  isExpense: selectedValue == "Expense",
-                                );
+                            if (widget.trackerModel != null) {
+                              trackerRProvider.updateData(
+                                id: widget.trackerModel!.id ?? 0,
+                                title: titleController.text.isEmpty
+                                    ? "Reason unavailable"
+                                    : titleController.text,
+                                date: dateRef.selectedDate ??
+                                    formatDate(DateTime.now()),
+                                amount: double.parse(amountController.text),
+                                isExpense: selectedValue == "Expense",
+                              );
+                            } else {
+                              trackerRProvider.addData(
+                                title: titleController.text.isEmpty
+                                    ? "Reason unavailable"
+                                    : titleController.text,
+                                date: dateRef.selectedDate ??
+                                    formatDate(DateTime.now()),
+                                amount: double.parse(amountController.text),
+                                isExpense: selectedValue == "Expense",
+                              );
+                            }
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
@@ -220,8 +286,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                       // selectedDate: DateTime.now(),
                       locale: const Locale('en', 'US'),
                       onDateTimeChanged: (DateTime value) {
-                        ref.read(dateProvider.notifier).state = dateRef.copyWith(
-                            selectedDate: formatDate(value));
+                        ref.read(dateProvider.notifier).state =
+                            dateRef.copyWith(selectedDate: formatDate(value));
                       },
                     ),
                   ),
@@ -232,8 +298,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         InkWell(
                           onTap: () {
                             Navigator.of(context).pop();
-                            ref.read(dateProvider.notifier).state =
-                                DateModel(selectedDate: formatDate(DateTime.now()));
+                            ref.read(dateProvider.notifier).state = DateModel(
+                                selectedDate: formatDate(DateTime.now()));
                           },
                           child: Card(
                               elevation: 4,

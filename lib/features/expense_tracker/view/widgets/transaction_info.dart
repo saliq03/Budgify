@@ -7,16 +7,19 @@ import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import 'dialog/reusable_dialog_class.dart';
 
 class TransactionInfo extends ConsumerWidget {
-  final bool isTransactionPage;
+  // final bool isTransactionPage;
 
-  const TransactionInfo({super.key, this.isTransactionPage = false});
+  const TransactionInfo({super.key,
+    // this.isTransactionPage = false
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
-    final trackerList = isTransactionPage
-        ? ref.watch(filteredTransactionProvider)
-        : ref.watch(expenseTrackerProvider).trackers;
+    // final trackerList = isTransactionPage
+    //     ? ref.watch(filteredTransactionProvider)
+    //     : ref.watch(expenseTrackerProvider).trackers;
+    final trackerList = ref.watch(filteredTransactionProvider);
     final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
     final currency = ref.watch(currencyProvider).symbol;
     final rProvider = ref.read(expenseTrackerProvider.notifier);

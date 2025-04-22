@@ -84,12 +84,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             spacerH(),
             transactionSection(),
             spacerH(10),
-            TransactionInfo(
-              isTransactionPage: true,
-            ),
-            // transactionInfo(theme, currency)
-
-            // TransactionInfo(),
+            TransactionInfo(),
           ],
         ),
       ),

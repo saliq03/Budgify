@@ -2,6 +2,7 @@ import 'package:budgify/core/routes/paths.dart';
 import 'package:budgify/features/expense_tracker/view/pages/all_transaction_page.dart';
 import 'package:budgify/features/expense_tracker/view/pages/expense_management_page.dart';
 import 'package:flutter/material.dart';
+import '../../features/expense_tracker/model/tracker_model.dart';
 import '../../features/expense_tracker/view/pages/more_apps_page.dart';
 import '../../features/profile/view/pages/profile_page.dart';
 import '../../shared/view/widgets/bottom_nav_bar/bottom_nav_bar.dart';
@@ -16,8 +17,12 @@ class AppRoutes {
         return MaterialPageRoute(builder: (context) => MoreAppsPage());
 
       case Paths.expenseManagementPage:
-        return MaterialPageRoute(
-            builder: (context) => const ExpenseManagementPage());
+        return MaterialPageRoute(builder: (context) {
+          final tracker = settings.arguments as TrackerModel?;
+          return ExpenseManagementPage(
+            trackerModel: tracker,
+          );
+        });
 
       case Paths.allTransactionPage:
         return MaterialPageRoute(
