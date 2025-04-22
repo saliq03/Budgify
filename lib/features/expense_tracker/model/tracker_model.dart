@@ -5,14 +5,14 @@ class TrackerModel {
   String title;
   String date;
   double amount;
-  bool isExpense;
+  int trackerCategory;
 
   TrackerModel({
     this.id,
     required this.title,
     required this.date,
     required this.amount,
-    required this.isExpense,
+    required this.trackerCategory,
   });
 
   factory TrackerModel.fromMap(Map<String, dynamic> map) {
@@ -21,7 +21,8 @@ class TrackerModel {
         title: map[DBHelper.columnTrackerTitle],
         date: map[DBHelper.columnTrackerDate],
         amount: map[DBHelper.columnTrackerAmount],
-        isExpense: map[DBHelper.columnIsExpense] == 1);
+        trackerCategory: map[DBHelper.columnTrackerCategory],
+    );
   }
 
   Map<String,dynamic> toMap() {
@@ -29,7 +30,7 @@ class TrackerModel {
       DBHelper.columnTrackerTitle: title,
       DBHelper.columnTrackerDate: date,
       DBHelper.columnTrackerAmount: amount,
-      DBHelper.columnIsExpense: isExpense ? 1 : 0,
+      DBHelper.columnTrackerCategory: trackerCategory,
     };
   }
 

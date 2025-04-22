@@ -11,14 +11,22 @@ import '../../utils/transaction_type.dart';
 
 class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
   ExpenseTrackerNotifier(this.ref)
-      : super(TrackerSummary(trackers: [], totalIncome: 0.0, totalExpense: 0.0, totalBalance: 0.0));
+      : super(TrackerSummary(trackers: [], trackerCategory: TrackerCategory(
+          totalIncome: 0.0,
+          totalExpense: 0.0,
+          totalBalance: 0.0,
+          investment: 0.0,
+          tax: 0.0,
+        )));
   Ref ref;
-  bool isLoading = true;
+  bool isLoading = false;
   DBHelper dbHelper = DBHelper();
   Database? database;
   double totalIncome = 0.0;
   double totalExpense = 0.0;
   double totalBalance = 0.0;
+  double totalInvestment = 0.0;
+  double totalTax = 0.0;
 
   // Asynchronous init method for initializing the state
   Future<void> init() async {
@@ -36,9 +44,9 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
       {required String title,
       required String date,
       required double amount,
-      required bool isExpense}) async {
+      required int trackerCategory}) async {
     bool isValueAdded = await dbHelper.addTrackerData(TrackerModel(
-        title: title, date: date, amount: amount, isExpense: isExpense));
+        title: title, date: date, amount: amount, trackerCategory: trackerCategory));
     if (isValueAdded) {
       fetchData();
     }
@@ -49,9 +57,9 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
       required String title,
       required String date,
       required double amount,
-      required bool isExpense}) async {
+      required int trackerCategory}) async {
     bool isValueUpdated = await dbHelper.updateTrackerData(TrackerModel(
-        id: id, title: title, date: date, amount: amount, isExpense: isExpense));
+        id: id, title: title, date: date, amount: amount, trackerCategory: trackerCategory));
     if (isValueUpdated) {
       fetchData();
     }
@@ -69,17 +77,19 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
   Future<void> fetchData() async {
     double totalIncome = 0.0;
     double totalExpense = 0.0;
+    double totalInvestment = 0.0;
+    double totalTax = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    final wProvider = ref.watch(dateProvider);
+    final rProvider =  ref.read(dateProvider);
 
     List<TrackerModel> filteredList=[];
-    if (wProvider.startDateFilter == null) {
+    if (rProvider.startDateFilter == null) {
       filteredList = list.reversed.toList();
     } else {
-      DateTime startDate = DateTime.now().subtract(Duration(days: 30));
+      DateTime startDate = parseDate(rProvider.startDateFilter!);
       // DateTime startDate = DateTime.now().subtract(Duration(days: 30));
-      DateTime endDate = parseDate(wProvider.endDateFilter!);
+      DateTime endDate = parseDate(rProvider.endDateFilter!);
 
       filteredList = list.where((tracker) {
         DateTime trackerDate = parseDate(tracker.date);
@@ -89,8 +99,12 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     }
 
     for (var tracker in filteredList) {
-      if (tracker.isExpense) {
+      if (tracker.trackerCategory==ExpenseType.expense.intValue) {
         totalExpense += tracker.amount;
+      } else if(tracker.trackerCategory==ExpenseType.investment.intValue) {
+        totalInvestment += tracker.amount;
+      } else if(tracker.trackerCategory==ExpenseType.tax.intValue) {
+        totalTax += tracker.amount;
       } else {
         totalIncome += tracker.amount;
       }
@@ -98,9 +112,13 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
 
     state = TrackerSummary(
       trackers: filteredList,
-      totalIncome: totalIncome,
-      totalExpense: totalExpense,
-      totalBalance: totalIncome - totalExpense,
+      trackerCategory: TrackerCategory(
+        totalIncome: totalIncome,
+        totalExpense: totalExpense,
+        totalBalance: (totalIncome - totalExpense) + totalInvestment - totalTax,
+        investment: totalInvestment,
+        tax: totalTax,
+      ),
     );
   }
 }
@@ -132,20 +150,20 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   List<TrackerModel> filteredList = [];
 
   if (filter == TransactionType.mostExpensive.value) {
-    filteredList = allData.where((tracker) => tracker.isExpense).toList()
+    filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.expense.intValue).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
   } else if (filter == TransactionType.leastExpensive.value) {
-    filteredList = allData.where((tracker) => tracker.isExpense).toList()
+    filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.expense.intValue).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsNewestToOldest.value) {
     filteredList = allData.toList()
       ..sort((a, b) =>
           parseDate(b.date).compareTo(parseDate(a.date))); // Newest to Oldest
   } else if (filter == TransactionType.mostIncome.value) {
-    filteredList = allData.where((tracker) => !tracker.isExpense).toList()
+    filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.income.intValue).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
   } else if (filter == TransactionType.leastIncome.value) {
-    filteredList = allData.where((tracker) => !tracker.isExpense).toList()
+    filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.income.intValue).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsOldestToNewest.value) {
     filteredList = allData.toList()

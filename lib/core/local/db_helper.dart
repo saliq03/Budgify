@@ -11,7 +11,7 @@ class DBHelper {
   static const String columnTrackerTitle = "t_title";
   static const String columnTrackerDate = "t_date";
   static const String columnTrackerAmount = "t_amount";
-  static const String columnIsExpense = "is_expense";
+  static const String columnTrackerCategory = "t_category";
 
   // Private constructor
   DBHelper._private();
@@ -42,23 +42,23 @@ class DBHelper {
             $columnTrackerTitle TEXT,
             $columnTrackerDate TEXT,
             $columnTrackerAmount REAL,
-            $columnIsExpense INTEGER
+            $columnTrackerCategory INTEGER
           )
         ''');
 
-        await db.insert(trackerTableName, {
-          columnTrackerTitle: "Sample Income",
-          columnTrackerDate: DateTime.now().toString().split(" ")[0],
-          columnTrackerAmount: 2334.0,
-          columnIsExpense: 0
-        });
-
-        await db.insert(trackerTableName, {
-          columnTrackerTitle: "Sample Expense",
-          columnTrackerDate: DateTime.now().toString().split(" ")[0],
-          columnTrackerAmount: 23232.0,
-          columnIsExpense: 1
-        });
+        // await db.insert(trackerTableName, {
+        //   columnTrackerTitle: "Sample Income",
+        //   columnTrackerDate: DateTime.now().toString().split(" ")[0],
+        //   columnTrackerAmount: 2334.0,
+        //   columnTrackerCategory: 0
+        // });
+        //
+        // await db.insert(trackerTableName, {
+        //   columnTrackerTitle: "Sample Expense",
+        //   columnTrackerDate: DateTime.now().toString().split(" ")[0],
+        //   columnTrackerAmount: 23232.0,
+        //   columnTrackerCategory: 1
+        // });
       },
     );
   }

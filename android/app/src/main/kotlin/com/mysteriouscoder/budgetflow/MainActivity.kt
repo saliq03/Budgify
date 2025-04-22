@@ -1,4 +1,4 @@
-package com.mysteriouscoder.budgify
+package com.mysteriouscoder.budgetflow
 
 import io.flutter.embedding.android.FlutterActivity
 

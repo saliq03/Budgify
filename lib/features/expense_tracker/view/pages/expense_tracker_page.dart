@@ -124,7 +124,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
 
   Widget cardSection(
       final double w, final BuildContext context, final currency) {
-    final wProvider = ref.watch(expenseTrackerProvider);
+    final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
     final positiveBalance = wProvider.totalBalance >= 0;
     final zeroBalance = wProvider.totalBalance == 0;
     final zeroIncome = wProvider.totalIncome == 0;
@@ -137,6 +137,17 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     final incomeColor = zeroIncome ? Colors.white : AppColors.lightGreen;
     final expenseColor = zeroExpense ? Colors.white : AppColors.lightRed;
     // Reverse the list to show latest items first
+
+    var totalIncome=0.0;
+    var totalExpense=0.0;
+    if(wProvider.investment > 0) {
+      totalIncome += wProvider.investment + wProvider.totalIncome;
+      totalExpense += wProvider.totalExpense - wProvider.tax;
+    }
+    else {
+      totalIncome += wProvider.totalIncome;
+      totalExpense += wProvider.totalExpense - wProvider.tax - wProvider.investment;
+    }
 
     return Card(
       elevation: 4,
@@ -197,7 +208,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     color: incomeColor,
                     text: "Income",
                     icon: Icons.arrow_circle_up_outlined,
-                    amount: "$currency ${wProvider.totalIncome}",
+                    amount: "$currency $totalIncome",
                     isShow: !zeroIncome,
                     onTap: showCurrencyPickerDialog,
                   ),
@@ -208,7 +219,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     color: expenseColor,
                     text: "Expense",
                     icon: Icons.arrow_circle_down_outlined,
-                    amount: "$currency ${wProvider.totalExpense}",
+                    amount: "$currency $totalExpense",
                     isShow: !zeroExpense,
                     isExpense: true,
                     onTap: showCurrencyPickerDialog,

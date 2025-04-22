@@ -1,5 +1,7 @@
+import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ConsumerWidget, WidgetRef;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
@@ -23,6 +25,8 @@ class TransactionInfo extends ConsumerWidget {
     final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
     final currency = ref.watch(currencyProvider).symbol;
     final rProvider = ref.read(expenseTrackerProvider.notifier);
+
+
     return Expanded(
       child: isLoading
           ? const Center(
@@ -42,14 +46,35 @@ class TransactionInfo extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 100),
                   itemBuilder: (context, index) {
                     var tl = trackerList[index];
+                    IconData icon= Icons.arrow_circle_up_outlined;
+                    Color color = Colors.green;
+
+                    switch (tl.trackerCategory) {
+                      case 0:
+                        icon = Icons.arrow_circle_up_outlined;
+                        color = Colors.green;
+                        break;
+                      case 1:
+                        icon = Icons.arrow_circle_down_outlined;
+                        color = Colors.red;
+                        break;
+                      case 3:
+                        icon = FontAwesomeIcons.moneyBillWave;
+                        color = Colors.redAccent;
+                        break;
+                      case 2:
+                        icon = FontAwesomeIcons.chartLine;
+                        color = Colors.blueAccent;
+                        break;
+                    }
+
+
 
                     return ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: Icon(
-                            tl.isExpense
-                                ? Icons.arrow_circle_down_outlined
-                                : Icons.arrow_circle_up_outlined,
-                            color: tl.isExpense ? Colors.red : Colors.green,
+                            icon,
+                            color: color,
                             size: 40),
                         title: Text(
                           tl.title,
@@ -63,8 +88,8 @@ class TransactionInfo extends ConsumerWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
                               child: Icon(
-                                tl.isExpense ? Icons.remove : Icons.add,
-                                color: tl.isExpense ? Colors.red : Colors.green,
+                                (tl.trackerCategory== ExpenseType.tax.intValue || tl.trackerCategory == ExpenseType.expense.intValue)  ? Icons.remove : Icons.add,
+                                color: color,
                                 size: 20,
                               ),
                             ),
@@ -75,7 +100,7 @@ class TransactionInfo extends ConsumerWidget {
                               style: AppStyles.headingPrimary(
                                 context: context,
                                 fontSize: 18,
-                                color: tl.isExpense ? Colors.red : Colors.green,
+                                color: color,
                               ),
                             )),
                           ],

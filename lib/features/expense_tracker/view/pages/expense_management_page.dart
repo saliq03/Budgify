@@ -198,7 +198,9 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                 date: dateRef.selectedDate ??
                                     formatDate(DateTime.now()),
                                 amount: double.parse(amountController.text),
-                                isExpense: selectedValue == "Expense",
+                                trackerCategory: ExpenseType.values
+                                    .firstWhere((e) => e.value == selectedValue)
+                                    .intValue,
                               );
                             } else {
                               trackerRProvider.addData(
@@ -208,7 +210,9 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                 date: dateRef.selectedDate ??
                                     formatDate(DateTime.now()),
                                 amount: double.parse(amountController.text),
-                                isExpense: selectedValue == "Expense",
+                                trackerCategory: ExpenseType.values
+                                    .firstWhere((e) => e.value == selectedValue)
+                                    .intValue,
                               );
                             }
                             Navigator.pop(context);
