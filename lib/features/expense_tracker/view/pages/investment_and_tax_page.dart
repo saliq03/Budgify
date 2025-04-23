@@ -1,17 +1,4 @@
-import 'package:budgify/features/expense_tracker/utils/invest_and_tax_type.dart';
-import 'package:budgify/features/expense_tracker/view/widgets/transaction_filter/transaction_filter2.dart';
-import 'package:budgify/features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
-import 'package:budgify/shared/view/widgets/date_filter.dart';
-import 'package:budgify/shared/view/widgets/global_widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../../core/routes/paths.dart';
-import '../../../../core/theme/app_gradients.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../widgets/buttons/reusable_outlined_button.dart';
-import '../widgets/custom_drop_down.dart';
-import '../widgets/reusable_card_details.dart';
+part of 'expense_tracker_home_page.dart';
 
 class InvestmentAndTaxPage extends ConsumerWidget {
   const InvestmentAndTaxPage({super.key});
@@ -19,7 +6,6 @@ class InvestmentAndTaxPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double w = MediaQuery.of(context).size.width;
-    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -96,9 +82,10 @@ class InvestmentAndTaxPage extends ConsumerWidget {
                   child: ReusableCardDetails(
                     color: Colors.white,
                     text: "Investment",
-                    icon: Icons.arrow_circle_up_outlined,
+                    icon:  FontAwesomeIcons.sackDollar,
                     amount: "0.0",
                     isShow: true,
+                    iconSize: 18,
                     onTap: () {},
                   ),
                 ),
@@ -106,10 +93,11 @@ class InvestmentAndTaxPage extends ConsumerWidget {
                 Expanded(
                   child: ReusableCardDetails(
                     color: Colors.white,
-                    text: "Invest Returns",
-                    icon: Icons.arrow_circle_up_outlined,
+                    text: "Returns %",
+                    icon:  FontAwesomeIcons.sackDollar,
                     amount: "0.0",
                     isShow: true,
+                    iconSize: 18,
                     onTap: () {},
                   ),
                 ),
@@ -123,7 +111,7 @@ class InvestmentAndTaxPage extends ConsumerWidget {
                   child: ReusableCardDetails(
                     color: Colors.white,
                     text: "Tax Amount",
-                    icon: Icons.arrow_circle_down_outlined,
+                    icon: Icons.receipt_long,
                     amount: "00",
                     isShow: true,
                     isExpense: true,
@@ -135,7 +123,7 @@ class InvestmentAndTaxPage extends ConsumerWidget {
                   child: ReusableCardDetails(
                     color: Colors.white,
                     text: "Total Tax %",
-                    icon: Icons.arrow_circle_down_outlined,
+                    icon: Icons.receipt_long,
                     amount: "00",
                     isShow: true,
                     isExpense: true,

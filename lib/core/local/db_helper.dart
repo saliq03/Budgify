@@ -12,6 +12,7 @@ class DBHelper {
   static const String columnTrackerDate = "t_date";
   static const String columnTrackerAmount = "t_amount";
   static const String columnTrackerCategory = "t_category";
+  static const String columnTrackerPercentage = "t_percentage";
 
   // Private constructor
   DBHelper._private();
@@ -42,7 +43,8 @@ class DBHelper {
             $columnTrackerTitle TEXT,
             $columnTrackerDate TEXT,
             $columnTrackerAmount REAL,
-            $columnTrackerCategory INTEGER
+            $columnTrackerCategory INTEGER,
+            $columnTrackerPercentage REAL
           )
         ''');
 

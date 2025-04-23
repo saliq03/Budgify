@@ -1,23 +1,5 @@
-import 'package:budgify/core/theme/app_colors.dart';
-import 'package:budgify/core/theme/app_gradients.dart';
-import 'package:budgify/core/theme/app_styles.dart';
-import 'package:budgify/features/expense_tracker/model/currency_model.dart';
-import 'package:budgify/features/expense_tracker/view/widgets/transaction_filter/transaction_filter1.dart';
-import 'package:budgify/shared/view/widgets/global_widgets.dart';
-import 'package:currency_picker/currency_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../../core/routes/paths.dart';
-import '../../../../shared/view/widgets/date_filter.dart';
-import '../../utils/transaction_type.dart';
-import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
-import '../widgets/buttons/reusable_outlined_button.dart';
-import '../widgets/custom_drop_down.dart';
-import '../widgets/reusable_card_details.dart';
-import '../widgets/transaction_info.dart';
+part of 'expense_tracker_home_page.dart';
 
-//
 class ExpenseTrackerPage extends ConsumerStatefulWidget {
   const ExpenseTrackerPage({super.key});
 
@@ -26,7 +8,6 @@ class ExpenseTrackerPage extends ConsumerStatefulWidget {
 }
 
 class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
-
   @override
   void initState() {
     super.initState();
@@ -76,27 +57,39 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Paths.expenseManagementPage);
-        },
-        backgroundColor: theme.primary,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 
   Widget cardSection(
-      final double w, final BuildContext context, final currency)
-  {
+      final double w, final BuildContext context, final currency) {
     final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
-    final positiveBalance = wProvider.totalBalance >= 0;
-    final zeroBalance = wProvider.totalBalance == 0;
-    final zeroIncome = wProvider.totalIncome == 0;
-    final zeroExpense = wProvider.totalExpense == 0;
+    double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
+    final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
+        TransactionType.excludingInvestmentAndTax.value;
+
+    if (isExcludeInvestmentAndTax) {
+      totalBalance = wProvider.totalIncome - wProvider.totalExpense;
+      totalIncome = wProvider.totalIncome;
+      totalExpense = wProvider.totalExpense;
+    } else {
+      totalBalance = wProvider.totalIncome -
+          wProvider.totalExpense +
+          wProvider.investment -
+          wProvider.tax;
+      if (wProvider.investment > 0) {
+        totalIncome += wProvider.investment + wProvider.totalIncome;
+        totalExpense += wProvider.totalExpense - wProvider.tax;
+      } else {
+        totalIncome += wProvider.totalIncome;
+        totalExpense +=
+            wProvider.totalExpense - wProvider.tax - wProvider.investment;
+      }
+    }
+
+    final zeroBalance = totalIncome ==0 && totalExpense == 0;
+    final zeroIncome = totalIncome == 0;
+    final zeroExpense = totalExpense == 0;
+    final positiveBalance = totalBalance >= 0;
     final totalBalanceColor = zeroBalance
         ? Colors.white
         : positiveBalance
@@ -104,18 +97,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             : AppColors.lightRed;
     final incomeColor = zeroIncome ? Colors.white : AppColors.lightGreen;
     final expenseColor = zeroExpense ? Colors.white : AppColors.lightRed;
-    // Reverse the list to show latest items first
-
-    var totalIncome=0.0;
-    var totalExpense=0.0;
-    if(wProvider.investment > 0) {
-      totalIncome += wProvider.investment + wProvider.totalIncome;
-      totalExpense += wProvider.totalExpense - wProvider.tax;
-    }
-    else {
-      totalIncome += wProvider.totalIncome;
-      totalExpense += wProvider.totalExpense - wProvider.tax - wProvider.investment;
-    }
 
     return Card(
       elevation: 4,
@@ -158,7 +139,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     child: InkWell(
                   onTap: showCurrencyPickerDialog,
                   child: Text(
-                    "$currency ${wProvider.totalBalance.abs()}",
+                    "$currency ${totalBalance.abs()}",
                     style: AppStyles.headingPrimary(
                         context: context,
                         fontSize: 30,
@@ -221,7 +202,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     );
   }
 }
-
 
 // Widget transactionInfo(final ColorScheme theme, final currency) {
 //     final trackerList = ref.watch(filteredTransactionProvider);
@@ -330,3 +310,20 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
 //                 ),
 //     );
 //   }
+
+// import 'package:budgify/core/theme/app_colors.dart';
+// import 'package:budgify/core/theme/app_gradients.dart';
+// import 'package:budgify/core/theme/app_styles.dart';
+// import 'package:budgify/features/expense_tracker/model/currency_model.dart';
+// import 'package:budgify/features/expense_tracker/utils/transaction_type.dart';
+// import 'package:budgify/features/expense_tracker/view/widgets/transaction_filter/transaction_filter1.dart';
+// import 'package:budgify/shared/view/widgets/global_widgets.dart';
+// import 'package:currency_picker/currency_picker.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import '../../../../core/routes/paths.dart';
+// import '../../../../shared/view/widgets/date_filter.dart';
+// import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+// import '../widgets/buttons/reusable_outlined_button.dart';
+// import '../widgets/reusable_card_details.dart';
+// import '../widgets/transaction_info.dart';

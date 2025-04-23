@@ -6,6 +6,7 @@ class TrackerModel {
   String date;
   double amount;
   int trackerCategory;
+  double percentage;
 
   TrackerModel({
     this.id,
@@ -13,6 +14,7 @@ class TrackerModel {
     required this.date,
     required this.amount,
     required this.trackerCategory,
+    required this.percentage,
   });
 
   factory TrackerModel.fromMap(Map<String, dynamic> map) {
@@ -22,6 +24,7 @@ class TrackerModel {
         date: map[DBHelper.columnTrackerDate],
         amount: map[DBHelper.columnTrackerAmount],
         trackerCategory: map[DBHelper.columnTrackerCategory],
+        percentage: map[DBHelper.columnTrackerPercentage] ?? 0.0,
     );
   }
 
@@ -31,6 +34,7 @@ class TrackerModel {
       DBHelper.columnTrackerDate: date,
       DBHelper.columnTrackerAmount: amount,
       DBHelper.columnTrackerCategory: trackerCategory,
+      DBHelper.columnTrackerPercentage: percentage,
     };
   }
 

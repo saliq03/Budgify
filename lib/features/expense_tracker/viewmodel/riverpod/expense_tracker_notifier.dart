@@ -45,9 +45,13 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
       {required String title,
       required String date,
       required double amount,
-      required int trackerCategory}) async {
+      required int trackerCategory,
+      required double percentage
+      }) async {
     bool isValueAdded = await dbHelper.addTrackerData(TrackerModel(
-        title: title, date: date, amount: amount, trackerCategory: trackerCategory));
+        title: title, date: date, amount: amount, trackerCategory: trackerCategory,
+    percentage: percentage
+    ));
     if (isValueAdded) {
       fetchData();
     }
@@ -58,9 +62,13 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
       required String title,
       required String date,
       required double amount,
-      required int trackerCategory}) async {
+      required int trackerCategory,
+      required double percentage
+      }) async {
     bool isValueUpdated = await dbHelper.updateTrackerData(TrackerModel(
-        id: id, title: title, date: date, amount: amount, trackerCategory: trackerCategory));
+        id: id, title: title, date: date, amount: amount, trackerCategory: trackerCategory,
+    percentage: percentage
+    ));
     if (isValueUpdated) {
       fetchData();
     }
@@ -156,7 +164,13 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   if (filter == TransactionType.mostExpensive.value) {
     filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.expense.intValue).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
-  } else if (filter == TransactionType.leastExpensive.value) {
+  }
+  else if(filter == TransactionType.excludingInvestmentAndTax.value)
+    {
+     filteredList =allData.where( (tracker) => (tracker.trackerCategory != ExpenseType.investment.intValue) && (tracker.trackerCategory !=ExpenseType.tax.intValue) ).toList();
+    }
+
+  else if (filter == TransactionType.leastExpensive.value) {
     filteredList = allData.where((tracker) => tracker.trackerCategory==ExpenseType.expense.intValue).toList()
       ..sort((a, b) => a.amount.compareTo(b.amount));
   } else if (filter == TransactionType.transactionsNewestToOldest.value) {

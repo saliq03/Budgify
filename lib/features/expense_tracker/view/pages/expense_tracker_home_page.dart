@@ -1,10 +1,25 @@
-import 'package:budgify/features/expense_tracker/view/pages/expense_tracker_page.dart';
-import 'package:budgify/features/expense_tracker/view/pages/investment_and_tax_page.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../core/routes/paths.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_gradients.dart';
 import '../../../../core/theme/app_styles.dart';
+import '../../../../shared/view/widgets/date_filter.dart';
+import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
+import '../../model/currency_model.dart';
+import '../../utils/transaction_type.dart';
+import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../widgets/buttons/reusable_outlined_button.dart';
 import '../widgets/drawer/custom_drawer.dart';
+import '../widgets/reusable_card_details.dart';
+import '../widgets/transaction_filter/transaction_filter1.dart';
+import '../widgets/transaction_filter/transaction_filter2.dart';
+import '../widgets/transaction_info.dart';
+part 'expense_tracker_page.dart';
+part 'investment_and_tax_page.dart';
 
 class ExpenseTrackerHomePage extends ConsumerStatefulWidget {
   const ExpenseTrackerHomePage({super.key});
@@ -21,7 +36,6 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
   }
 
   @override
@@ -77,10 +91,19 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
               children: [
                 ExpenseTrackerPage(),
                 InvestmentAndTaxPage(),
-
               ]))
 
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
+        },
+        backgroundColor: theme.primary,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }

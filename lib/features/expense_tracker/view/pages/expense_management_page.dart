@@ -16,6 +16,7 @@ import '../../utils/expense_type.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/custom_drop_down.dart';
 
+
 class ExpenseManagementPage extends ConsumerStatefulWidget {
   final TrackerModel? trackerModel;
 
@@ -29,7 +30,7 @@ class ExpenseManagementPage extends ConsumerStatefulWidget {
 class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
-  final TextEditingController returnController = TextEditingController();
+  final TextEditingController percentageController = TextEditingController();
 
   @override
   void initState() {
@@ -43,6 +44,12 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 
       titleController.text = widget.trackerModel!.title;
       amountController.text = widget.trackerModel!.amount.toString();
+
+      if(widget.trackerModel!.percentage != 0.0) {
+        percentageController.text = widget.trackerModel!.percentage.toString();
+      }
+
+
       // ref.read(dateProvider.notifier).state =
       //     dateRef.copyWith(selectedDate: widget.trackerModel!.date);
     }
@@ -52,7 +59,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   void dispose() {
     titleController.dispose();
     amountController.dispose();
-    returnController.dispose();
+    percentageController.dispose();
     super.dispose();
   }
 
@@ -166,7 +173,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                       if (isShowReturn)
                         ReusableTextField(
                           prefixIcon: Icons.percent,
-                          controller: returnController,
+                          controller: percentageController,
                           hintText: "0",
                           keyboardType: TextInputType.number,
                           inputFormatters: [
@@ -195,6 +202,10 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                 title: titleController.text.isEmpty
                                     ? "Reason unavailable"
                                     : titleController.text,
+                                percentage: double.parse(
+                                    percentageController.text.isEmpty
+                                        ? "0"
+                                        : percentageController.text),
                                 date: dateRef.selectedDate ??
                                     formatDate(DateTime.now()),
                                 amount: double.parse(amountController.text),
@@ -209,6 +220,10 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                                     : titleController.text,
                                 date: dateRef.selectedDate ??
                                     formatDate(DateTime.now()),
+                                  percentage: double.parse(
+                                      percentageController.text.isEmpty
+                                          ? "0"
+                                          : percentageController.text),
                                 amount: double.parse(amountController.text),
                                 trackerCategory: ExpenseType.values
                                     .firstWhere((e) => e.value == selectedValue)
@@ -533,3 +548,5 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 //     print("Selected range: ${args.value}");
 //   },
 // ),
+
+

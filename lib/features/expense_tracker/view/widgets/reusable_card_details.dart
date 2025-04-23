@@ -11,16 +11,19 @@ class ReusableCardDetails extends StatelessWidget {
   final bool isShow;
   final bool isExpense;
   final VoidCallback? onTap;
+  final double iconSize;
 
   const ReusableCardDetails(
       {super.key,
         required this.text,
+        this.iconSize = 20,
         required this.icon,
         required this.amount, required this.color, required this.isShow, this.isExpense= false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -29,7 +32,7 @@ class ReusableCardDetails extends StatelessWidget {
             Icon(
               icon,
               color: color,
-              size: 20,
+              size: iconSize,
             ),
             spacerW(5),
             Text(
