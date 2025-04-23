@@ -1,10 +1,8 @@
-import 'package:budgify/features/expense_tracker/view/pages/expense_tracker_page.dart';
 import 'package:budgify/features/expense_tracker/view/widgets/dialog/reusable_dialog_class.dart';
+import 'package:budgify/features/insights/view/pages/insights_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import '../../../../features/expense_tracker/view/pages/expense_management_page.dart';
-import '../../../../features/my_budget/view/pages/my_budget_page.dart';
-import '../../../../features/profile/view/pages/profile_page.dart';
+import '../../../../features/expense_tracker/view/pages/expense_tracker_home_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -22,10 +20,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     bottomBarPages = [
-      // ExpenseManagementPage(),
-      ExpenseTrackerPage(),
-      MyBudgetPage(),
-      ProfilePage(),
+      ExpenseTrackerHomePage(),
+      // MyBudgetPage(),
+      InsightsPage(),
     ];
   }
 
@@ -78,26 +75,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
           ),
         ),
-        SalomonBottomBarItem(
-          selectedColor: Theme.of(context).colorScheme.primary,
-          icon: const Icon(
-            Icons.account_balance_wallet_outlined,
-          ),
-          title: Text(
-            'My Budget',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: bottomNavFontFamily,
-            ),
-          ),
-        ),
+        // SalomonBottomBarItem(
+        //   selectedColor: Theme.of(context).colorScheme.primary,
+        //   icon: const Icon(
+        //     Icons.account_balance_wallet_outlined,
+        //   ),
+        //   title: Text(
+        //     'My Budget',
+        //     textAlign: TextAlign.center,
+        //     style: TextStyle(
+        //       fontFamily: bottomNavFontFamily,
+        //     ),
+        //   ),
+        // ),
         SalomonBottomBarItem(
           selectedColor: Theme.of(context).colorScheme.primary,
           icon: const Icon(
             Icons.bar_chart,
           ),
           title: Text(
-            'Report',
+            'Insights',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: bottomNavFontFamily,

@@ -1,9 +1,11 @@
 enum TransactionType {
   allTransactions,
+  excludingInvestmentAndTax,
   transactionsNewestToOldest,
   transactionsOldestToNewest,
   mostExpensive,
   leastExpensive,
+
   // onlyIncome,
   // onlyExpense,
   mostIncome,
@@ -13,6 +15,9 @@ enum TransactionType {
     switch (this) {
       case TransactionType.allTransactions:
         return 'All Transactions';
+
+      case TransactionType.excludingInvestmentAndTax:
+        return 'Excluding Investment & Tax';
       case TransactionType.transactionsNewestToOldest:
         return 'Transactions: Latest First';
       case TransactionType.transactionsOldestToNewest:

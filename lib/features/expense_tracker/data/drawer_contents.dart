@@ -32,7 +32,6 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
             Navigator.pop(context);
           }
           await shareAppLink();
-
         },
       ),
       DrawerModel(
@@ -40,7 +39,7 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
           icon: Icons.feedback_outlined,
           onTap: () {
             openUrl(
-                url: "mailto:officialbrainbooster@gmail.com?subject=Feedback",
+                url: "mailto:mysteriouscoderofficial@gmail.com?subject=Feedback",
                 context: context,
                 isExternal: true);
             Navigator.pop(context);
@@ -51,7 +50,7 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
           onTap: () {
             openUrl(
                 url:
-                    "https://play.google.com/store/apps/details?id=com.mysteriouscoder.brainbooster",
+                    "https://play.google.com/store/apps/details?id=com.mysteriouscoder.budgetflow",
                 context: context);
             Navigator.pop(context);
           }),
@@ -72,14 +71,13 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
               Navigator.pop(context);
             }
             await ReusableDialogClass.showYesNoDialog(context);
-
           }),
     ];
 
 Future<void> shareAppLink() async {
   try {
     final String message =
-        "Check out this amazing sound therapy application:\n\n ${Constants.appUrl} \n";
+        "Discover a powerful solution for managing your expenses and budget effectively:\n\n${Constants.budgetFlowUrl}";
     await Share.share(message);
   } catch (e) {
     if (kDebugMode) {

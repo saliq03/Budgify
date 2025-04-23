@@ -7,6 +7,7 @@ import '../../../../core/local/db_helper.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
 import '../../model/tracker_summary.dart';
+import '../../utils/invest_and_tax_type.dart';
 import '../../utils/transaction_type.dart';
 
 class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
@@ -142,6 +143,9 @@ final selectedValueProvider = StateProvider<String>((ref) => ExpenseType.income.
 
 final transactionProvider =
     StateProvider<String>((ref) => TransactionType.allTransactions.value);
+
+final investmentAndTaxProvider =
+    StateProvider<String>((ref) => InvestAndTaxType.investmentAndTax.value);
 
 final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   final filter = ref.watch(transactionProvider);

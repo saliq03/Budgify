@@ -24,7 +24,12 @@ class ReusableTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.inputFormatters,
     this.prefixIcon,
-    this.isPassword = false, this.radius, this.onChanged, this.focusNode, this.prefixText, this.onTapPrefix,
+    this.isPassword = false,
+    this.radius,
+    this.onChanged,
+    this.focusNode,
+    this.prefixText,
+    this.onTapPrefix,
   });
 
   @override
@@ -32,7 +37,7 @@ class ReusableTextField extends StatefulWidget {
 }
 
 class _ReusableTextFieldState extends State<ReusableTextField> {
-  bool _obscureText =  true;
+  bool _obscureText = true;
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
@@ -62,57 +67,63 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return TextField(
-      onChanged: (value){
-        if(widget.onChanged!=null) {
+      onChanged: (value) {
+        if (widget.onChanged != null) {
           widget.onChanged!(value);
         }
-        },
-      focusNode:widget.focusNode?? _focusNode,
-      obscureText: (!widget.isPassword)?false : _obscureText,
+      },
+      focusNode: widget.focusNode ?? _focusNode,
+      obscureText: (!widget.isPassword) ? false : _obscureText,
       maxLines: widget.maxLines,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
-        prefixIcon:
-        InkWell(
-          onTap: widget.onTapPrefix,
-          child: widget.prefixText !=null ?
-              Padding(
-                padding: const EdgeInsets.only(top: 12,left: 18),
-                child: Text(
-                  widget.prefixText!,
-                  style: AppStyles.headingPrimary(context: context),
-                ),
+        prefixIcon: widget.prefixText != null || widget.prefixIcon != null
+            ? InkWell(
+                onTap: widget.onTapPrefix,
+                child: widget.prefixText != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 12, left: 18),
+                        child: Text(
+                          widget.prefixText!,
+                          style: AppStyles.headingPrimary(context: context),
+                        ),
+                      )
+                    : widget.prefixIcon == null
+                        ? null
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Icon(widget.prefixIcon,
+                                color: _isFocused
+                                    ? theme.primary
+                                    : theme.onSurface.withValues(alpha: 0.8),
+                                size: 25),
+                          ),
               )
-              :
-          widget.prefixIcon == null
-              ? null
-              : Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Icon(widget.prefixIcon,
-                color: _isFocused ? theme.primary : theme.onSurface.withValues(alpha: 0.8),
-                size: 25),
-          ),
-        ),
+            : null,
 
-
-        suffixIcon:  (!widget.isPassword)? null:
-        IconButton(
-          icon: Icon(
-            _obscureText ? Icons.visibility : Icons.visibility_off,
-            color: _isFocused ? theme.primary : theme.onSurface.withValues(alpha: 0.8),
-          ),
-          onPressed: _toggle,
-        ),
+        suffixIcon: (!widget.isPassword)
+            ? null
+            : IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                  color: _isFocused
+                      ? theme.primary
+                      : theme.onSurface.withValues(alpha: 0.8),
+                ),
+                onPressed: _toggle,
+              ),
         hintText: widget.hintText,
         hintStyle: TextStyle(
           fontFamily: 'Poppins',
-          color: _isFocused ? theme.primary : theme.onSurface.withValues(alpha: 0.8),
+          color: _isFocused
+              ? theme.primary
+              : theme.onSurface.withValues(alpha: 0.8),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(widget.radius ??15),
+          borderRadius: BorderRadius.circular(widget.radius ?? 15),
           borderSide: BorderSide(
             color: _isFocused ? theme.primary : theme.onSurface,
             width: 1.5,

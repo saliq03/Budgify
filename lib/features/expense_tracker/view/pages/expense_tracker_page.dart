@@ -2,8 +2,8 @@ import 'package:budgify/core/theme/app_colors.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/features/expense_tracker/model/currency_model.dart';
+import 'package:budgify/features/expense_tracker/view/widgets/transaction_filter/transaction_filter1.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
-import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,6 @@ import '../../utils/transaction_type.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../widgets/buttons/reusable_outlined_button.dart';
 import '../widgets/custom_drop_down.dart';
-import '../widgets/drawer/custom_drawer.dart';
 import '../widgets/reusable_card_details.dart';
 import '../widgets/transaction_info.dart';
 
@@ -27,7 +26,6 @@ class ExpenseTrackerPage extends ConsumerStatefulWidget {
 }
 
 class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -53,39 +51,29 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     final theme = Theme.of(context).colorScheme;
     final currency = ref.watch(currencyProvider).symbol;
     return Scaffold(
-      key: _scaffoldKey,
-      endDrawer: CustomDrawer(h: h, w: w * 0.7),
-      appBar: ReusableAppBar(
-        text: 'Expense Tracker',
-        // text: 'Profile',
-        isCenterText: false,
-        isMenu: true,
-        onPressed: () {
-          _scaffoldKey.currentState!.openEndDrawer();
-        },
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            spacerH(),
-            transactionFilter(theme),
-            spacerH(10),
-            // CurrencyPicker(),
-            // spacerH(10),
-            DateFilter(),
-            spacerH(10),
-            cardSection(w, context, currency),
-            spacerH(),
-            transactionSection(),
-            spacerH(10),
-            TransactionInfo(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              spacerH(),
+              TransactionFilter1(),
+              spacerH(10),
+              // CurrencyPicker(),
+              // spacerH(10),
+              cardSection(w, context, currency),
+              spacerH(10),
+              DateFilter(),
+              spacerH(),
+              transactionSection(),
+              spacerH(10),
+              TransactionInfo(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -101,29 +89,9 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     );
   }
 
-  Widget transactionFilter(final theme) {
-    return Consumer(builder: (context, ref, child) {
-      final selectedValue = ref.watch(transactionProvider);
-
-      return CustomDropDown(
-        icon: Icons.arrow_drop_down_rounded,
-        categories: TransactionType.values.map((e) => e.value).toList(),
-        leadingIconSize: 20,
-        onChanged: (newValue) {
-          if (newValue != null) {
-            ref.read(transactionProvider.notifier).state = newValue;
-          }
-        },
-        selectedValue: selectedValue,
-        leadingIcon: FontAwesomeIcons.receipt,
-        color: theme.onSurface,
-        borderColor: theme.onSurface,
-      );
-    });
-  }
-
   Widget cardSection(
-      final double w, final BuildContext context, final currency) {
+      final double w, final BuildContext context, final currency)
+  {
     final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
     final positiveBalance = wProvider.totalBalance >= 0;
     final zeroBalance = wProvider.totalBalance == 0;

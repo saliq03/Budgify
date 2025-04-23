@@ -33,8 +33,8 @@ class Constants {
       'https://play.google.com/store/apps/details?id=com.mysteriouscoder.mazedarhindijokes';
   static const String noteMasterUrl =
       'https://play.google.com/store/apps/details?id=com.mysteriouscoder.notemaster';
-  static const String appUrl =
-      'https://play.google.com/store/apps/details?id=com.mysteriouscoder.brainbooster';
+  static const String budgetFlowUrl =
+      'https://play.google.com/store/apps/details?id=com.mysteriouscoder.budgetflow';
 
   //Social Media Links
 static const String youtubeLink="https://youtube.com/@mysterious_coder?si=nmKdCfauVOj0LApZ";

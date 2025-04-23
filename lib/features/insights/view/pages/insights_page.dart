@@ -8,14 +8,14 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
 
-class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+class InsightsPage extends ConsumerStatefulWidget {
+  const InsightsPage({super.key});
 
   @override
-  ConsumerState<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<InsightsPage> createState() => _InsightsPageState();
 }
 
-class _ProfilePageState extends ConsumerState<ProfilePage> {
+class _InsightsPageState extends ConsumerState<InsightsPage> {
   @override
   Widget build(BuildContext context) {
     final expenseData = ref.watch(expenseTrackerProvider);
@@ -23,7 +23,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final theme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: const ReusableAppBar(text: 'Report'),
+      appBar: const ReusableAppBar(text: 'Insights'),
       body: SingleChildScrollView(
         child: Column(
           children: [

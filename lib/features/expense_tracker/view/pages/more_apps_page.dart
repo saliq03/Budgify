@@ -31,37 +31,37 @@ class _MoreAppsPageState extends ConsumerState<MoreAppsPage> {
     final uProvider = ref.watch(moreAppsProvider);
     final theme = Theme.of(context).colorScheme;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: ReusableAppBar(
         text: 'More Apps',
         isCenterText: false,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              spacerH(30),
-              ReusableTextField(
-                controller: searchController,
-                hintText: 'Search by App Name',
-                onChanged: (value) {
-                  rProvider.filterApps(value);
-                },
-              ),
-              spacerH(),
-              uProvider.isEmpty
-                  ? SizedBox(
-                      width: w,
-                      height: h - 200,
-                      child: Center(
-                          child: Text(
-                        'No apps found',
-                        style: AppStyles.descriptionPrimary(
-                            context: context, color: theme.onSurface),
-                      )))
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            spacerH(),
+            ReusableTextField(
+              controller: searchController,
+              hintText: 'Search by App Name',
+              onChanged: (value) {
+                rProvider.filterApps(value);
+              },
+            ),
+            spacerH(10),
+            uProvider.isEmpty
+                ? SizedBox(
+                    width: w,
+                    height: h - 200,
+                    child: Center(
+                        child: Text(
+                      'No apps found',
+                      style: AppStyles.descriptionPrimary(
+                          context: context, color: theme.onSurface),
+                    )))
+                : Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 10, bottom: 80),
                       itemCount: uProvider.length,
                       itemBuilder: (context, index) {
                         final e = uProvider[index];
@@ -82,9 +82,8 @@ class _MoreAppsPageState extends ConsumerState<MoreAppsPage> {
                         );
                       },
                     ),
-              spacerH(100),
-            ],
-          ),
+                  ),
+          ],
         ),
       ),
     );
