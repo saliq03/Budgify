@@ -1,4 +1,4 @@
-import 'package:budgify/features/expense_tracker/view/widgets/transaction_info.dart';
+import 'package:budgify/features/expense_tracker/view/widgets/transaction_history/transaction_info.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:flutter/material.dart';

@@ -1,23 +1,19 @@
 import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'
-    show ConsumerWidget, WidgetRef;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ConsumerWidget, WidgetRef;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../../core/routes/paths.dart';
-import '../../../../core/theme/app_styles.dart';
-import '../../../../shared/view/widgets/global_widgets.dart';
-import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
-import 'dialog/reusable_dialog_class.dart';
+import '../../../../../core/routes/paths.dart';
+import '../../../../../core/theme/app_styles.dart';
+import '../../../../../shared/view/widgets/global_widgets.dart';
+import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../dialog/reusable_dialog_class.dart';
 
 class TransactionInfo extends ConsumerWidget {
   final bool isScrollable;
 
-  // final bool isTransactionPage;
-
   const TransactionInfo({
     super.key,
     this.isScrollable = false,
-    // this.isTransactionPage = false
   });
 
   @override

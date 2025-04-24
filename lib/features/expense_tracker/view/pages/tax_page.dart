@@ -6,20 +6,24 @@ class TaxPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            spacerH(),
-            TaxFilter(),
-            spacerH(10),
-            ReusableCardWidget(isTax: true),
-            spacerH(10),
-            DateFilter(),
-            spacerH(),
-            taxHistory(context),
-            spacerH(10),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              spacerH(),
+              TaxFilter(),
+              spacerH(10),
+              ReusableCardWidget(isTax: true),
+              spacerH(10),
+              DateFilter(),
+              spacerH(),
+              taxHistory(context),
+              spacerH(10),
+              ReusableInfo(isTaxPage: true,
+                isScrollable: false,)
+            ],
+          ),
         ),
       ),
     );

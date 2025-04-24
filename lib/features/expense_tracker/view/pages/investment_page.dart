@@ -6,20 +6,24 @@ class InvestmentPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            spacerH(),
-            InvestmentFilter(),
-            spacerH(10),
-            ReusableCardWidget(isTax: false,),
-            spacerH(10),
-            DateFilter(),
-            spacerH(),
-            investmentHistory(context),
-            spacerH(10),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              spacerH(),
+              InvestmentFilter(),
+              spacerH(10),
+              ReusableCardWidget(isTax: false,),
+              spacerH(10),
+              DateFilter(),
+              spacerH(),
+              investmentHistory(context),
+              spacerH(10),
+              ReusableInfo(isTaxPage: false,
+              isScrollable: false,)
+            ],
+          ),
         ),
       ),
     );
