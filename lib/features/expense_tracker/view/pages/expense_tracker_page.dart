@@ -32,7 +32,6 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    final theme = Theme.of(context).colorScheme;
     final currency = ref.watch(currencyProvider).symbol;
     return Scaffold(
       body: SingleChildScrollView(
@@ -42,7 +41,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               spacerH(),
-              TransactionFilter1(),
+              TransactionFilter(),
               spacerH(10),
               // CurrencyPicker(),
               // spacerH(10),

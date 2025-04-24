@@ -3,8 +3,6 @@ import 'package:budgify/features/expense_tracker/view/pages/all_transaction_page
 import 'package:budgify/features/expense_tracker/view/pages/expense_management_page.dart';
 import 'package:flutter/material.dart';
 import '../../features/expense_tracker/model/tracker_model.dart';
-import '../../features/expense_tracker/view/pages/expense_tracker_home_page.dart';
-import '../../features/expense_tracker/view/pages/invest_and_tax_all_transactions_page.dart';
 import '../../features/expense_tracker/view/pages/more_apps_page.dart';
 import '../../shared/view/widgets/bottom_nav_bar/bottom_nav_bar.dart';
 
@@ -29,9 +27,9 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (context) => const AllTransactionPage());
 
-      case Paths.allTransactionInvestAndTaxPage:
-        return MaterialPageRoute(
-            builder: (context) => const InvestAndTaxAllTransactions());
+      // case Paths.allTransactionInvestAndTaxPage:
+      //   return MaterialPageRoute(
+      //       builder: (context) => const InvestAndTaxAllTransactions());
 
       default:
         return MaterialPageRoute(builder: (context) => const BottomNavBar());

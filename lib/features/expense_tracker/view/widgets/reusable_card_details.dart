@@ -35,10 +35,14 @@ class ReusableCardDetails extends StatelessWidget {
               size: iconSize,
             ),
             spacerW(5),
-            Text(
-              text,
-              style: AppStyles.descriptionPrimary(
-                  context: context, fontSize: 16, color: color),
+            Flexible(
+              child: Text(
+                text,
+                style: AppStyles.descriptionPrimary(
+                    context: context, fontSize: 16, color: color),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

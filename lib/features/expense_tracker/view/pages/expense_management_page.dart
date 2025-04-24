@@ -73,7 +73,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final isShowReturn = selectedValue == ExpenseType.investment.value ||
         selectedValue == ExpenseType.tax.value;
 
-    final String selectedText;
+    final String selectedText
+    ;
     if (selectedValue == ExpenseType.income.value) {
       selectedText = "Add Income";
     } else if (selectedValue == ExpenseType.expense.value) {

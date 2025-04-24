@@ -1,16 +1,11 @@
-import 'package:budgify/features/expense_tracker/view/widgets/transaction_filter/transaction_filter1.dart';
 import 'package:budgify/features/expense_tracker/view/widgets/transaction_info.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../shared/view/widgets/currency_picker.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
-import '../../utils/transaction_type.dart';
-import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
-import '../widgets/custom_drop_down.dart';
+import '../widgets/filters/transaction_filter.dart';
 
 class AllTransactionPage extends StatelessWidget {
   const AllTransactionPage({super.key});
@@ -30,11 +25,11 @@ class AllTransactionPage extends StatelessWidget {
             spacerH(),
             CurrencyPicker(),
             spacerH(10),
-            TransactionFilter1(),
+            TransactionFilter(),
             spacerH(10),
             DateFilter(),
             spacerH(10),
-            TransactionInfo(),
+            TransactionInfo(isScrollable: true,),
           ],
         ),
       ),

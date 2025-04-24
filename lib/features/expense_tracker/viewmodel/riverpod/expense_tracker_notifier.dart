@@ -1,6 +1,8 @@
 import 'package:budgify/features/expense_tracker/model/currency_model.dart';
 import 'package:budgify/features/expense_tracker/model/date_model.dart';
 import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
+import 'package:budgify/features/expense_tracker/utils/investment_type.dart';
+import 'package:budgify/features/expense_tracker/utils/tax_type.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
@@ -152,8 +154,12 @@ final selectedValueProvider = StateProvider<String>((ref) => ExpenseType.income.
 final transactionProvider =
     StateProvider<String>((ref) => TransactionType.allTransactions.value);
 
-final investmentAndTaxProvider =
-    StateProvider<String>((ref) => InvestAndTaxType.investmentAndTax.value);
+final investmentProvider =
+    StateProvider<String>((ref) => InvestmentType.investmentLatestFirst.value);
+
+final taxProvider =
+    StateProvider<String>((ref) => TaxType.taxLatestFirst.value);
+
 
 final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   final filter = ref.watch(transactionProvider);
@@ -200,3 +206,7 @@ final dateProvider = StateProvider<DateModel>((ref) {
     selectedDate: formatDate(DateTime.now()),
   );
 });
+
+
+//final investmentAndTaxProvider =
+//     StateProvider<String>((ref) => InvestAndTaxType.investmentAndTax.value);
