@@ -37,5 +37,4 @@ class TrackerModel {
       DBHelper.columnTrackerPercentage: percentage,
     };
   }
-
 }

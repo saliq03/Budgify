@@ -5,6 +5,8 @@ class InvestmentPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
+    final investmentModel =
+        ref.watch(filteredInvestmentProvider).investmentModel;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -14,7 +16,13 @@ class InvestmentPage extends ConsumerWidget {
               spacerH(),
               InvestmentFilter(),
               spacerH(10),
-              ReusableCardWidget(isTax: false,),
+              ReusableCardWidget(
+                icon: FontAwesomeIcons.sackDollar,
+                section1: CardModel(name: "Current Amount", value: investmentModel.currentAmount ),
+                section2: CardModel(name: "Invested Amount", value: investmentModel.investedAmount),
+                section3: CardModel(name: "Total Returns", value: investmentModel.totalReturns),
+                section4: CardModel(name: "Returns %", value: investmentModel.returnsPercentage),
+              ),
               spacerH(10),
               DateFilter(),
               spacerH(),

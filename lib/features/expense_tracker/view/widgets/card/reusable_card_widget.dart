@@ -1,20 +1,52 @@
+import 'package:budgify/core/theme/app_colors.dart';
+import 'package:budgify/features/expense_tracker/model/card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../../core/theme/app_gradients.dart';
 import '../../../../../shared/view/widgets/global_widgets.dart';
 import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../reusable_card_details.dart';
 
 class ReusableCardWidget extends ConsumerWidget {
-  final bool isTax;
+  final IconData icon;
+  final CardModel section1;
+  final CardModel section2;
+  final CardModel section3;
+  final CardModel section4;
+  final bool isTaxPage;
 
-  const ReusableCardWidget({super.key, this.isTax = false});
+  const ReusableCardWidget({
+    super.key,
+    required this.icon,
+    required this.section1,
+    required this.section2,
+    required this.section3,
+    required this.section4,
+    this.isTaxPage = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currency = ref.watch(currencyProvider).symbol;
     final double w = MediaQuery.of(context).size.width;
+    final double section1value = double.parse(section1.value);
+    final double section2value = double.parse(section2.value);
+    final double section3value = double.parse(section3.value);
+    final double section4value = double.parse(section4.value);
+    final Color section1Color = isTaxPage
+        ? (section1value > 0 ? AppColors.lightRed : Colors.white)
+        : Colors.white;
+    final Color section2Color = isTaxPage
+        ? (section2value > 0 ? AppColors.lightRed : Colors.white)
+        : Colors.white;
+
+    final Color section3Color = isTaxPage
+        ? (section3value > 0 ? AppColors.lightRed : Colors.white)
+        : Colors.white;
+    final Color section4Color = isTaxPage
+        ? (section4value > 0 ? AppColors.lightRed : Colors.white)
+        : Colors.white;
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -37,27 +69,22 @@ class ReusableCardWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: ReusableCardDetails(
-                    color: Colors.white,
-                    text: 'Current Amount',
-                    icon: isTax
-                        ? Icons.receipt_long
-                        : FontAwesomeIcons.sackDollar,
-                    amount: "$currency 0.0",
+                    color: section1Color,
+                    text: section1.name,
+                    icon: icon,
+                    amount: "$currency ${section1.value}",
                     isShow: true,
                     iconSize: 18,
                     onTap: () {},
                   ),
                 ),
                 spacerW(),
-
                 Expanded(
                   child: ReusableCardDetails(
-                    color: Colors.white,
-                    text: isTax ? "Tax Amount" : "Original Amount",
-                    icon: isTax
-                        ? Icons.receipt_long
-                        : FontAwesomeIcons.sackDollar,
-                    amount: "$currency  0.0",
+                    text: section2.name,
+                    color: section2Color,
+                    icon: icon,
+                    amount: "$currency  ${section2.value}",
                     isShow: true,
                     iconSize: 18,
                     onTap: () {},
@@ -71,28 +98,23 @@ class ReusableCardWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: ReusableCardDetails(
-                    color: Colors.white,
-                    text: isTax ? "Total Tax" :"Total Returns",
-                    icon: isTax
-                        ? Icons.receipt_long
-                        : FontAwesomeIcons.sackDollar,
-                    amount: "$currency 0.0",
+                    text: section3.name,
+                    color: section3Color,
+                    icon: icon,
+                    amount: "$currency ${section3.value}",
                     isShow: true,
                     iconSize: 18,
                     onTap: () {},
                   ),
                 ),
-
                 spacerW(),
                 Expanded(
                   child: ReusableCardDetails(
-                    color: Colors.white,
-                    text: isTax ? "Total Tax %" :"Returns %",
-                    icon: isTax
-                        ? Icons.receipt_long
-                        : FontAwesomeIcons.sackDollar,
-                    amount:  "0%",
-                    isShow: true,
+                    text: section4.name,
+                    color: section4Color,
+                    icon: icon,
+                    amount: "${section4.value}%",
+                    isShow: false,
                     iconSize: 18,
                     onTap: () {},
                   ),
@@ -105,6 +127,15 @@ class ReusableCardWidget extends ConsumerWidget {
     );
   }
 }
+// text: 'Current Amount',
+// text: isTaxPage ? "Tax Amount" : "Original Amount",
+// text: isTaxPage ? "Total Tax" : "Total Returns",
+
+// text: isTaxPage ? "Total Tax %" :"Returns %",
+
+//isTaxPage
+//                         ? Icons.receipt_long
+//                         : FontAwesomeIcons.sackDollar,
 
 // Text(
 // "Current Amount",

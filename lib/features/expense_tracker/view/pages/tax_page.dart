@@ -5,6 +5,7 @@ class TaxPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final taxModel = ref.watch(filteredTaxProvider).taxModel;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -14,7 +15,13 @@ class TaxPage extends ConsumerWidget {
               spacerH(),
               TaxFilter(),
               spacerH(10),
-              ReusableCardWidget(isTax: true),
+              ReusableCardWidget(
+                icon: FontAwesomeIcons.sackDollar,
+                section1: CardModel(name: "Net Amount\n(After Tax)", value: taxModel.netAmountAfterTax ),
+                section2: CardModel(name: "Total Tax", value: taxModel.totalTax),
+                section3: CardModel(name: "Taxable Amount", value: taxModel.taxableAmount),
+                section4: CardModel(name: "Tax %", value: taxModel.taxPercentage),
+              ),
               spacerH(10),
               DateFilter(),
               spacerH(),
