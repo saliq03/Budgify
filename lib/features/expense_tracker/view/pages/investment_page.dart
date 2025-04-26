@@ -17,6 +17,7 @@ class InvestmentPage extends ConsumerWidget {
               InvestmentFilter(),
               spacerH(10),
               ReusableCardWidget(
+                isTaxPage: false,
                 icon: FontAwesomeIcons.sackDollar,
                 section1: CardModel(name: "Current Amount", value: investmentModel.currentAmount ),
                 section2: CardModel(name: "Invested Amount", value: investmentModel.investedAmount),

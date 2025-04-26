@@ -17,9 +17,9 @@ class TaxPage extends ConsumerWidget {
               spacerH(10),
               ReusableCardWidget(
                 icon: FontAwesomeIcons.sackDollar,
-                section1: CardModel(name: "Net Amount\n(After Tax)", value: taxModel.netAmountAfterTax ),
-                section2: CardModel(name: "Total Tax", value: taxModel.totalTax),
-                section3: CardModel(name: "Taxable Amount", value: taxModel.taxableAmount),
+                section1: CardModel(name: "After Tax", value: taxModel.netAmountAfterTax ),
+                section2: CardModel(name: "Before Tax", value: taxModel.taxableAmount),
+                section3: CardModel(name: "Total Tax", value: taxModel.totalTax),
                 section4: CardModel(name: "Tax %", value: taxModel.taxPercentage),
               ),
               spacerH(10),

@@ -1,9 +1,11 @@
 import 'package:budgify/core/theme/app_colors.dart';
 import 'package:budgify/features/expense_tracker/model/card_model.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/theme/app_gradients.dart';
 import '../../../../../shared/view/widgets/global_widgets.dart';
+import '../../../model/currency_model.dart';
 import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../reusable_card_details.dart';
 
@@ -25,28 +27,53 @@ class ReusableCardWidget extends ConsumerWidget {
     this.isTaxPage = true,
   });
 
+  Color getSectionColor(double value) {
+    return isTaxPage
+        ? (value > 0 ? AppColors.lightRed : Colors.white)
+        : (value > 0
+            ? AppColors.lightGreen
+            : (value < 0 ?
+             AppColors.lightRed :
+             Colors.white));
+  }
+
+  double getSectionValue(String value) {
+    return double.tryParse(value) ?? 0.0;
+  }
+
+  bool isShowCondition(double value) {
+    return isTaxPage ? false : (value < 0 || value > 0);
+  }
+
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void showCurrencyPickerDialog() {
+      showCurrencyPicker(
+        context: context,
+        showFlag: true,
+        showCurrencyName: true,
+        showCurrencyCode: true,
+        onSelect: (Currency currency) {
+          ref.read(currencyProvider.notifier).state =
+              CurrencyModel.fromJson(currency);
+        },
+      );
+    }
+
     final currency = ref.watch(currencyProvider).symbol;
     final double w = MediaQuery.of(context).size.width;
-    final double section1value = double.parse(section1.value);
-    final double section2value = double.parse(section2.value);
-    final double section3value = double.parse(section3.value);
-    final double section4value = double.parse(section4.value);
-    final Color section1Color = isTaxPage
-        ? (section1value > 0 ? AppColors.lightRed : Colors.white)
-        : Colors.white;
-    final Color section2Color = isTaxPage
-        ? (section2value > 0 ? AppColors.lightRed : Colors.white)
-        : Colors.white;
-
-    final Color section3Color = isTaxPage
-        ? (section3value > 0 ? AppColors.lightRed : Colors.white)
-        : Colors.white;
-    final Color section4Color = isTaxPage
-        ? (section4value > 0 ? AppColors.lightRed : Colors.white)
-        : Colors.white;
-
+    final double section1Value = getSectionValue(section1.value);
+    final double section2Value = getSectionValue(section2.value);
+    final double section3Value = getSectionValue(section3.value);
+    final double section4Value = getSectionValue(section4.value);
+    final Color section1Color =
+        getSectionColor(section4Value);
+    // final Color section2Color = getSectionColor(getSectionValue(section2.value));
+    final Color section3Color =
+        getSectionColor(section3Value);
+    final Color section4Color =
+        getSectionColor(section4Value);
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -72,22 +99,23 @@ class ReusableCardWidget extends ConsumerWidget {
                     color: section1Color,
                     text: section1.name,
                     icon: icon,
-                    amount: "$currency ${section1.value}",
-                    isShow: true,
+                    amount: "$currency ${section1Value.abs()}",
+                    isShow: isShowCondition(section1Value),
+                    isExpense: section3Value < 0,
                     iconSize: 18,
-                    onTap: () {},
+                    onTap: showCurrencyPickerDialog,
                   ),
                 ),
                 spacerW(),
                 Expanded(
                   child: ReusableCardDetails(
                     text: section2.name,
-                    color: section2Color,
+                    color: Colors.white,
                     icon: icon,
-                    amount: "$currency  ${section2.value}",
-                    isShow: true,
+                    amount: "$currency  ${section2Value.abs()}",
+                    isShow: false,
                     iconSize: 18,
-                    onTap: () {},
+                    onTap: showCurrencyPickerDialog,
                   ),
                 ),
               ],
@@ -101,10 +129,11 @@ class ReusableCardWidget extends ConsumerWidget {
                     text: section3.name,
                     color: section3Color,
                     icon: icon,
-                    amount: "$currency ${section3.value}",
-                    isShow: true,
+                    amount: "$currency ${section3Value.abs()}",
+                    isShow: isShowCondition(section3Value),
+                    isExpense: section3Value < 0,
                     iconSize: 18,
-                    onTap: () {},
+                    onTap: showCurrencyPickerDialog,
                   ),
                 ),
                 spacerW(),
@@ -113,10 +142,11 @@ class ReusableCardWidget extends ConsumerWidget {
                     text: section4.name,
                     color: section4Color,
                     icon: icon,
-                    amount: "${section4.value}%",
-                    isShow: false,
+                    amount: "${section4Value.abs()}%",
+                    isShow: isShowCondition(section4Value),
+                    isExpense: section3Value < 0,
                     iconSize: 18,
-                    onTap: () {},
+                    onTap: showCurrencyPickerDialog,
                   ),
                 ),
               ],

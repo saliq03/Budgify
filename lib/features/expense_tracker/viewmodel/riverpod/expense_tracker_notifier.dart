@@ -315,11 +315,12 @@ final filteredTaxProvider = Provider<TaxSummary>((ref) {
   }
 
   for (var tracker in filteredList) {
-    netAmountAfterTax += tracker.amount;
     taxableAmount += tracker.amount;
-    totalTax += tracker.amount * (tracker.percentage / 100);
     taxPercentage += tracker.percentage;
   }
+  taxPercentage = taxPercentage / filteredList.length;
+  totalTax = taxableAmount * (taxPercentage / 100);
+  netAmountAfterTax = taxableAmount - totalTax;
 
   return TaxSummary(
       trackerModel: filteredList,

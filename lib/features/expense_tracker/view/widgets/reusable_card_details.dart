@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/app_styles.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 
@@ -42,6 +41,7 @@ class ReusableCardDetails extends StatelessWidget {
                     context: context, fontSize: 16, color: color),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
             ),
           ],
