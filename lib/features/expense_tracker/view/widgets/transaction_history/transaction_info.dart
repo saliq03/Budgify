@@ -19,7 +19,7 @@ class TransactionInfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final double w = MediaQuery.of(context).size.width;
     final double h = MediaQuery.of(context).size.height;
-    final trackerList = ref.watch(filteredTransactionProvider);
+    final trackerList = ref.watch(filteredTransactionProvider).trackerModel;
     final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
     final currency = ref.watch(currencyProvider).symbol;
     return isLoading

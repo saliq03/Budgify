@@ -60,7 +60,8 @@ class TaxPage extends ConsumerWidget {
         ),
         spacerW(),
         ReusableOutlinedButton(onPressed: () {
-          Navigator.pushNamed(context, Paths.allTransactionPage);
+          Navigator.pushNamed(context, Paths.investmentTaxHistoryPage,
+              arguments: true);
         })
       ],
     );

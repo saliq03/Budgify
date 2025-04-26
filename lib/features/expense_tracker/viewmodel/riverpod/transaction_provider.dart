@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
+import '../../model/transaction_summary.dart';
 import '../../utils/expense_type.dart';
 import '../../utils/transaction_type.dart';
 import 'expense_tracker_notifier.dart';
@@ -8,8 +9,33 @@ import 'expense_tracker_notifier.dart';
 final transactionProvider =
 StateProvider<String>((ref) => TransactionType.allTransactions.value);
 
+final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
 
-final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
+  final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
+  double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
+  final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
+      TransactionType.excludingInvestmentAndTax.value;
+
+  if (isExcludeInvestmentAndTax) {
+    totalBalance = wProvider.totalIncome - wProvider.totalExpense;
+    totalIncome = wProvider.totalIncome;
+    totalExpense = wProvider.totalExpense;
+  } else {
+    totalBalance = wProvider.totalIncome -
+        wProvider.totalExpense +
+        wProvider.investment -
+        wProvider.tax;
+    if (wProvider.investment > 0) {
+      totalIncome += wProvider.investment + wProvider.totalIncome;
+      totalExpense += wProvider.totalExpense - wProvider.tax;
+    } else {
+      totalIncome += wProvider.totalIncome;
+      totalExpense +=
+          wProvider.totalExpense - wProvider.tax - wProvider.investment;
+    }
+  }
+
+
   final filter = ref.watch(transactionProvider);
   final allData = ref.watch(expenseTrackerProvider).trackers;
 
@@ -56,5 +82,11 @@ final filteredTransactionProvider = Provider<List<TrackerModel>>((ref) {
   } else {
     filteredList = allData;
   }
-  return filteredList;
+  return TransactionSummary(
+      trackerModel: filteredList,
+      transactionModel: TransactionModel(
+        income: totalIncome.toStringAsFixed(2),
+        expense: totalExpense.toStringAsFixed(2),
+        totalBalance: totalBalance.toStringAsFixed(2),
+      ));
 });

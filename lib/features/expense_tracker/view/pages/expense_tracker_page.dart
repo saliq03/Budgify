@@ -8,12 +8,25 @@ class ExpenseTrackerPage extends ConsumerStatefulWidget {
 }
 
 class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() {
+  //     ref.read(expenseTrackerProvider.notifier).init();
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(expenseTrackerProvider.notifier).init();
     });
+  }
+
+
+  double getDoubleValue(String value) {
+    return double.tryParse(value) ?? 0.0;
   }
 
   void showCurrencyPickerDialog() {
@@ -72,31 +85,13 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
 
   Widget cardSection(
       final double w, final BuildContext context, final currency) {
-    final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
-    double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
-    final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
-        TransactionType.excludingInvestmentAndTax.value;
+    final transactionInfo =
+        ref.watch(filteredTransactionProvider).transactionModel;
+    double totalBalance = getDoubleValue(transactionInfo.totalBalance),
+        totalIncome = getDoubleValue(transactionInfo.income),
+        totalExpense = getDoubleValue(transactionInfo.expense);
 
-    if (isExcludeInvestmentAndTax) {
-      totalBalance = wProvider.totalIncome - wProvider.totalExpense;
-      totalIncome = wProvider.totalIncome;
-      totalExpense = wProvider.totalExpense;
-    } else {
-      totalBalance = wProvider.totalIncome -
-          wProvider.totalExpense +
-          wProvider.investment -
-          wProvider.tax;
-      if (wProvider.investment > 0) {
-        totalIncome += wProvider.investment + wProvider.totalIncome;
-        totalExpense += wProvider.totalExpense - wProvider.tax;
-      } else {
-        totalIncome += wProvider.totalIncome;
-        totalExpense +=
-            wProvider.totalExpense - wProvider.tax - wProvider.investment;
-      }
-    }
-
-    final zeroBalance = totalIncome ==0 && totalExpense == 0;
+    final zeroBalance = totalIncome == 0 && totalExpense == 0;
     final zeroIncome = totalIncome == 0;
     final zeroExpense = totalExpense == 0;
     final positiveBalance = totalBalance >= 0;
@@ -212,6 +207,32 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     );
   }
 }
+
+
+//
+// final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
+// double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
+// final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
+//     TransactionType.excludingInvestmentAndTax.value;
+//
+// if (isExcludeInvestmentAndTax) {
+//   totalBalance = wProvider.totalIncome - wProvider.totalExpense;
+//   totalIncome = wProvider.totalIncome;
+//   totalExpense = wProvider.totalExpense;
+// } else {
+//   totalBalance = wProvider.totalIncome -
+//       wProvider.totalExpense +
+//       wProvider.investment -
+//       wProvider.tax;
+//   if (wProvider.investment > 0) {
+//     totalIncome += wProvider.investment + wProvider.totalIncome;
+//     totalExpense += wProvider.totalExpense - wProvider.tax;
+//   } else {
+//     totalIncome += wProvider.totalIncome;
+//     totalExpense +=
+//         wProvider.totalExpense - wProvider.tax - wProvider.investment;
+//   }
+// }
 
 // Widget transactionInfo(final ColorScheme theme, final currency) {
 //     final trackerList = ref.watch(filteredTransactionProvider);
