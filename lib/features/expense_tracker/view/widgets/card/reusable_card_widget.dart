@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/theme/app_gradients.dart';
 import '../../../../../shared/view/widgets/global_widgets.dart';
 import '../../../model/currency_model.dart';
-import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../../viewmodel/riverpod/currency_provider.dart';
 import '../reusable_card_details.dart';
 
 class ReusableCardWidget extends ConsumerWidget {
@@ -68,12 +68,12 @@ class ReusableCardWidget extends ConsumerWidget {
     final double section3Value = getSectionValue(section3.value);
     final double section4Value = getSectionValue(section4.value);
     final Color section1Color =
-        getSectionColor(section4Value);
+        getSectionColor(section3Value);
     // final Color section2Color = getSectionColor(getSectionValue(section2.value));
     final Color section3Color =
         getSectionColor(section3Value);
     final Color section4Color =
-        getSectionColor(section4Value);
+        getSectionColor(section3Value);
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -100,8 +100,8 @@ class ReusableCardWidget extends ConsumerWidget {
                     text: section1.name,
                     icon: icon,
                     amount: "$currency ${section1Value.abs()}",
-                    isShow: isShowCondition(section1Value),
-                    isExpense: section3Value < 0,
+                    isShow: false,
+                    // isExpense: section3Value < 0,
                     iconSize: 18,
                     onTap: showCurrencyPickerDialog,
                   ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_styles.dart';
 import '../../../features/expense_tracker/model/currency_model.dart';
-import '../../../features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../../features/expense_tracker/viewmodel/riverpod/currency_provider.dart';
 
 class CurrencyPicker extends ConsumerWidget {
   const CurrencyPicker({super.key});

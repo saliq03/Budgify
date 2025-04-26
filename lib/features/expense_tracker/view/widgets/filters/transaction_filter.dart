@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../utils/transaction_type.dart';
 import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../../viewmodel/riverpod/transaction_provider.dart';
 import '../custom_drop_down.dart';
 
 class TransactionFilter extends StatelessWidget {

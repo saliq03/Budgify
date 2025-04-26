@@ -70,8 +70,6 @@ class ReusableCardDetails extends StatelessWidget {
                   amount,
                   style: AppStyles.headingPrimary(
                       context: context, fontSize: 18, color: color),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 ),
 
               ),

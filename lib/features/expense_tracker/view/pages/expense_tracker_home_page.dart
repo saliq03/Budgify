@@ -16,7 +16,11 @@ import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
 import '../../model/currency_model.dart';
 import '../../utils/transaction_type.dart';
+import '../../viewmodel/riverpod/currency_provider.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../viewmodel/riverpod/investment_provider.dart';
+import '../../viewmodel/riverpod/tax_provider.dart';
+import '../../viewmodel/riverpod/transaction_provider.dart';
 import '../widgets/buttons/reusable_outlined_button.dart';
 import '../widgets/card/reusable_card_widget.dart';
 import '../widgets/drawer/custom_drawer.dart';
@@ -103,16 +107,6 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
               ]))
 
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Paths.expenseManagementPage);
-        },
-        backgroundColor: theme.primary,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
       ),
     );
   }

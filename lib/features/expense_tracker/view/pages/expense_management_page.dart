@@ -13,7 +13,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../model/currency_model.dart';
 import '../../model/tracker_model.dart';
 import '../../utils/expense_type.dart';
+import '../../viewmodel/riverpod/currency_provider.dart';
 import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../viewmodel/riverpod/selected_value_provider.dart';
 import '../widgets/custom_drop_down.dart';
 
 
@@ -47,11 +49,17 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
 
       if(widget.trackerModel!.percentage != 0.0) {
         percentageController.text = widget.trackerModel!.percentage.toString();
+
+        // ref.read(selectedValueProvider.notifier).state =
+        //     ExpenseType.investment.value;
+
+        // ref.read(dateProvider.notifier).state =
+        //     dateRef.copyWith(selectedDate: widget.trackerModel!.date);
       }
 
 
-      // ref.read(dateProvider.notifier).state =
-      //     dateRef.copyWith(selectedDate: widget.trackerModel!.date);
+
+
     }
   }
 

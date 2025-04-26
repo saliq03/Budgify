@@ -7,6 +7,7 @@ class InvestmentPage extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     final investmentModel =
         ref.watch(filteredInvestmentProvider).investmentModel;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -33,6 +34,16 @@ class InvestmentPage extends ConsumerWidget {
               isScrollable: false,)
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
+        },
+        backgroundColor: theme.primary,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
     );

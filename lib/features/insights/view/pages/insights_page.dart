@@ -7,6 +7,7 @@ import 'package:budgify/features/expense_tracker/viewmodel/riverpod/expense_trac
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
+import '../../../expense_tracker/viewmodel/riverpod/currency_provider.dart';
 
 class InsightsPage extends ConsumerStatefulWidget {
   const InsightsPage({super.key});

@@ -2,7 +2,7 @@ import 'package:budgify/features/expense_tracker/utils/investment_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../viewmodel/riverpod/expense_tracker_notifier.dart';
+import '../../../viewmodel/riverpod/investment_provider.dart';
 import '../custom_drop_down.dart';
 
 class InvestmentFilter extends StatelessWidget {

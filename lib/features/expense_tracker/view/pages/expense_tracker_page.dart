@@ -33,6 +33,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     final currency = ref.watch(currencyProvider).symbol;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -54,6 +55,16 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
               TransactionInfo(),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
+        },
+        backgroundColor: theme.primary,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
     );

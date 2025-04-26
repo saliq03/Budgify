@@ -6,6 +6,7 @@ class TaxPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final taxModel = ref.watch(filteredTaxProvider).taxModel;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -31,6 +32,16 @@ class TaxPage extends ConsumerWidget {
                 isScrollable: false,)
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage);
+        },
+        backgroundColor: theme.primary,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
     );

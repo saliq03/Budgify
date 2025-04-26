@@ -1,5 +1,4 @@
 import 'package:budgify/features/expense_tracker/utils/expense_type.dart';
-import 'package:budgify/features/expense_tracker/utils/transaction_type.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
