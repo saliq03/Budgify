@@ -20,6 +20,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
   @override
   Widget build(BuildContext context) {
     final expenseData = ref.watch(expenseTrackerProvider);
+    final totalBalance =
+        expenseData.trackerCategory.totalIncome - expenseData.trackerCategory.totalExpense;
     final currencySymbol = ref.watch(currencyProvider).symbol;
     final theme = Theme.of(context).colorScheme;
 
@@ -45,7 +47,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 series: <CircularSeries>[
                   PieSeries<_ChartData, String>(
                     dataSource: [
-                      _ChartData('$currencySymbol Total Balance', expenseData.trackerCategory.totalBalance),
+                      _ChartData('$currencySymbol Total Balance', totalBalance),
                       _ChartData('Income', expenseData.trackerCategory.totalIncome),
                       _ChartData('Expense', expenseData.trackerCategory.totalExpense),
                     ],
@@ -103,7 +105,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                         x: 2,
                         barRods: [
                           BarChartRodData(
-                            toY: expenseData.trackerCategory.totalBalance,
+                            toY: totalBalance,
                             color: Colors.blue,
                             width: 20,
                           ),
@@ -125,7 +127,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                     dataSource: [
                       _ChartData('Jan', expenseData.trackerCategory.totalIncome),
                       _ChartData('Feb', expenseData.trackerCategory.totalExpense),
-                      _ChartData('Mar', expenseData.trackerCategory.totalBalance),
+                      _ChartData('Mar', totalBalance),
                     ],
                     xValueMapper: (_ChartData data, _) => data.category,
                     yValueMapper: (_ChartData data, _) => data.amount,

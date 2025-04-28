@@ -42,18 +42,18 @@ final filteredInvestmentProvider = Provider<InvestmentSummary>((ref) {
         .where((tracker) =>
     tracker.trackerCategory == ExpenseType.investment.intValue)
         .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+      ..sort((a, b) => b.amount!.compareTo(a.amount!));
   } else if (filter == InvestmentType.investmentLowToHigh.value) {
     filteredList = allData
         .where((tracker) =>
     tracker.trackerCategory == ExpenseType.investment.intValue)
         .toList()
-      ..sort((a, b) => a.amount.compareTo(b.amount));
+      ..sort((a, b) => a.amount!.compareTo(b.amount!));
   }
 
   for (var tracker in filteredList) {
-    investedAmount += tracker.amount;
-    totalReturns += tracker.amount * (tracker.percentage / 100);
+    investedAmount += tracker.amount!;
+    totalReturns += tracker.amount! * (tracker.percentage / 100);
     returnsPercentage += tracker.percentage;
   }
   if(filteredList.isNotEmpty) {

@@ -31,7 +31,6 @@ class AppGradients{
 
     // Color.fromRGBO(38, 18, 125, 1),
     // Color.fromARGB(255, 34, 95, 216),
-
   ];
 
   static List<Color> youtubeGradient= [
@@ -39,6 +38,17 @@ class AppGradients{
     Color.fromARGB(255, 230, 0, 0),
     Color.fromARGB(255, 179, 0, 0),
   ];
+
+  static List<Color> greenGradient=[
+    Colors.green,
+    Colors.green.shade400
+  ];
+
+  static List<Color> skyBlueGradient=[
+    Colors.blue,
+    Colors.blueAccent.shade400
+  ];
+
 
   static List<Color> instagramGradient=[
     Color.fromARGB(255, 193, 53, 132),

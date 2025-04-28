@@ -1,3 +1,4 @@
+import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -35,7 +36,7 @@ class ReusableListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final TrackerModel tl = trackerList[index];
         IconData icon = Icons.arrow_circle_up_outlined;
-        Color color = Colors.green;
+        List<Color> colors = AppGradients.greenGradient;
         double totalReturns = 0;
         double currentAmount = 0;
         double totalTax = 0;
@@ -46,29 +47,31 @@ class ReusableListView extends StatelessWidget {
             tl.trackerCategory == ExpenseType.investment.intValue;
 
         if (isInvestment) {
-          totalReturns = tl.amount * (tl.percentage / 100);
-          currentAmount = tl.amount + totalReturns;
+          totalReturns = tl.amount! * (tl.percentage / 100);
+          currentAmount = tl.amount! + totalReturns;
         } else if (isTax) {
-          totalTax = tl.amount * (tl.percentage / 100);
-          netAmountAfterTax = tl.amount - totalTax;
+          totalTax = tl.amount! * (tl.percentage / 100);
+          netAmountAfterTax = tl.amount! - totalTax;
         }
 
         switch (tl.trackerCategory) {
           case 0:
             icon = Icons.arrow_circle_up_outlined;
-            color = Colors.green;
+            colors = AppGradients.greenGradient;
             break;
           case 1:
             icon = Icons.arrow_circle_down_outlined;
-            color = Colors.red;
+            colors = AppGradients.youtubeGradient;
             break;
           case 3:
             icon = Icons.receipt_long;
-            color = Colors.redAccent;
+            colors = AppGradients.youtubeGradient;
+
             break;
           case 2:
             icon = FontAwesomeIcons.sackDollar;
-            color = Colors.blueAccent;
+            colors = AppGradients.skyBlueGradient;
+
             break;
         }
 
@@ -91,9 +94,15 @@ class ReusableListView extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            CircleAvatar(
-                                backgroundColor: color,
-                                radius: 20,
+                            Container(
+                                width: 42,
+                                height: 42,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: colors,
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight),
+                                    shape: BoxShape.circle),
                                 child: Icon(icon, color: Colors.white)),
                             spacerW(),
                             SizedBox(
@@ -113,7 +122,7 @@ class ReusableListView extends StatelessWidget {
                                           ? "Before Tax:"
                                           : "Invested Amt:",
                                       value:
-                                          "$currency ${tl.amount.toStringAsFixed(2)}",
+                                          "$currency${tl.amount!.toStringAsFixed(2)}",
                                       context: context,
                                       color: theme.onSurface),
                                   spacerH(2),
@@ -121,8 +130,8 @@ class ReusableListView extends StatelessWidget {
                                       title:
                                           isTax ? "After Tax:" : "Current Amt:",
                                       value: isTax
-                                          ? "$currency ${netAmountAfterTax.toStringAsFixed(2)}"
-                                          : "$currency ${currentAmount.toStringAsFixed(2)}",
+                                          ? "$currency${netAmountAfterTax.toStringAsFixed(2)}"
+                                          : "$currency${currentAmount.toStringAsFixed(2)}",
                                       context: context,
                                       color: detailsColors),
                                   spacerH(2),
@@ -131,8 +140,8 @@ class ReusableListView extends StatelessWidget {
                                           ? "Total Return:"
                                           : "Total Tax:",
                                       value: isTax
-                                          ? "$currency ${totalTax.toStringAsFixed(2)}"
-                                          : "$currency ${totalReturns.toStringAsFixed(2)}",
+                                          ? "$currency${totalTax.toStringAsFixed(2)}"
+                                          : "$currency${totalReturns.toStringAsFixed(2)}",
                                       context: context,
                                       color: detailsColors),
                                   spacerH(2),
@@ -146,8 +155,7 @@ class ReusableListView extends StatelessWidget {
                               ),
                             ),
                             Spacer(),
-                            reusableTrailingContent(
-                                tl, theme, context),
+                            reusableTrailingContent(tl, theme, context),
                           ],
                         )
                       ],
@@ -155,7 +163,7 @@ class ReusableListView extends StatelessWidget {
                   )
                 : ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(icon, color: color, size: 40),
+                    leading: Icon(icon, color: colors[0], size: 40),
                     title: Text(
                       tl.title,
                       style: AppStyles.headingPrimary(
@@ -173,24 +181,27 @@ class ReusableListView extends StatelessWidget {
                                         ExpenseType.expense.intValue)
                                 ? Icons.remove
                                 : Icons.add,
-                            color: color,
+                            color: colors[0],
                             size: 20,
                           ),
                         ),
                         spacerW(2),
                         Flexible(
                             child: Text(
-                          "$currency ${tl.amount}",
+                          "$currency${tl.amount}",
                           style: AppStyles.headingPrimary(
                             context: context,
                             fontSize: 17,
-                            color: color,
+                            color: colors[0],
                           ),
                         )),
                       ],
                     ),
-                    trailing:
-                        reusableTrailingContent(tl, theme, context,),
+                    trailing: reusableTrailingContent(
+                      tl,
+                      theme,
+                      context,
+                    ),
                   ),
             const Divider()
           ],
@@ -226,8 +237,7 @@ class ReusableListView extends StatelessWidget {
     );
   }
 
-  Widget reusableTrailingContent(
-      var tl, final theme, final context) {
+  Widget reusableTrailingContent(var tl, final theme, final context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -253,8 +263,11 @@ class ReusableListView extends StatelessWidget {
             Consumer(
               builder: (context, ref, child) => InkWell(
                 onTap: () async {
-                  await ReusableDialogClass.deletedTransactionDialog(context, () {
-                    ref.read(expenseTrackerProvider.notifier).deleteData(tl!.id);
+                  await ReusableDialogClass.deletedTransactionDialog(context,
+                      () {
+                    ref
+                        .read(expenseTrackerProvider.notifier)
+                        .deleteData(tl!.id);
                     Navigator.of(context).pop();
                   });
                 },

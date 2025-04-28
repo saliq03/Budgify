@@ -4,7 +4,7 @@ class TrackerModel {
   int? id;
   String title;
   String date;
-  double amount;
+  double? amount;
   int trackerCategory;
   double percentage;
 

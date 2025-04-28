@@ -1,4 +1,7 @@
+import 'package:budgify/features/expense_tracker/model/card_model.dart';
 import 'package:budgify/features/expense_tracker/model/date_model.dart';
+import 'package:budgify/features/expense_tracker/viewmodel/riverpod/on_changed_value_provider.dart';
+import 'package:budgify/shared/view/widgets/containers/reusable_folded_corner_container.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
@@ -18,7 +21,6 @@ import '../../viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../../viewmodel/riverpod/selected_value_provider.dart';
 import '../widgets/custom_drop_down.dart';
 
-
 class ExpenseManagementPage extends ConsumerStatefulWidget {
   final TrackerModel? trackerModel;
 
@@ -37,7 +39,9 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   @override
   void initState() {
     super.initState();
-    updateValues();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateValues();
+    });
   }
 
   void updateValues() {
@@ -45,21 +49,27 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
       // final dateRef = ref.watch(dateProvider);
 
       titleController.text = widget.trackerModel!.title;
-      amountController.text = widget.trackerModel!.amount.toString();
 
-      if(widget.trackerModel!.percentage != 0.0) {
-        percentageController.text = widget.trackerModel!.percentage.toString();
-
-        // ref.read(selectedValueProvider.notifier).state =
-        //     ExpenseType.investment.value;
-
-        // ref.read(dateProvider.notifier).state =
-        //     dateRef.copyWith(selectedDate: widget.trackerModel!.date);
+      if (widget.trackerModel!.amount != null) {
+        amountController.text = widget.trackerModel!.amount.toString();
       }
 
+      ref.read(selectedValueProvider.notifier).state =
+          ExpenseType.investment.value;
 
+      final selectedExpenseType = ExpenseType.values
+          .firstWhere(
+            (e) => e.intValue == widget.trackerModel!.trackerCategory,
+            orElse: () => ExpenseType.expense, // Default fallback if not found
+          )
+          .value;
 
+      // print("Selected Expense Type: ${selectedExpenseType}");
 
+      ref.read(selectedValueProvider.notifier).state = selectedExpenseType;
+      if (widget.trackerModel!.percentage != 0.0) {
+        percentageController.text = widget.trackerModel!.percentage.toString();
+      }
     }
   }
 
@@ -77,12 +87,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final rProvider = ref.read(currencyProvider.notifier);
     final currency = ref.watch(currencyProvider).symbol;
     final dateRef = ref.watch(dateProvider);
-
+    final isTaxPage = selectedValue == ExpenseType.tax.value;
     final isShowReturn = selectedValue == ExpenseType.investment.value ||
         selectedValue == ExpenseType.tax.value;
 
-    final String selectedText
-    ;
+    final String selectedText;
     if (selectedValue == ExpenseType.income.value) {
       selectedText = "Add Income";
     } else if (selectedValue == ExpenseType.expense.value) {
@@ -95,170 +104,214 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final trackerRProvider = ref.read(expenseTrackerProvider.notifier);
     final double w = MediaQuery.of(context).size.width;
     final theme = Theme.of(context).colorScheme;
+    final onChangedValue = ref.read(onChangeValueProvider);
+    final onChangedProvider= ref.read(onChangedInvestmentTaxProvider);
+
     return Scaffold(
       appBar: ReusableAppBar(
         text: 'Expense Management',
         isCenterText: false,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              spacerH(40),
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
+        child: Column(
+          children: [
+            spacerH(40),
+            Visibility(
+                visible: isShowReturn,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, bottom: 10),
+                  child: ReusableFoldedCornerContainer(
+                    isTaxPage: isTaxPage,
+                    section1: CardModel(
+                        name: isTaxPage ? "After Tax:" : "Current Amount:",
+                        value: "$currency${onChangedProvider.beforeOperationAmount}"),
+                    section2: CardModel(
+                        name: isTaxPage ? "Before Tax:" : "Invested Amount:",
+                        value: "$currency${onChangedProvider.afterOperationAmount}"),
+                    section3: CardModel(
+                        name: isTaxPage ? "Total Tax:" : "Total Returns:",
+                        value: "$currency${onChangedProvider.changedAmount}" ),
+                    section4: CardModel(
+                      name: isTaxPage ? "Tax %:" : "Returns %:",
+                      value: onChangedValue.percentage == "0" || onChangedValue.percentage == ""
+                          ? "0.0%"
+                          : "${onChangedValue.percentage}%",
+                    ),
+                  ),
+                )),
+            spacerH(),
+
+            Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Container(
+                width: w,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  // color: Colors.white,
+                  gradient: LinearGradient(
+                      colors: AppGradients.skyBlueMyAppGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Container(
-                  width: w,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    // color: Colors.white,
-                    gradient: LinearGradient(
-                        colors: AppGradients.skyBlueMyAppGradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        selectedText,
-                        style: AppStyles.headingPrimary(
-                            context: context, color: Colors.white),
-                      ),
-                      spacerH(15),
+                child: Column(
+                  children: [
+                    Text(
+                      selectedText,
+                      style: AppStyles.headingPrimary(
+                          context: context, color: Colors.white),
+                    ),
+                    spacerH(15),
+                    ReusableTextField(
+                      controller: titleController,
+                      hintText: "Enter Title",
+                      prefixIcon: Icons.title_outlined,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 1,
+                    ),
+                    spacerH(),
+                    ReusableTextField(
+                      prefixText: currency,
+                      onTapPrefix: () {
+                        showCurrencyPicker(
+                          context: context,
+                          showFlag: true,
+                          showCurrencyName: true,
+                          showCurrencyCode: true,
+                          onSelect: (Currency currency) {
+                            rProvider.state = CurrencyModel.fromJson(currency);
+                            // print(currency.name);
+                          },
+                        );
+                      },
+                      controller: amountController,
+                      hintText: "Enter Amount",
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*')),
+                        // FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value){
+                        ref.read(onChangeValueProvider.notifier).state =
+                            onChangedValue.copyWith(
+                          beforeOperationAmount: value,
+                          percentage: percentageController.text,
+                          isTaxPage: isTaxPage,
+                        );
+                      },
+                    ),
+                    spacerH(),
+                    SizedBox(
+                      height: 55,
+                      // height: 40,
+                      child: CustomDropDown(
+                          icon: Icons.arrow_drop_down_rounded,
+                          categories:
+                              ExpenseType.values.map((e) => e.value).toList(),
+                          onChanged: (newValue) {
+                            if (newValue != null) {
+                              ref.read(selectedValueProvider.notifier).state =
+                                  newValue;
+                            }
+                          },
+                          selectedValue: selectedValue),
+                    ),
+                    spacerH(),
+                    if (isShowReturn)
                       ReusableTextField(
-                        controller: titleController,
-                        hintText: "Enter Title",
-                        prefixIcon: Icons.title_outlined,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 1,
-                      ),
-                      spacerH(),
-                      ReusableTextField(
-                        prefixText: currency,
-                        onTapPrefix: () {
-                          showCurrencyPicker(
-                            context: context,
-                            showFlag: true,
-                            showCurrencyName: true,
-                            showCurrencyCode: true,
-                            onSelect: (Currency currency) {
-                              rProvider.state =
-                                  CurrencyModel.fromJson(currency);
-                              // print(currency.name);
-                            },
-                          );
-                        },
-                        controller: amountController,
-                        hintText: "Enter Amount",
+                        prefixIcon: Icons.percent,
+                        controller: percentageController,
+                        hintText: "0",
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d*\.?\d*')),
+                            RegExp(r'^-?\d*\.?\d*'),
+                          ),
                           // FilteringTextInputFormatter.digitsOnly,
                         ],
-                      ),
-                      spacerH(),
-                      SizedBox(
-                        height: 55,
-                        // height: 40,
-                        child: CustomDropDown(
-                            icon: Icons.arrow_drop_down_rounded,
-                            categories:
-                                ExpenseType.values.map((e) => e.value).toList(),
-                            onChanged: (newValue) {
-                              if (newValue != null) {
-                                ref.read(selectedValueProvider.notifier).state =
-                                    newValue;
-                              }
-                            },
-                            selectedValue: selectedValue),
-                      ),
-                      spacerH(),
-                      if (isShowReturn)
-                        ReusableTextField(
-                          prefixIcon: Icons.percent,
-                          controller: percentageController,
-                          hintText: "0",
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^-?\d*\.?\d*'),
-                            ),
-                            // FilteringTextInputFormatter.digitsOnly,
-                          ],
-                        ),
-                      if (isShowReturn) spacerH(),
-                      selectDate(w, context, theme, dateRef),
-                      spacerH(),
-                      ElevatedButton(
-                          onPressed: () {
-                            if (amountController.text.isEmpty) {
-                              IconSnackBar.show(
-                                context,
-                                label: "Please enter amount!",
-                                snackBarType: SnackBarType.alert,
+                        onChanged: (value){
+                          ref.read(onChangeValueProvider.notifier).state =
+                              onChangedValue.copyWith(
+                                beforeOperationAmount: value,
+                                percentage: percentageController.text,
+                                isTaxPage: isTaxPage,
                               );
-                              return;
-                            }
-                            if (widget.trackerModel != null) {
-                              trackerRProvider.updateData(
-                                id: widget.trackerModel!.id ?? 0,
-                                title: titleController.text.isEmpty
-                                    ? "Reason unavailable"
-                                    : titleController.text,
-                                percentage: double.parse(
-                                    percentageController.text.isEmpty
-                                        ? "0"
-                                        : percentageController.text),
-                                date: dateRef.selectedDate ??
-                                    formatDate(DateTime.now()),
-                                amount: double.parse(amountController.text),
-                                trackerCategory: ExpenseType.values
-                                    .firstWhere((e) => e.value == selectedValue)
-                                    .intValue,
-                              );
-                            } else {
-                              trackerRProvider.addData(
-                                title: titleController.text.isEmpty
-                                    ? "Reason unavailable"
-                                    : titleController.text,
-                                date: dateRef.selectedDate ??
-                                    formatDate(DateTime.now()),
-                                  percentage: double.parse(
-                                      percentageController.text.isEmpty
-                                          ? "0"
-                                          : percentageController.text),
-                                amount: double.parse(amountController.text),
-                                trackerCategory: ExpenseType.values
-                                    .firstWhere((e) => e.value == selectedValue)
-                                    .intValue,
-                              );
-                            }
-                            Navigator.pop(context);
                           },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(w, 40),
-                            backgroundColor: Color.fromARGB(255, 34, 95, 216),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                      ),
+                    if (isShowReturn) spacerH(),
+                    selectDate(w, context, theme, dateRef),
+                    spacerH(),
+                    ElevatedButton(
+                        onPressed: () {
+                          if (amountController.text.isEmpty) {
+                            IconSnackBar.show(
+                              context,
+                              label: "Please enter amount!",
+                              snackBarType: SnackBarType.alert,
+                            );
+                            return;
+                          }
+                          if (widget.trackerModel != null) {
+                            trackerRProvider.updateData(
+                              id: widget.trackerModel!.id ?? 0,
+                              title: titleController.text.isEmpty
+                                  ? "Reason unavailable"
+                                  : titleController.text,
+                              percentage: double.parse(
+                                  percentageController.text.isEmpty
+                                      ? "0"
+                                      : percentageController.text),
+                              date: dateRef.selectedDate ??
+                                  formatDate(DateTime.now()),
+                              amount: double.parse(amountController.text),
+                              trackerCategory: ExpenseType.values
+                                  .firstWhere((e) => e.value == selectedValue)
+                                  .intValue,
+                            );
+                          } else {
+                            trackerRProvider.addData(
+                              title: titleController.text.isEmpty
+                                  ? "Reason unavailable"
+                                  : titleController.text,
+                              date: dateRef.selectedDate ??
+                                  formatDate(DateTime.now()),
+                              percentage: double.parse(
+                                  percentageController.text.isEmpty
+                                      ? "0"
+                                      : percentageController.text),
+                              amount: double.parse(amountController.text),
+                              trackerCategory: ExpenseType.values
+                                  .firstWhere((e) => e.value == selectedValue)
+                                  .intValue,
+                            );
+                          }
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(w, 40),
+                          backgroundColor: Color.fromARGB(255, 34, 95, 216),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          child: Text(
-                            selectedText,
-                            style: AppStyles.descriptionPrimary(
-                                context: context, color: Colors.white),
-                          ))
-                    ],
-                  ),
+                        ),
+                        child: Text(
+                          selectedText,
+                          style: AppStyles.descriptionPrimary(
+                              context: context, color: Colors.white),
+                        ))
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            spacerH(40),
+
+            spacerH(80),
+          ],
         ),
       ),
     );
@@ -409,153 +462,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
   }
 }
 
-// TableCalendar(
-//   firstDay: DateTime.utc(2020, 1, 1),
-//   lastDay: DateTime.utc(2030, 12, 31),
-//   focusedDay: DateTime.now(),
-//   // focusedDay: _focusedDay,
-//   selectedDayPredicate: (day) {
-//     return false;
-//     // return isSameDay(_selectedDay, day);
-//   },
-//   onDaySelected: (selectedDay, focusedDay) {
-//     setState(() {
-//       // _selectedDay = selectedDay;
-//       // _focusedDay = focusedDay; // update focused day as well
-//     });
-//   },
-// ),
-// Row(
-//   children: [
-//     Expanded(
-//         child: InkWell(
-//           onTap: () {
-//             if (true) {
-//               showCustomDateRangePicker(
-//                 context,
-//                 dismissible: true,
-//                 minimumDate: DateTime.now()
-//                     .subtract(const Duration(days: 3000)),
-//                 maximumDate:
-//                 DateTime.now().add(const Duration(days: 0)),
-//                 // endDate: endDate,
-//                 // startDate: startDate,
-//                 // backgroundColor: bgColor,
-//                 // primaryColor: customColor,
-//                 onApplyClick: (start, end) {
-//                   // setState(() {
-//                   //   endDate = end;
-//                   //   startDate = start;
-//                   // });
-//                 },
-//                 onCancelClick: () {},
-//               );
-//             }
-//           },
-//           child: Card(
-//             elevation: 4,
-//             shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(5)),
-//             child: Container(
-//               height: 40,
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(5),
-//                 // color: selectDate == null
-//                 //     ? startDate == null
-//                 //     ? customColor
-//                 //     : secondaryThemeColor
-//                 //     : Color.fromARGB(255, 114, 114, 114),
-//               ),
-//               padding:
-//               const EdgeInsets.only(left: 10, right: 10),
-//               child: Center(
-//                   child: FittedBox(
-//                       child: Text(
-//                         // (startDate == null)
-//                         //     ?
-//                       "Start Date",
-//                             // : "${getMonth(startDate!.month)} ${startDate!.day},${startDate!.year}",
-//                         style: const TextStyle(
-//                             color: Colors.white,
-//                             fontSize: 14,
-//                             fontWeight: FontWeight.w700),
-//                       ))),
-//             ),
-//           ),
-//         )),
-//     const Text(
-//       " - ",
-//       style: TextStyle(
-//           fontSize: 20,
-//           fontWeight: FontWeight.w700,
-//           color: Colors.black),
-//     ),
-//     Expanded(
-//         child: InkWell(
-//           onTap: () {
-//             if (true) {
-//               showCustomDateRangePicker(
-//                 context,
-//                 dismissible: true,
-//                 minimumDate: DateTime.now()
-//                     .subtract(const Duration(days: 3000)),
-//                 maximumDate:
-//                 DateTime.now().add(const Duration(days: 0)),
-//                 // endDate: endDate,
-//                 // startDate: startDate,
-//                 // backgroundColor: bgColor,
-//                 // primaryColor: customColor,
-//                 onApplyClick: (start, end) {
-//                   // setState(() {
-//                   //   endDate = end;
-//                   //   startDate = start;
-//                   // });
-//                 },
-//                 onCancelClick: () {},
-//               );
-//             }
-//           },
-//           child: Card(
-//             elevation: 4,
-//             shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(5)),
-//             child: Container(
-//               height: 40,
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(5),
-//                 color:
-//                 // selectDate == null
-//                 //     ? endDate == null
-//                 //     ? customColor
-//                 //     : secondaryThemeColor
-//                 //     :
-//                   Color.fromARGB(255, 114, 114, 114),
-//               ),
-//               padding:
-//               const EdgeInsets.only(left: 10, right: 10),
-//               child: Center(
-//                   child: FittedBox(
-//                       child: Text(
-//                         // endDate == null
-//                         //     ?
-//                       "End Date",
-//                             // : "${getMonth(endDate!.month)} ${endDate!.day},${endDate!.year}",
-//                         style: const TextStyle(
-//                             color: Colors.white,
-//                             fontSize: 14,
-//                             fontWeight: FontWeight.w700),
-//                       ))),
-//             ),
-//           ),
-//         )),
-//   ],
-// ),
+class OnChangedValueWidget extends ConsumerWidget {
+  const OnChangedValueWidget({super.key});
 
-// SfDateRangePicker(
-//   selectionMode: DateRangePickerSelectionMode.range,
-//   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-//     print("Selected range: ${args.value}");
-//   },
-// ),
-
-
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container();
+  }
+}

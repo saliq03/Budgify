@@ -14,12 +14,11 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
             trackerCategory: TrackerCategory(
               totalIncome: 0.0,
               totalExpense: 0.0,
-              totalBalance: 0.0,
               investment: 0.0,
               tax: 0.0,
             )));
   Ref ref;
-  bool isLoading = true;
+  bool isLoading = false;
   DBHelper dbHelper = DBHelper();
   Database? database;
   double totalIncome = 0.0;
@@ -91,32 +90,38 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     double totalTax = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    final rProvider = ref.read(dateProvider);
+    final rProvider = ref.watch(dateProvider);
 
     List<TrackerModel> filteredList = [];
     if (rProvider.startDateFilter == null) {
+
+      print("Start Date: ${rProvider.startDateFilter}");
+      print("End Date: ${rProvider.endDateFilter}");
       filteredList = list.reversed.toList();
+
     } else {
+      print("Start Date: ${rProvider.startDateFilter}");
+      print("End Date: ${rProvider.endDateFilter}");
       DateTime startDate = parseDate(rProvider.startDateFilter!);
       // DateTime startDate = DateTime.now().subtract(Duration(days: 30));
       DateTime endDate = parseDate(rProvider.endDateFilter!);
-
       filteredList = list.where((tracker) {
         DateTime trackerDate = parseDate(tracker.date);
         return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
             trackerDate.isBefore(endDate.add(Duration(days: 1)));
       }).toList();
+      filteredList = list.reversed.toList();
     }
 
     for (var tracker in filteredList) {
       if (tracker.trackerCategory == ExpenseType.expense.intValue) {
-        totalExpense += tracker.amount;
+        totalExpense += tracker.amount!;
       } else if (tracker.trackerCategory == ExpenseType.investment.intValue) {
-        totalInvestment += tracker.amount;
+        totalInvestment += tracker.amount!;
       } else if (tracker.trackerCategory == ExpenseType.tax.intValue) {
-        totalTax += tracker.amount;
+        totalTax += tracker.amount!;
       } else {
-        totalIncome += tracker.amount;
+        totalIncome += tracker.amount!;
       }
     }
 
@@ -125,7 +130,6 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
       trackerCategory: TrackerCategory(
         totalIncome: totalIncome,
         totalExpense: totalExpense,
-        totalBalance: (totalIncome - totalExpense) + totalInvestment - totalTax,
         investment: totalInvestment,
         tax: totalTax,
       ),

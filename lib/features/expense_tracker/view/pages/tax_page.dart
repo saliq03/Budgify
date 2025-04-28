@@ -6,7 +6,6 @@ class TaxPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final taxModel = ref.watch(filteredTaxProvider).taxModel;
-    final theme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -17,7 +16,7 @@ class TaxPage extends ConsumerWidget {
               TaxFilter(),
               spacerH(10),
               ReusableCardWidget(
-                icon: FontAwesomeIcons.sackDollar,
+                icon: Icons.receipt_long,
                 section1: CardModel(name: "After Tax", value: taxModel.netAmountAfterTax ),
                 section2: CardModel(name: "Before Tax", value: taxModel.taxableAmount),
                 section3: CardModel(name: "Total Tax", value: taxModel.totalTax),
@@ -34,16 +33,30 @@ class TaxPage extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Paths.expenseManagementPage);
-        },
-        backgroundColor: theme.primary,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
+      floatingActionButton:
+      ReusableFloatingActionButton(onTap: (){
+        Navigator.pushNamed(context, Paths.expenseManagementPage,
+            arguments: TrackerModel(title: '', date: '', amount: null
+                , trackerCategory: ExpenseType.tax.intValue, percentage: 0) );
+
+      }, icon:  Icons.receipt_long, colors: AppGradients.youtubeGradient)
+
+
+      //floatingActionButton: InkWell(
+      //         onTap: (){
+      //           Navigator.pushNamed(context, Paths.expenseManagementPage,
+      //               arguments: TrackerModel(title: '', date: '', amount: null
+      //                   , trackerCategory: ExpenseType.tax.intValue, percentage: 0) );
+      //         },
+      //         child: CircleAvatar(
+      //           backgroundColor: Colors.red.shade400,
+      //           radius: 25,
+      //           child: const Icon(
+      //             Icons.receipt_long,
+      //             color: Colors.white,
+      //           ),
+      //         ),
+      //       )
     );
   }
   Widget taxHistory(BuildContext context) {

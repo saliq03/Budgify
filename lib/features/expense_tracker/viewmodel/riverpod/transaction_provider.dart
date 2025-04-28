@@ -46,7 +46,7 @@ final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
         .where((tracker) =>
     tracker.trackerCategory == ExpenseType.expense.intValue)
         .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+      ..sort((a, b) => b.amount!.compareTo(a.amount!));
   } else if (filter == TransactionType.excludingInvestmentAndTax.value) {
     filteredList = allData
         .where((tracker) =>
@@ -58,7 +58,7 @@ final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
         .where((tracker) =>
     tracker.trackerCategory == ExpenseType.expense.intValue)
         .toList()
-      ..sort((a, b) => a.amount.compareTo(b.amount));
+      ..sort((a, b) => a.amount!.compareTo(b.amount!));
   } else if (filter == TransactionType.transactionsNewestToOldest.value) {
     filteredList = allData.toList()
       ..sort((a, b) =>
@@ -68,13 +68,13 @@ final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
         .where(
             (tracker) => tracker.trackerCategory == ExpenseType.income.intValue)
         .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+      ..sort((a, b) => b.amount!.compareTo(a.amount!));
   } else if (filter == TransactionType.leastIncome.value) {
     filteredList = allData
         .where(
             (tracker) => tracker.trackerCategory == ExpenseType.income.intValue)
         .toList()
-      ..sort((a, b) => a.amount.compareTo(b.amount));
+      ..sort((a, b) => a.amount!.compareTo(b.amount!));
   } else if (filter == TransactionType.transactionsOldestToNewest.value) {
     filteredList = allData.toList()
       ..sort((a, b) =>

@@ -1,12 +1,16 @@
-import 'package:budgify/features/expense_tracker/view/widgets/transaction_history/transaction_info.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/routes/paths.dart';
+import '../../../../core/theme/app_gradients.dart';
 import '../../../../shared/view/widgets/currency_picker.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
+import '../../model/tracker_model.dart';
+import '../../utils/expense_type.dart';
 import '../widgets/filters/investment_filter.dart';
 import '../widgets/filters/tax_filter.dart';
+import '../widgets/reusable_floating_action_button.dart';
 import '../widgets/transaction_history/reusable_info.dart';
 
 class InvestmentTaxHistoryPage extends StatelessWidget {
@@ -16,40 +20,50 @@ class InvestmentTaxHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: ReusableAppBar(
-        text: isTaxPage ? "Tax History" : "Investment History",
-        isCenterText: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            spacerH(),
-            CurrencyPicker(),
-            spacerH(10),
-            isTaxPage ? TaxFilter() : InvestmentFilter(),
-            spacerH(10),
-            DateFilter(),
-            spacerH(10),
-            ReusableInfo(
-              isTaxPage: isTaxPage,
-              isScrollable: true,
-            )
-          ],
+        appBar: ReusableAppBar(
+          text: isTaxPage ? "Tax History" : "Investment History",
+          isCenterText: false,
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Paths.expenseManagementPage);
-        },
-        backgroundColor: theme.primary,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              spacerH(),
+              CurrencyPicker(),
+              spacerH(10),
+              isTaxPage ? TaxFilter() : InvestmentFilter(),
+              spacerH(10),
+              DateFilter(),
+              spacerH(10),
+              ReusableInfo(
+                isTaxPage: isTaxPage,
+                isScrollable: true,
+              )
+            ],
+          ),
         ),
-      ),
+        floatingActionButton: isTaxPage
+            ? ReusableFloatingActionButton(onTap: () {
+          Navigator.pushNamed(context, Paths.expenseManagementPage,
+              arguments: TrackerModel(title: '',
+                  date: '',
+                  amount: null,
+                  trackerCategory: ExpenseType.tax.intValue,
+                  percentage: 0));
+        }, icon: Icons.receipt_long, colors: AppGradients.youtubeGradient)
+            : ReusableFloatingActionButton(
+            onTap: () {
+              Navigator.pushNamed(context, Paths.expenseManagementPage,
+                  arguments: TrackerModel(
+                      title: '',
+                      date: '',
+                      amount: null,
+                      trackerCategory: ExpenseType.investment.intValue,
+                      percentage: 0));
+            },
+            icon: FontAwesomeIcons.sackDollar,
+            colors: AppGradients.skyBlueGradient)
     );
   }
 }

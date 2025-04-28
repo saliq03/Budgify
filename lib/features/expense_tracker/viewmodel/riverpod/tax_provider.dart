@@ -42,19 +42,19 @@ final filteredTaxProvider = Provider<TaxSummary>((ref) {
     filteredList = allData
         .where((tracker) => tracker.trackerCategory == ExpenseType.tax.intValue)
         .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+      ..sort((a, b) => b.amount!.compareTo(a.amount!));
   } else if (filter == TaxType.taxLowToHigh.value) {
     filteredList = allData
         .where((tracker) => tracker.trackerCategory == ExpenseType.tax.intValue)
         .toList()
-      ..sort((a, b) => a.amount.compareTo(b.amount));
+      ..sort((a, b) => a.amount!.compareTo(b.amount!));
   } else {
     filteredList = allData;
   }
 
   for (var tracker in filteredList) {
-    taxableAmount += tracker.amount;
-    totalTax += tracker.amount * (tracker.percentage / 100);
+    taxableAmount += tracker.amount!;
+    totalTax += tracker.amount! * (tracker.percentage / 100);
     taxPercentage += tracker.percentage;
   }
   if(filteredList.isNotEmpty) {
