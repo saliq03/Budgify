@@ -90,6 +90,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final isTaxPage = selectedValue == ExpenseType.tax.value;
     final isShowReturn = selectedValue == ExpenseType.investment.value ||
         selectedValue == ExpenseType.tax.value;
+    var percentageValue =
+        double.tryParse(percentageController.text) ?? 0.0;
 
     final String selectedText;
     if (selectedValue == ExpenseType.income.value) {
@@ -105,7 +107,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final double w = MediaQuery.of(context).size.width;
     final theme = Theme.of(context).colorScheme;
     final onChangedValue = ref.read(onChangeValueProvider);
-    final onChangedProvider= ref.read(onChangedInvestmentTaxProvider);
+    final onChangedProvider = ref.read(onChangedInvestmentTaxProvider);
 
     return Scaffold(
       appBar: ReusableAppBar(
@@ -124,23 +126,25 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                     isTaxPage: isTaxPage,
                     section1: CardModel(
                         name: isTaxPage ? "After Tax:" : "Current Amount:",
-                        value: "$currency${onChangedProvider.beforeOperationAmount}"),
+                        value:
+                            "$currency${onChangedProvider.beforeOperationAmount}"),
                     section2: CardModel(
                         name: isTaxPage ? "Before Tax:" : "Invested Amount:",
-                        value: "$currency${onChangedProvider.afterOperationAmount}"),
+                        value:
+                            "$currency${onChangedProvider.afterOperationAmount}"),
                     section3: CardModel(
                         name: isTaxPage ? "Total Tax:" : "Total Returns:",
-                        value: "$currency${onChangedProvider.changedAmount}" ),
+                        value: "$currency${onChangedProvider.changedAmount}"),
                     section4: CardModel(
                       name: isTaxPage ? "Tax %:" : "Returns %:",
-                      value: onChangedValue.percentage == "0" || onChangedValue.percentage == ""
+                      value: onChangedValue.percentage == "0" ||
+                              onChangedValue.percentage == ""
                           ? "0.0%"
                           : "${onChangedValue.percentage}%",
                     ),
                   ),
                 )),
             spacerH(),
-
             Card(
               elevation: 4,
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -167,11 +171,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                     ),
                     spacerH(15),
                     ReusableTextField(
+                      maxLines: 5,
                       controller: titleController,
                       hintText: "Enter Title",
                       prefixIcon: Icons.title_outlined,
                       keyboardType: TextInputType.multiline,
-                      maxLines: 1,
                     ),
                     spacerH(),
                     ReusableTextField(
@@ -196,7 +200,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             RegExp(r'^\d*\.?\d*')),
                         // FilteringTextInputFormatter.digitsOnly,
                       ],
-                      onChanged: (value){
+                      onChanged: (value) {
                         ref.read(onChangeValueProvider.notifier).state =
                             onChangedValue.copyWith(
                           beforeOperationAmount: value,
@@ -234,14 +238,14 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           ),
                           // FilteringTextInputFormatter.digitsOnly,
                         ],
-                        onChanged: (value){
+                        onChanged: (value) {
                           ref.read(onChangeValueProvider.notifier).state =
                               onChangedValue.copyWith(
-                                beforeOperationAmount: value,
-                                percentage: percentageController.text,
-                                isTaxPage: isTaxPage,
-                              );
-                          },
+                            beforeOperationAmount: value,
+                            percentage: percentageController.text,
+                            isTaxPage: isTaxPage,
+                          );
+                        },
                       ),
                     if (isShowReturn) spacerH(),
                     selectDate(w, context, theme, dateRef),
@@ -256,7 +260,22 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                             );
                             return;
                           }
-                          if (widget.trackerModel != null) {
+
+                          if(isTaxPage && percentageValue < 0.0) {
+                            // percentageValue =percentageValue.abs();
+                            // percentageController.text = percentageValue.toString();
+                            IconSnackBar.show(
+                              context,
+                              label: "Tax cannot be negative!",
+                              snackBarType: SnackBarType.alert,
+                            );
+                            return;
+                          }
+
+
+
+                          ///It is a special condition because when we add value then while navigating amount will always be null and if we update value then amount can not be possibly null.
+                          if (widget.trackerModel!.amount != null) {
                             trackerRProvider.updateData(
                               id: widget.trackerModel!.id ?? 0,
                               title: titleController.text.isEmpty
@@ -309,7 +328,6 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
               ),
             ),
             spacerH(40),
-
             spacerH(80),
           ],
         ),

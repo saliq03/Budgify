@@ -162,7 +162,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     child: InkWell(
                   onTap: showCurrencyPickerDialog,
                   child: Text(
-                    "$currency ${totalBalance.abs()}",
+                    "$currency${totalBalance.abs()}",
                     style: AppStyles.headingPrimary(
                         context: context,
                         fontSize: 30,
@@ -180,7 +180,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     color: incomeColor,
                     text: "Income",
                     icon: Icons.arrow_circle_up_outlined,
-                    amount: "$currency $totalIncome",
+                    amount: "$currency$totalIncome",
                     isShow: !zeroIncome,
                     onTap: showCurrencyPickerDialog,
                   ),
@@ -191,7 +191,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     color: expenseColor,
                     text: "Expense",
                     icon: Icons.arrow_circle_down_outlined,
-                    amount: "$currency $totalExpense",
+                    amount: "$currency${totalExpense.abs()}",
                     isShow: !zeroExpense,
                     isExpense: true,
                     onTap: showCurrencyPickerDialog,

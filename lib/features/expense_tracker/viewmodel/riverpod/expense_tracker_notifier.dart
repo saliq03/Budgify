@@ -95,13 +95,13 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     List<TrackerModel> filteredList = [];
     if (rProvider.startDateFilter == null) {
 
-      print("Start Date: ${rProvider.startDateFilter}");
-      print("End Date: ${rProvider.endDateFilter}");
+      // print("Start Date: ${rProvider.startDateFilter}");
+      // print("End Date: ${rProvider.endDateFilter}");
       filteredList = list.reversed.toList();
 
     } else {
-      print("Start Date: ${rProvider.startDateFilter}");
-      print("End Date: ${rProvider.endDateFilter}");
+      // print("Start Date: ${rProvider.startDateFilter}");
+      // print("End Date: ${rProvider.endDateFilter}");
       DateTime startDate = parseDate(rProvider.startDateFilter!);
       // DateTime startDate = DateTime.now().subtract(Duration(days: 30));
       DateTime endDate = parseDate(rProvider.endDateFilter!);

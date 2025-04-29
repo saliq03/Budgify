@@ -79,6 +79,7 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
       keyboardType: widget.keyboardType,
       inputFormatters: widget.inputFormatters,
       textAlignVertical: TextAlignVertical.center,
+      minLines: 1,
       decoration: InputDecoration(
         prefixIcon: widget.prefixText != null || widget.prefixIcon != null
             ? InkWell(
