@@ -1,6 +1,8 @@
+import 'package:budgify/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_styles.dart';
 import '../../../features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
 import 'global_widgets.dart';
 
@@ -37,7 +39,6 @@ void showCustomDateRangePicker(
   );
 }
 
-
 class CustomDateRangePicker extends ConsumerStatefulWidget {
   final DateTime minimumDate;
   final DateTime maximumDate;
@@ -63,7 +64,8 @@ class CustomDateRangePicker extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CustomDateRangePicker> createState() => CustomDateRangePickerState();
+  ConsumerState<CustomDateRangePicker> createState() =>
+      CustomDateRangePickerState();
 }
 
 class CustomDateRangePickerState extends ConsumerState<CustomDateRangePicker>
@@ -92,8 +94,7 @@ class CustomDateRangePickerState extends ConsumerState<CustomDateRangePicker>
 
   @override
   Widget build(BuildContext context) {
-
-    final rProvider= ref.read(dateProvider.notifier);
+    final rProvider = ref.read(dateProvider.notifier);
     return Center(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -183,7 +184,7 @@ class CustomDateRangePickerState extends ConsumerState<CustomDateRangePicker>
                                   height: 4,
                                 ),
                                 Text(
-                                widget.initialEndDate != null
+                                  widget.initialEndDate != null
                                       ? formatDate(widget.initialEndDate!)
                                       : '--/-- ',
                                   style: TextStyle(
@@ -208,101 +209,152 @@ class CustomDateRangePickerState extends ConsumerState<CustomDateRangePicker>
                         primaryColor: widget.primaryColor,
                         startEndDateChange:
                             (DateTime startDateData, DateTime endDateData) {
-
                           setState(() {
                             startDate = startDateData;
                             endDate = endDateData;
                           });
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 45,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(24.0)),
-                                ),
-                                child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: widget.primaryColor,
-                                    side:
-                                        BorderSide(color: widget.primaryColor),
-                                    shape: const RoundedRectangleBorder(
+                      Consumer(
+                        builder: (context, ref, child) {
+                          return Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 45,
+                                    decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(24.0)),
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    try {
-                                      widget.onCancelClick();
-                                      Navigator.pop(context);
-                                    } catch (_) {}
-                                  },
-                                  child: const Center(
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18,
-                                        color: Colors.white,
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.all(5),
+                                        backgroundColor: Colors.red,
+                                        side: BorderSide(color: Colors.red),
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(24.0)),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        var rProvider =ref.read(dateProvider.notifier);
+                                        rProvider.state =
+                                            rProvider.state.copyWith(
+                                          startDateFilter: null,
+                                        );
+
+                                        try {
+
+                                          // widget.onCancelClick();
+                                          Navigator.pop(context);
+                                        } catch (_) {}
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Reset',
+                                          style: AppStyles.descriptionPrimary(
+                                              fontSize: 14,
+                                              context: context,
+                                              color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Container(
-                                height: 48,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(24.0)),
-                                ),
-                                child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: widget.primaryColor,
-                                    side:
-                                        BorderSide(color: widget.primaryColor),
-                                    shape: const RoundedRectangleBorder(
+                                spacerW(15),
+                                Expanded(
+                                  child: Container(
+                                    height: 45,
+                                    decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(24.0)),
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    try {
-
-
-                                      rProvider.state = rProvider.state.copyWith(
-                                        startDateFilter: formatDate(startDate!),
-                                        endDateFilter: formatDate(endDate!),
-                                      );
-
-                                      print("Start Date: ${rProvider.state.startDateFilter}");
-                                      print("End Date: ${rProvider.state.endDateFilter}");
-
-                                      Navigator.pop(context);
-                                    } catch (_) {}
-                                  },
-                                  child: const Center(
-                                    child: Text(
-                                      'Apply',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18,
-                                        color: Colors.white,
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.all(5),
+                                        backgroundColor: widget.primaryColor,
+                                        side: BorderSide(
+                                            color: widget.primaryColor),
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(24.0)),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        try {
+                                          widget.onCancelClick();
+                                          Navigator.pop(context);
+                                        } catch (_) {}
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Cancel',
+                                          style: AppStyles.descriptionPrimary(
+                                              fontSize: 14,
+                                              context: context,
+                                              color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Container(
+                                    height: 48,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(24.0)),
+                                    ),
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.all(5),
+                                        backgroundColor: Colors.green,
+                                        side: BorderSide(color: Colors.green),
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(24.0)),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        try {
+                                          rProvider.state =
+                                              rProvider.state.copyWith(
+                                            startDateFilter:
+                                                formatDate(startDate!),
+                                            endDateFilter: formatDate(endDate!),
+                                          );
+
+                                          // print("Start Date: ${rProvider.state.startDateFilter}");
+                                          // print("End Date: ${rProvider.state.endDateFilter}");
+
+                                          Navigator.pop(context);
+                                        } catch (_) {}
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Apply',
+                                          style: AppStyles.descriptionPrimary(
+                                              fontSize: 14,
+                                              context: context,
+                                              color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       )
                     ],
                   ),
@@ -438,7 +490,7 @@ class CustomCalendarState extends State<CustomCalendar> {
                 child: Center(
                   child: Text(
                     // "Current Month"
-                    formatCalendarDate(currentMonthDate) ,
+                    formatCalendarDate(currentMonthDate),
                     // DateFormat('MMMM, yyyy').format(currentMonthDate),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,

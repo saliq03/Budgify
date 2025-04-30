@@ -479,12 +479,3 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     );
   }
 }
-
-class OnChangedValueWidget extends ConsumerWidget {
-  const OnChangedValueWidget({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container();
-  }
-}

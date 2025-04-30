@@ -5,7 +5,10 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../features/my_budget/model/my_budget_model.dart';
+
 class DBHelper {
+  ///Table 1:
   static const String trackerTableName = "tracker";
   static const String columnTrackerId = "t_id";
   static const String columnTrackerTitle = "t_title";
@@ -13,6 +16,19 @@ class DBHelper {
   static const String columnTrackerAmount = "t_amount";
   static const String columnTrackerCategory = "t_category";
   static const String columnTrackerPercentage = "t_percentage";
+
+  ///Table 2:
+  // static const String investmentTableName = "emi_loans";
+  // static const String columnInvestmentId = "el_id";
+  // static const String columnInvestmentTitle = "el_title";
+  // static const String columnInvestmentDate = "el_date";
+
+  ///Table 3:
+  static const String myBudgetTableName = "my_budget";
+  static const String columnMyBudgetId = "mb_id";
+  static const String columnMyBudgetTitle = "mb_title";
+  static const String columnMyBudgetDate = "mb_date";
+  static const String columnMyBudgetDescription = "mb_description";
 
   // Private constructor
   DBHelper._private();
@@ -47,6 +63,14 @@ class DBHelper {
             $columnTrackerPercentage REAL
           )
         ''');
+        await db.execute('''
+          CREATE TABLE $myBudgetTableName (
+            $columnMyBudgetId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnMyBudgetTitle TEXT,
+            $columnMyBudgetDate TEXT,
+            $columnMyBudgetDescription TEXT
+          )
+        ''');
 
         // await db.insert(trackerTableName, {
         //   columnTrackerTitle: "Sample Income",
@@ -65,6 +89,8 @@ class DBHelper {
     );
   }
 
+  /// Table 1:
+  /// Add Tracker Data
   Future<bool> addTrackerData(TrackerModel tracker) async {
     try {
       Database mDB = await getDB();
@@ -77,7 +103,7 @@ class DBHelper {
       return false;
     }
   }
-
+  /// Fetch Tracker Data
   Future<List<TrackerModel>> fetchTrackerData() async {
     try {
       Database mDB = await getDB();
@@ -91,7 +117,7 @@ class DBHelper {
       return [];
     }
   }
-
+  /// Update Tracker Data
   Future<bool> updateTrackerData(TrackerModel tracker) async {
     try {
       Database mDB = await getDB();
@@ -105,7 +131,7 @@ class DBHelper {
       return false;
     }
   }
-
+  /// Delete Tracker Data
   Future<bool> deleteTrackerData(int id) async {
     try {
       Database mDB = await getDB();
@@ -119,4 +145,63 @@ class DBHelper {
       return false;
     }
   }
+
+  /// Table 3:
+ /// Add My Budget Data
+  Future<bool> addMyBudgetData(MyBudgetModel myBudget) async {
+    try {
+      Database mDB = await getDB();
+      int rowsEffected =
+          await mDB.insert(myBudgetTableName, myBudget.toMap());
+      return rowsEffected > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in adding data: $e");
+      }
+      return false;
+    }
+  }
+  /// Fetch My Budget Data
+  Future<List<MyBudgetModel>> fetchMyBudgetData() async {
+    try {
+      Database mDB = await getDB();
+      List<Map<String, dynamic>> myBudgetData =
+          await mDB.query(myBudgetTableName);
+      return myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in fetching data: $e");
+      }
+      return [];
+    }
+  }
+  /// Update My Budget Data
+  Future<bool> updateMyBudgetData(MyBudgetModel myBudget) async {
+    try {
+      Database mDB = await getDB();
+      int rowsEffected = await mDB.update(myBudgetTableName, myBudget.toMap(),
+          where: "$columnMyBudgetId = ?", whereArgs: [myBudget.id]);
+      return rowsEffected > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in updating data: $e");
+      }
+      return false;
+    }
+  }
+  /// Delete My Budget Data
+  Future<bool> deleteMyBudgetData(int id) async {
+    try {
+      Database mDB = await getDB();
+      int rowsEffected = await mDB.delete(myBudgetTableName,
+          where: "$columnMyBudgetId = ?", whereArgs: [id]);
+      return rowsEffected > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in deleting data: $e");
+      }
+      return false;
+    }
+  }
+
 }
