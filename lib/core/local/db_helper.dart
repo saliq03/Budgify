@@ -153,6 +153,7 @@ class DBHelper {
       Database mDB = await getDB();
       int rowsEffected =
           await mDB.insert(myBudgetTableName, myBudget.toMap());
+      print("rowsEffected: $rowsEffected");
       return rowsEffected > 0;
     } catch (e) {
       if (kDebugMode) {

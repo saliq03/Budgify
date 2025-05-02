@@ -1,7 +1,5 @@
-import 'package:budgify/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../core/theme/app_styles.dart';
 import '../../../features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
 import 'global_widgets.dart';

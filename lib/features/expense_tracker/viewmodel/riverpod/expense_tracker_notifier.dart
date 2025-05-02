@@ -17,6 +17,13 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
               investment: 0.0,
               tax: 0.0,
             )));
+
+  // {
+  //   ref.listen<DateModel>(dateProvider, (previous, next) {
+  //     fetchData(); // This will be triggered whenever dateProvider changes
+  //   });
+  // }
+
   Ref ref;
   bool isLoading = false;
   DBHelper dbHelper = DBHelper();
@@ -90,20 +97,21 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     double totalTax = 0.0;
 
     List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    final rProvider = ref.watch(dateProvider);
-
+    // final wProvider = ref.watch(dateProvider);
+    final rProvider = ref.read(dateProvider);
+    //
     List<TrackerModel> filteredList = [];
-    if (rProvider.startDateFilter == null) {
-
+    // if (wProvider.startDateFilter == null) {
+    //
+    //   // print("Start Date: ${rProvider.startDateFilter}");
+    //   // print("End Date: ${rProvider.endDateFilter}");
+    //   filteredList = list.reversed.toList();
+    //
+    // } else {
       // print("Start Date: ${rProvider.startDateFilter}");
       // print("End Date: ${rProvider.endDateFilter}");
-      filteredList = list.reversed.toList();
-
-    } else {
-      // print("Start Date: ${rProvider.startDateFilter}");
-      // print("End Date: ${rProvider.endDateFilter}");
-      DateTime startDate = parseDate(rProvider.startDateFilter!);
-      // DateTime startDate = DateTime.now().subtract(Duration(days: 30));
+      // DateTime startDate = parseDate(rProvider.startDateFilter!);
+      DateTime startDate = DateTime.now().subtract(Duration(days:5));
       DateTime endDate = parseDate(rProvider.endDateFilter!);
       filteredList = list.where((tracker) {
         DateTime trackerDate = parseDate(tracker.date);
@@ -111,7 +119,7 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
             trackerDate.isBefore(endDate.add(Duration(days: 1)));
       }).toList();
       filteredList = list.reversed.toList();
-    }
+    // }
 
     for (var tracker in filteredList) {
       if (tracker.trackerCategory == ExpenseType.expense.intValue) {

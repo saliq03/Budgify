@@ -26,6 +26,8 @@ class MyBudgetNotifier extends StateNotifier<List<MyBudgetModel>> {
       required String description}) async {
     bool isValueAdded = await dbHelper.addMyBudgetData(
         MyBudgetModel(title: title, date: date, description: description));
+    // print("isValueAdded");
+    // print(isValueAdded);
     if (isValueAdded) {
       fetchData();
     }
