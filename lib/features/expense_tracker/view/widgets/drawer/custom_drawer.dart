@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/static_assets.dart';
 import '../../../../../core/theme/app_gradients.dart';
@@ -7,7 +8,7 @@ import '../../../../../shared/view/widgets/reusable_circular_image.dart';
 import '../../../data/drawer_contents.dart';
 import 'drawer_tile.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({required this.h, required this.w, super.key});
 
   final double h;
@@ -15,7 +16,7 @@ class CustomDrawer extends StatelessWidget {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     return Container(
       width: w,
       height: h,
@@ -61,13 +62,13 @@ class CustomDrawer extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context,index){
-              var value = drawerContentsList(context)[index];
+              var value = drawerContentsList(context,ref)[index];
               return DrawerTile(
                 onTap: value.onTap,
                 icon: value.icon,
                 title: value.title,
               );
-            },itemCount: drawerContentsList(context).length,),
+            },itemCount: drawerContentsList(context,ref).length,),
             spacerH(160),
           ],
         ),

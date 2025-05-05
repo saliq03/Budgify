@@ -5,4 +5,5 @@ class Paths {
   static const String expenseManagementPage = '/expense_management_page';
   static const String allTransactionPage = '/all_transaction_page';
   static const String investmentTaxHistoryPage = '/investment_tax_history_page';
+  static const String budgetManagementPage = '/budget_management_page';
 }

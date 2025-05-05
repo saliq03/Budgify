@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../../../../features/emi_and_loans/view/pages/emi_and_loans.dart';
 import '../../../../features/expense_tracker/view/pages/expense_tracker_home_page.dart';
-import '../../../../features/my_budget/view/pages/budget_management_page.dart';
 import '../../../../features/my_budget/view/pages/my_budget_page.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -55,6 +54,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
           ],
         ),
+
+        // body: bottomBarPages[currentPage],
         bottomNavigationBar: SalomonBottomBar(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           items: bottomNavBarItems(context),

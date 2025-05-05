@@ -35,12 +35,12 @@ class ReusableDialogClass {
     );
   }
 
-  static Future<bool> deletedTransactionDialog(BuildContext context,VoidCallback onClick) async {
+  static Future<bool> deletedEntryDialog({required BuildContext context,required VoidCallback onClick,String text="transaction"}) async {
     return await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => ReusableDialog(
-        dialogTitle:  "Are you sure you want to delete transaction?",
+        dialogTitle:  "Are you sure you want to delete $text?",
         dialogRowItem1: DialogYesNoButton(
           text: 'Yes',
           fontSize: 16,

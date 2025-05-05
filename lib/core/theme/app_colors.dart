@@ -27,8 +27,10 @@ class AppColors{
   static const Color babyBlue = Color(0xff81deea);
   static const Color lightRed =Color(0xFFFFCDD2);
   static const Color lightGreen= Color(0xFFB6E7B8);
+  static const Color lightGreen2 = Color(0xFF26B8A1);
   static const Color redPink = Color(0xfff48fb1);
   static const Color violet = Color(0xffcf94da);
   static const Color deepPurple = Color(0xFF673AB7);
+  static const Color lightPurple = Color(0xFFB29BE3);
 
 }

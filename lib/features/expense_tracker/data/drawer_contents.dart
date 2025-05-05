@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
@@ -7,7 +8,7 @@ import '../../../core/constants/constants.dart';
 import '../model/drawer_model.dart';
 import '../view/widgets/dialog/reusable_dialog_class.dart';
 
-List<DrawerModel> drawerContentsList(BuildContext context) => [
+List<DrawerModel> drawerContentsList(BuildContext context, WidgetRef ref) => [
       DrawerModel(
           title: "Connect",
           icon: Icons.person,
@@ -39,7 +40,8 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
           icon: Icons.feedback_outlined,
           onTap: () {
             openUrl(
-                url: "mailto:mysteriouscoderofficial@gmail.com?subject=Feedback",
+                url:
+                    "mailto:mysteriouscoderofficial@gmail.com?subject=Feedback",
                 context: context,
                 isExternal: true);
             Navigator.pop(context);
@@ -54,6 +56,24 @@ List<DrawerModel> drawerContentsList(BuildContext context) => [
                 context: context);
             Navigator.pop(context);
           }),
+      // DrawerModel(
+      //     title: "Change Currency",
+      //     icon: Icons.currency_exchange,
+      //     onTap: () {
+      //       Navigator.pop(context);
+      //
+      //       showCurrencyPicker(
+      //         context: context,
+      //         showFlag: true,
+      //         showCurrencyName: true,
+      //         showCurrencyCode: true,
+      //         onSelect: (Currency currency) {
+      //           ref.read(currencyProvider.notifier).state =
+      //               CurrencyModel.fromJson(currency);
+      //           // print(currency.name);
+      //         },
+      //       );
+      //     }),
       DrawerModel(
           title: "Privacy Policy",
           icon: Icons.privacy_tip,

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:budgify/features/my_budget/model/my_budget_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,6 +12,7 @@ class MyBudgetNotifier extends StateNotifier<List<MyBudgetModel>> {
 
   Future<void> init() async {
     await getDB();
+    await fetchData();
     isLoading = false;
   }
 
@@ -22,10 +24,11 @@ class MyBudgetNotifier extends StateNotifier<List<MyBudgetModel>> {
   Future<void> addData(
       {required String title,
       required String date,
+      required Color color,
       // required int colorCode,
       required String description}) async {
-    bool isValueAdded = await dbHelper.addMyBudgetData(
-        MyBudgetModel(title: title, date: date, description: description));
+    bool isValueAdded = await dbHelper.addMyBudgetData(MyBudgetModel(
+        title: title, date: date, description: description, color: color));
     // print("isValueAdded");
     // print(isValueAdded);
     if (isValueAdded) {
@@ -36,11 +39,16 @@ class MyBudgetNotifier extends StateNotifier<List<MyBudgetModel>> {
   Future<void> updateData(
       {required int id,
       required String title,
-      // required String date,
+      required Color color,
+      required String date,
       // required int colorCode,
       required String description}) async {
     bool isValueAdded = await dbHelper.updateMyBudgetData(MyBudgetModel(
-        id: id, title: title, date: "", description: description));
+        id: id,
+        title: title,
+        date: date,
+        description: description,
+        color: color));
     if (isValueAdded) {
       fetchData();
     }
@@ -59,8 +67,7 @@ class MyBudgetNotifier extends StateNotifier<List<MyBudgetModel>> {
   }
 }
 
-
 final myBudgetProvider =
-StateNotifierProvider<MyBudgetNotifier, List<MyBudgetModel>>(
-      (ref) => MyBudgetNotifier(),
+    StateNotifierProvider<MyBudgetNotifier, List<MyBudgetModel>>(
+  (ref) => MyBudgetNotifier(),
 );

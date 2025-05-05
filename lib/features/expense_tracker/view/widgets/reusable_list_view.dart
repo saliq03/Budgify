@@ -263,7 +263,7 @@ class ReusableListView extends StatelessWidget {
             Consumer(
               builder: (context, ref, child) => InkWell(
                 onTap: () async {
-                  await ReusableDialogClass.deletedTransactionDialog(context,
+                  await ReusableDialogClass.deletedEntryDialog(context: context, onClick:
                       () {
                     ref
                         .read(expenseTrackerProvider.notifier)

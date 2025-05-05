@@ -1,34 +1,77 @@
-
+import 'package:flutter/material.dart';
 import '../../../core/local/db_helper.dart';
+import '../../../core/theme/app_colors.dart';
 
-class MyBudgetModel{
-    final int? id;
-    final String title;
-    final String date;
-    final String description;
+class MyBudgetModel {
+  final int? id;
+  final String title;
+  final String date;
+  final String description;
+  final Color color;
 
-    MyBudgetModel({
-      this.id,
-      required this.title,
-      required this.date,
-      required this.description,
-    });
+  MyBudgetModel({
+    this.id,
+    required this.title,
+    required this.date,
+    required this.description,
+    required this.color,
+  });
 
-    factory MyBudgetModel.fromMap(Map<String, dynamic> map) {
-      return MyBudgetModel(
-        id: map[DBHelper.columnMyBudgetId],
-        title: map[DBHelper.columnMyBudgetTitle],
-        date: map[DBHelper.columnMyBudgetDate],
-        description: map[DBHelper.columnMyBudgetDescription],
-      );
+  factory MyBudgetModel.fromMap(Map<String, dynamic> map) {
+    int intColor = map[DBHelper.columnMyBudgetColor];
+    Color color = Colors.transparent;
+
+    if (intColor == 0) {
+      color = AppColors.lightGreen;
+    } else if (intColor == 1) {
+      color = AppColors.redPink;
+    } else if (intColor == 2) {
+      color = AppColors.lightPurple;
+    } else if (intColor == 3) {
+      color = AppColors.redOrange;
+    } else if (intColor == 4) {
+      color = AppColors.violet;
+    } else {
+      color = AppColors.lightGreen2;
     }
 
-    Map<String,dynamic> toMap() {
-      return {
-        DBHelper.columnMyBudgetTitle: title,
-        DBHelper.columnMyBudgetDate: date,
-        DBHelper.columnMyBudgetDescription: description,
-      };
+    return MyBudgetModel(
+      id: map[DBHelper.columnMyBudgetId],
+      title: map[DBHelper.columnMyBudgetTitle],
+      date: map[DBHelper.columnMyBudgetDate],
+      description: map[DBHelper.columnMyBudgetDescription],
+      color: color,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    int intColor = 0;
+    if (color == AppColors.lightGreen) {
+      intColor = 0;
+    } else if (color == AppColors.redPink) {
+      intColor = 1;
+    } else if (color == AppColors.lightPurple) {
+      intColor = 2;
+    } else if (color == AppColors.redOrange) {
+      intColor = 3;
+    } else if (color == AppColors.violet) {
+      intColor = 4;
+    } else {
+      intColor = 5;
     }
 
+    return {
+      DBHelper.columnMyBudgetTitle: title,
+      DBHelper.columnMyBudgetDate: date,
+      DBHelper.columnMyBudgetDescription: description,
+      DBHelper.columnMyBudgetColor: intColor,
+    };
+  }
 }
+
+//  SelectedColor(color: AppColors.lightGreen, onTap: () {}),
+//   SelectedColor(color: AppColors.redPink, onTap: () {}),
+//   SelectedColor(color: AppColors.lightPurple, onTap: () {}),
+//   SelectedColor(color: AppColors.redOrange, onTap: () {}),
+//   SelectedColor(color: AppColors.violet, onTap: () {}),
+//   SelectedColor(color: AppColors.lightGreen2, onTap: () {}),

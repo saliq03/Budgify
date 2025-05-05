@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-
 import '../../features/my_budget/model/my_budget_model.dart';
 
 class DBHelper {
@@ -29,6 +28,7 @@ class DBHelper {
   static const String columnMyBudgetTitle = "mb_title";
   static const String columnMyBudgetDate = "mb_date";
   static const String columnMyBudgetDescription = "mb_description";
+  static const String columnMyBudgetColor = "mb_color";
 
   // Private constructor
   DBHelper._private();
@@ -68,7 +68,8 @@ class DBHelper {
             $columnMyBudgetId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnMyBudgetTitle TEXT,
             $columnMyBudgetDate TEXT,
-            $columnMyBudgetDescription TEXT
+            $columnMyBudgetDescription TEXT,
+            $columnMyBudgetColor INTEGER
           )
         ''');
 
@@ -153,7 +154,6 @@ class DBHelper {
       Database mDB = await getDB();
       int rowsEffected =
           await mDB.insert(myBudgetTableName, myBudget.toMap());
-      print("rowsEffected: $rowsEffected");
       return rowsEffected > 0;
     } catch (e) {
       if (kDebugMode) {
@@ -168,7 +168,10 @@ class DBHelper {
       Database mDB = await getDB();
       List<Map<String, dynamic>> myBudgetData =
           await mDB.query(myBudgetTableName);
+      print("myBudgetData: $myBudgetData");
+      print(myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList());
       return myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList();
+
     } catch (e) {
       if (kDebugMode) {
         print("Error in fetching data: $e");
