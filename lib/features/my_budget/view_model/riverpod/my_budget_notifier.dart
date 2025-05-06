@@ -3,6 +3,7 @@ import 'package:budgify/features/my_budget/model/my_budget_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/local/db_helper.dart';
+import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../utils/budget_filters_type.dart';
 import 'budget_filter_provider.dart';
 
@@ -79,21 +80,19 @@ final filteredMyBudgetProvider = StateProvider<List<MyBudgetModel>>((ref) {
   final budgetFilters = ref.watch(budgetFilterProvider);
   final filter1 = budgetFilters.filter1;
   final filter2 = budgetFilters.filter2;
-  List<MyBudgetModel> filteredList = myBudgetList;
+  List<MyBudgetModel> filteredList = [...myBudgetList];
 
   ///Filter by date
   if (filter1 == Filter1Type.datetime.value) {
     ///Filter by date ascending
     if (filter2 == Filter2Type.ascending.value) {
-
-      // filteredList=[];
-
-      // filteredList.sort((a, b) => a.date.compareTo(b.date));
+      filteredList.sort((a, b) => getDateTimeFromString(b.date)
+          .compareTo(getDateTimeFromString(a.date)));
     }
-
     ///Filter by date descending
     else {
-      // filteredList=[];
+      filteredList.sort((a, b) => getDateTimeFromString(a.date)
+          .compareTo(getDateTimeFromString(b.date)));
     }
   }
 
@@ -101,14 +100,12 @@ final filteredMyBudgetProvider = StateProvider<List<MyBudgetModel>>((ref) {
   else {
     ///Filter by title ascending
     if (filter2 == Filter2Type.ascending.value) {
-
-     // filteredList.sort((a, b) => a.title.compareTo(b.title));
+      filteredList.sort((a, b) => a.title.compareTo(b.title));
     }
 
     ///Filter by title descending
     else {
-      filteredList.reversed.toList();
-
+      filteredList.sort((a, b) => b.title.compareTo(a.title));
     }
   }
 

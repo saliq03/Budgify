@@ -168,8 +168,8 @@ class DBHelper {
       Database mDB = await getDB();
       List<Map<String, dynamic>> myBudgetData =
           await mDB.query(myBudgetTableName);
-      print("myBudgetData: $myBudgetData");
-      print(myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList());
+      // print("myBudgetData: $myBudgetData");
+      // print(myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList());
       return myBudgetData.map((e) => MyBudgetModel.fromMap(e)).toList();
 
     } catch (e) {

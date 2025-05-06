@@ -69,3 +69,24 @@ DateTime parseDate(String date) {
     int.parse(parts[0]), // Day
   );
 }
+
+///For the My Budget Page
+DateTime getDateTimeFromString(String date) {
+  List<String> dateList = date.split(' | ');
+  var amPm = dateList[1].split(' ')[1];
+  var hour = int.parse(dateList[1].split(':')[0]);
+
+ if(amPm =="PM" && hour != 12)
+    {
+    hour = hour + 12;
+    }
+  var dateTime = DateTime(
+    int.parse(dateList[0].split('/')[0]),
+    int.parse(dateList[0].split('/')[1]),
+    int.parse(dateList[0].split('/')[2]),
+    hour,
+    int.parse(dateList[1].split(':')[1]),
+    int.parse(dateList[1].split(':')[2].substring(0, 2)),
+  );
+  return dateTime;
+}

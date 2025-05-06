@@ -10,8 +10,8 @@ final transactionProvider =
 StateProvider<String>((ref) => TransactionType.allTransactions.value);
 
 final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
+  final wProvider = ref.watch(expenseTrackerDateFiltered).trackerCategory;
 
-  final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
   double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
   final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
       TransactionType.excludingInvestmentAndTax.value;

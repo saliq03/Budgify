@@ -57,15 +57,15 @@ class AppGradients{
   ];
 
   static List<Color> facebookGradient=[
-    Color.fromARGB(255, 59, 89, 152),
-    Color.fromARGB(255, 59, 89, 152),
-    Color.fromARGB(255, 59, 89, 152),
+    Color.fromARGB(255, 66, 103, 178),
+    Color.fromARGB(255, 58, 89, 152),
+    Color.fromARGB(255, 44, 62, 103),
   ];
 
   static List<Color> linkedInGradient=[
     Color.fromARGB(255, 0, 119, 181),
-    Color.fromARGB(255, 0, 119, 181),
-    Color.fromARGB(255, 0, 119, 181),
+    Color.fromARGB(255, 26, 145, 218),
+    Color.fromARGB(255, 21, 114, 171),
   ];
 
 

@@ -7,8 +7,18 @@ import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
 import '../../model/tracker_summary.dart';
 
+// Date Provider
+final dateProvider = StateProvider<DateModel>((ref) {
+  return DateModel(
+    // startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
+    endDateFilter: formatDate(DateTime.now()),
+    selectedDate: formatDate(DateTime.now()),
+  );
+});
+
+// Expense Notifier
 class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
-  ExpenseTrackerNotifier(this.ref)
+  ExpenseTrackerNotifier()
       : super(TrackerSummary(
             trackers: [],
             trackerCategory: TrackerCategory(
@@ -18,13 +28,6 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
               tax: 0.0,
             )));
 
-  // {
-  //   ref.listen<DateModel>(dateProvider, (previous, next) {
-  //     fetchData(); // This will be triggered whenever dateProvider changes
-  //   });
-  // }
-
-  Ref ref;
   bool isLoading = false;
   DBHelper dbHelper = DBHelper();
   Database? database;
@@ -96,30 +99,8 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
     double totalInvestment = 0.0;
     double totalTax = 0.0;
 
-    List<TrackerModel> list = await dbHelper.fetchTrackerData();
-    // final wProvider = ref.watch(dateProvider);
-    final rProvider = ref.read(dateProvider);
-    //
-    List<TrackerModel> filteredList = [];
-    // if (wProvider.startDateFilter == null) {
-    //
-    //   // print("Start Date: ${rProvider.startDateFilter}");
-    //   // print("End Date: ${rProvider.endDateFilter}");
-    //   filteredList = list.reversed.toList();
-    //
-    // } else {
-      // print("Start Date: ${rProvider.startDateFilter}");
-      // print("End Date: ${rProvider.endDateFilter}");
-      // DateTime startDate = parseDate(rProvider.startDateFilter!);
-      DateTime startDate = DateTime.now().subtract(Duration(days:5));
-      DateTime endDate = parseDate(rProvider.endDateFilter!);
-      filteredList = list.where((tracker) {
-        DateTime trackerDate = parseDate(tracker.date);
-        return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
-            trackerDate.isBefore(endDate.add(Duration(days: 1)));
-      }).toList();
-      filteredList = list.reversed.toList();
-    // }
+    final List<TrackerModel> list = await dbHelper.fetchTrackerData();
+    final List<TrackerModel> filteredList = list.reversed.toList();
 
     for (var tracker in filteredList) {
       if (tracker.trackerCategory == ExpenseType.expense.intValue) {
@@ -148,13 +129,72 @@ class ExpenseTrackerNotifier extends StateNotifier<TrackerSummary> {
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProvider =
     StateNotifierProvider<ExpenseTrackerNotifier, TrackerSummary>(
-  (ref) => ExpenseTrackerNotifier(ref),
+  (ref) => ExpenseTrackerNotifier(),
+  // (ref) => ExpenseTrackerNotifier()..init(),
 );
 
-final dateProvider = StateProvider<DateModel>((ref) {
-  return DateModel(
-    // startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
-    endDateFilter: formatDate(DateTime.now()),
-    selectedDate: formatDate(DateTime.now()),
-  );
+
+
+
+final expenseTrackerDateFiltered = StateProvider<TrackerSummary>((ref) {
+  final wProvider = ref.watch(dateProvider);
+  final trackersCategory = ref.watch(expenseTrackerProvider).trackerCategory;
+  final allData = ref.watch(expenseTrackerProvider).trackers;
+
+  final List<TrackerModel> filteredList;
+
+  if (wProvider.startDateFilter != null) {
+    DateTime startDate = parseDate(wProvider.startDateFilter!);
+    DateTime endDate = parseDate(wProvider.endDateFilter!);
+   print("Start Date: ${wProvider.startDateFilter}");
+    print("End Date: ${wProvider.endDateFilter}");
+
+
+    filteredList = allData.where((tracker) {
+      DateTime trackerDate = parseDate(tracker.date);
+      return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+          trackerDate.isBefore(endDate.add(Duration(days: 1)));
+    }).toList();
+
+  } else {
+    filteredList = allData;
+  }
+
+  return TrackerSummary(
+      trackers: filteredList, trackerCategory: trackersCategory);
 });
+
+//nal wProvider = ref.watch(dateProvider);
+//   List<TrackerModel> filteredList = [];
+//   if (wProvider.startDateFilter != null) {
+//   DateTime startDate = parseDate(wProvider.startDateFilter!);
+//   DateTime endDate = parseDate(wProvider.endDateFilter!);
+//
+//   filteredList = allData.where((tracker) {
+//     DateTime trackerDate = parseDate(tracker.date);
+//     return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+//         trackerDate.isBefore(endDate.add(Duration(days: 1)));
+//   }).toList();
+//   }
+
+//
+// } else {
+//   // print("Start Date: ${rProvider.startDateFilter}");
+//   // print("End Date: ${rProvider.endDateFilter}");
+//   DateTime startDate = parseDate(rProvider.startDateFilter!);
+//   // DateTime startDate = DateTime.now().subtract(Duration(days:3));
+//   DateTime endDate = parseDate(rProvider.endDateFilter!);
+//   filteredList = list.where((tracker) {
+//     DateTime trackerDate = parseDate(tracker.date);
+//     // return trackerDate.isAfter(startDate) &&
+//     //     trackerDate.isBefore(endDate);
+//     return trackerDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+//         trackerDate.isBefore(endDate.add(Duration(days: 1)));
+//   }).toList();
+// }
+
+// {
+//   ref.listen<DateModel>(dateProvider, (previous, next) {
+//     fetchData(); // This will be triggered whenever dateProvider changes
+//   });
+// }
