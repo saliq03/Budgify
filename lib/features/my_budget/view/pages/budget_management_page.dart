@@ -1,4 +1,5 @@
 import 'package:budgify/core/theme/app_gradients.dart';
+import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/features/expense_tracker/view/widgets/reusable_floating_action_button.dart';
 import 'package:budgify/features/my_budget/view_model/riverpod/selected_color_provider.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
@@ -55,6 +56,22 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
     var selectedColor = ref.watch(selectedColorProvider);
     var selectedColorRProvider = ref.read(selectedColorProvider.notifier);
     var rProvider = ref.read(myBudgetProvider.notifier);
+
+    ///DateTime format
+    final List dateTime = DateTime.now().toString().split(".")[0].split(" ");
+    dateTime[0] = dateTime[0].replaceAll("-", "/");
+    var twelveHoursSystem = int.parse(dateTime[1].substring(0, 2));
+    if (twelveHoursSystem == 12) {
+      dateTime[1] = "${dateTime[1]} PM";
+    } else if (twelveHoursSystem > 12) {
+      twelveHoursSystem = twelveHoursSystem - 12;
+      dateTime[1] =
+          "$twelveHoursSystem${dateTime[1].substring(2, dateTime[1].length)} PM";
+    } else {
+      dateTime[1] = "${dateTime[1]} AM";
+    }
+    final dateTimeString = "${dateTime[0]} | ${dateTime[1]}";
+
     return Scaffold(
       appBar: ReusableAppBar(
         text: "Budget Management",
@@ -63,6 +80,7 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
       backgroundColor: selectedColor,
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: 65,
@@ -105,6 +123,18 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
                   }),
             ),
             spacerH(10),
+
+            ///It shows previous date if we are in the update mode but if we are in the add mode it shows current date
+            Padding(
+              padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
+              child: Text(
+                  widget.myBudgetModel != null
+                      ? widget.myBudgetModel!.date
+                      : dateTimeString,
+                  style: AppStyles.descriptionPrimary(
+                      context: context, color: Colors.black, fontSize: 15)),
+            ),
+            spacerH(10),
             ReusableTextField(
               controller: titleController,
               hintText: "Heading",
@@ -136,6 +166,8 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
                     snackBarType: SnackBarType.alert);
                 return;
               }
+
+              /// In both add and update mode, current date is used to save in database.
               /// If we are in the update mode
               if (widget.myBudgetModel != null) {
                 rProvider.updateData(
@@ -143,13 +175,13 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
                     title: titleController.text,
                     color: selectedColor,
                     description: descriptionController.text,
-                    date: widget.myBudgetModel!.date);
+                    date: dateTimeString);
               } else {
                 /// If we are in the add mode
                 rProvider.addData(
                     color: selectedColor,
                     title: titleController.text,
-                    date: DateTime.now().toString().split(" ")[0],
+                    date: dateTimeString,
                     description: descriptionController.text);
               }
               Navigator.pop(context);

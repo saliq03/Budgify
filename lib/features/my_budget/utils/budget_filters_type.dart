@@ -1,13 +1,13 @@
 enum Filter1Type {
   title,
-  date;
+  datetime;
 
   String get value {
     switch (this) {
       case Filter1Type.title:
         return 'Title';
-      case Filter1Type.date:
-        return 'Date';
+      case Filter1Type.datetime:
+        return 'DateTime';
     }
   }
 }

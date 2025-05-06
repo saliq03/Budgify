@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //mutable
 final budgetFilterProvider = StateProvider<BudgetFilterModel>((ref) =>
     BudgetFilterModel(
-      filter1: Filter1Type.title.value,
+      filter1: Filter1Type.datetime.value,
       filter2: Filter2Type.ascending.value,
     ));
 

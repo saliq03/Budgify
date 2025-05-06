@@ -57,34 +57,21 @@ class ReusableFoldedCornerContainer2 extends ConsumerWidget {
             child: CustomPaint(
               painter: FoldedCornerPainter(color: color),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 22),
+                padding: const EdgeInsets.only(
+                    left: 15, right: 15, top: 20, bottom: 15),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              title,
-                              style: AppStyles.headingPrimary(
-                                  context: context,
-                                  fontSize: 18,
-                                  color: Colors.black),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          spacerW(10),
-                          Text(
-                            date.toString().split(" ")[0],
-                            style: AppStyles.descriptionPrimary(
-                                context: context,
-                                fontSize: 12,
-                                color: Colors.black),
-                          ),
-                        ],
+                      Text(
+                        title,
+                        style: AppStyles.headingPrimary(
+                            context: context,
+                            fontSize: 18,
+                            color: Colors.black),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+
                       spacerH(5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,11 +104,21 @@ class ReusableFoldedCornerContainer2 extends ConsumerWidget {
                             child: Icon(
                               Icons.delete,
                               color: Colors.black,
-                              size: 22,
+                              size: 25,
                             ),
                           ),
                         ],
                       ),
+                      spacerH(10),
+                      Text(
+                        date,
+                        style: AppStyles.descriptionPrimary(
+                            context: context,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black),
+                      ),
+
                     ]),
               ),
             ),
