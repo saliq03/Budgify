@@ -103,7 +103,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     } else {
       selectedText = "Add Tax";
     }
-    final trackerRProvider = ref.read(expenseTrackerProvider.notifier);
+    final trackerRProvider = ref.read(expenseTrackerProviderOriginal.notifier);
     final double w = MediaQuery.of(context).size.width;
     final theme = Theme.of(context).colorScheme;
     final onChangedValue = ref.read(onChangeValueProvider);

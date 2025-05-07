@@ -13,7 +13,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(expenseTrackerProvider.notifier).init();
+      ref.read(expenseTrackerProviderOriginal.notifier).init();
     });
     //   Future.microtask(() {
     //     ref.read(expenseTrackerProvider.notifier).init();

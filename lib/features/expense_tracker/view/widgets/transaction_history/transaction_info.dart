@@ -20,7 +20,7 @@ class TransactionInfo extends ConsumerWidget {
     final double w = MediaQuery.of(context).size.width;
     final double h = MediaQuery.of(context).size.height;
     final trackerList = ref.watch(filteredTransactionProvider).trackerModel;
-    final isLoading = ref.watch(expenseTrackerProvider.notifier).isLoading;
+    final isLoading = ref.watch(expenseTrackerProviderOriginal.notifier).isLoading;
     final currency = ref.watch(currencyProvider).symbol;
     return isLoading
         ? SizedBox(

@@ -15,7 +15,9 @@ class DateFilter extends ConsumerWidget {
       children: [
         Expanded(
             child: ShowDate(
-          date: wProvider.startDateFilter ?? "Start Date",
+          date: wProvider.startDateFilter == wProvider.endDateFilter
+              ? "Start Date"
+              : wProvider.startDateFilter!,
           startDate: wProvider.startDateFilter ?? wProvider.endDateFilter!,
           endDate: wProvider.endDateFilter ?? "End Date",
         )),
@@ -86,11 +88,15 @@ class ShowDate extends StatelessWidget {
                   color: Colors.white,
                   size: 20,
                 ),
-                spacerW(8),
-                Text(
-                  date,
-                  style: AppStyles.descriptionPrimary(
-                      context: context, color: Colors.white, fontSize: 15),
+                spacerW(5),
+                Flexible(
+                  child: Text(
+                    date,
+                    style: AppStyles.descriptionPrimary(
+                        context: context, color: Colors.white, fontSize: 15),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

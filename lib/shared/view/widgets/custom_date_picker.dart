@@ -237,17 +237,16 @@ class CustomDateRangePickerState extends ConsumerState<CustomDateRangePicker>
                                         ),
                                       ),
                                       onPressed: () {
-                                        var rProvider =ref.read(dateProvider.notifier);
-                                        rProvider.state =
-                                            rProvider.state.copyWith(
-                                          startDateFilter: null,
-                                        );
-
                                         try {
-
-                                          // widget.onCancelClick();
-                                          Navigator.pop(context);
+                                          rProvider.state = rProvider.state
+                                              .copyWith(
+                                                  startDateFilter: formatDate(
+                                                      DateTime.now()),
+                                                  // startDateFilter: formatDate(DateTime.now().subtract(Duration(days: 30))),
+                                                  endDateFilter: formatDate(
+                                                      DateTime.now()));
                                         } catch (_) {}
+                                        Navigator.pop(context);
                                       },
                                       child: Center(
                                         child: Text(

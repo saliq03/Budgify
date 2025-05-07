@@ -1,3 +1,4 @@
+import 'package:budgify/shared/view/widgets/currency_picker.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
@@ -36,6 +37,11 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            spacerH(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: CurrencyPicker(),
+            ),
             spacerH(),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),

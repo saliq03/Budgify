@@ -266,7 +266,7 @@ class ReusableListView extends StatelessWidget {
                   await ReusableDialogClass.deletedEntryDialog(context: context, onClick:
                       () {
                     ref
-                        .read(expenseTrackerProvider.notifier)
+                        .read(expenseTrackerProviderOriginal.notifier)
                         .deleteData(tl!.id);
                     Navigator.of(context).pop();
                   });
