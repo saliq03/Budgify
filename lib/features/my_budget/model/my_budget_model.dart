@@ -31,8 +31,10 @@ class MyBudgetModel {
       color = AppColors.redOrange;
     } else if (intColor == 4) {
       color = AppColors.violet;
-    } else {
+    } else if(intColor == 5) {
       color = AppColors.lightGreen2;
+    } else { // intColor == 6
+      color = AppColors.lightBlue;
     }
 
     return MyBudgetModel(
@@ -56,8 +58,10 @@ class MyBudgetModel {
       intColor = 3;
     } else if (color == AppColors.violet) {
       intColor = 4;
-    } else {
+    } else if (color == AppColors.lightGreen2) {
       intColor = 5;
+    } else {
+      intColor = 6;
     }
 
     return {
@@ -68,10 +72,3 @@ class MyBudgetModel {
     };
   }
 }
-
-//  SelectedColor(color: AppColors.lightGreen, onTap: () {}),
-//   SelectedColor(color: AppColors.redPink, onTap: () {}),
-//   SelectedColor(color: AppColors.lightPurple, onTap: () {}),
-//   SelectedColor(color: AppColors.redOrange, onTap: () {}),
-//   SelectedColor(color: AppColors.violet, onTap: () {}),
-//   SelectedColor(color: AppColors.lightGreen2, onTap: () {}),
