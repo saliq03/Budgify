@@ -33,7 +33,7 @@ class TransactionInfo extends ConsumerWidget {
         : trackerList.isEmpty
             ? SizedBox(
                 width: w,
-                height: isScrollable ? h - 200 : 250,
+                height: isScrollable ? h*0.5 : 250,
                 child: Center(
                   child: Text(
                     'No transactions found',

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_styles.dart';
@@ -8,6 +10,7 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPressed;
   final bool isMenu;
   final PreferredSizeWidget? bottom;
+  final VoidCallback? onPressedBackButton;
 
   const ReusableAppBar({
     super.key,
@@ -15,14 +18,24 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.text,
     this.onPressed,
     this.isMenu = false, this.bottom,
+    this.onPressedBackButton,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     final Color foregroundColor = Colors.white;
+    final bool canPop = Navigator.canPop(context);
+    //    final bool canPop = Navigator.of(context).canPop();
     // final Color foregroundColor = theme.surface;
     return AppBar(
+      leading: canPop
+          ? IconButton(
+        icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
+        color: foregroundColor,
+        onPressed: onPressedBackButton ?? () => Navigator.of(context).pop(),
+      )
+          : null,
       backgroundColor: theme.primary,
       centerTitle: isCenterText,
       foregroundColor: foregroundColor,

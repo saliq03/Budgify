@@ -40,7 +40,7 @@ class ReusableInfo extends ConsumerWidget {
         : trackerList.isEmpty
             ? SizedBox(
                 width: w,
-                height: isScrollable ? h - 200 : 250,
+                height: isScrollable ? h*0.5 : 250,
                 child: Center(
                   child: Text(
                     isTaxPage ? 'No Tax History' : 'No Investment History',

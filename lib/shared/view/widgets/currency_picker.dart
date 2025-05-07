@@ -1,6 +1,7 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/local/hive_database.dart';
 import '../../../core/theme/app_styles.dart';
 import '../../../features/expense_tracker/model/currency_model.dart';
 import '../../../features/expense_tracker/viewmodel/riverpod/currency_provider.dart';
@@ -14,6 +15,9 @@ class CurrencyPicker extends ConsumerWidget {
     final theme = Theme.of(context).colorScheme;
     final double w = MediaQuery.of(context).size.width;
     final rProvider = ref.read(currencyProvider.notifier);
+    // HiveDatabase hiveDatabase = HiveDatabase();
+
+
     return Container(
       width: w,
       padding: const EdgeInsets.all(10),
@@ -34,6 +38,7 @@ class CurrencyPicker extends ConsumerWidget {
             showCurrencyCode: true,
             onSelect: (Currency currency) {
               rProvider.state = CurrencyModel.fromJson(currency);
+               // hiveDatabase.put(HiveDatabase.currentCurrencyBox, "${currency.name} - ${currency.code} - ${currency.symbol}");
               // print(currency.name);
             },
           );
