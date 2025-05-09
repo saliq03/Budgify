@@ -74,7 +74,7 @@ class ReusableStylishContainer2 extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: AppGradients.darkBlueGradient,
+                        colors: AppGradients.greenGradient,
                       ),
                     ),
                     child: Material(

@@ -1,6 +1,4 @@
 class Constants {
-  static const String appTitle = 'BudgetFlow: Expense & Budget';
-  // static const String appTitle = 'Budgify — Expense & Budget';
   static const String brandName = 'Mysterious Coder';
 
   //All apps titles:
@@ -9,6 +7,7 @@ class Constants {
   static const String hindiShayariHub = 'Hindi Shayari Hub';
   static const String mazedarHindiJokes = 'Mazedar Hindi Jokes';
   static const String noteMaster = 'Note Master: Offline Organizer';
+  static const String budgetFlow = 'BudgetFlow: Expense & Budget';
 
   //App apps descriptions:
   static const String brainBoosterDescription =
@@ -21,6 +20,8 @@ class Constants {
       "Mazedar Hindi Jokes is a fun app packed with hilarious Hindi jokes to brighten your day. From witty one-liners to laugh-out-loud stories, enjoy endless entertainment. Easily share jokes with friends and family.";
   static const String noteMasterDescription =
       "NoteMaster: Offline Organizer is your go-to app for organizing notes, tasks, and ideas without needing an internet connection. Perfect for managing to-do lists, reminders, and important thoughts. Stay organized anytime, anywhere.";
+  static const String budgetFlowDescription =
+      "BudgetFlow is a simple and powerful app to track your expenses and manage your budget effortlessly. Stay organized, view your financial trends, and keep control of your money with an easy-to-use interface.";
 
   //All apps urls:
   static const String brainBoosterUrl =
@@ -37,6 +38,12 @@ class Constants {
       'https://play.google.com/store/apps/details?id=com.mysteriouscoder.budgetflow';
 
   //Social Media Links
-static const String youtubeLink="https://youtube.com/@mysterious_coder?si=nmKdCfauVOj0LApZ";
-static const String instagramLink="https://www.instagram.com/mysteriouscoder__?igsh=MTI5eGpxanE5ZGd5Mg==";
+  static const String youtubeLink =
+      "https://youtube.com/@mysterious_coder?si=nmKdCfauVOj0LApZ";
+  static const String instagramLink =
+      "https://www.instagram.com/mysteriouscoder__?igsh=MTI5eGpxanE5ZGd5Mg==";
+  static const String facebookLink =
+      "https://www.facebook.com/share/1C6RSPZgnq/";
+  static const String whatsAppChannelLink =
+      "https://whatsapp.com/channel/0029Vb1Se9gKrWR1TBGlCs1x";
 }

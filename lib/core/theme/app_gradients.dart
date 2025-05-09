@@ -40,8 +40,10 @@ class AppGradients{
   ];
 
   static List<Color> greenGradient=[
+    Color(0xff538a55),
+    Colors.green.shade200,
     Colors.green,
-    Colors.green.shade400
+    Color(0xff538a55),
   ];
 
   static List<Color> skyBlueGradient=[

@@ -157,7 +157,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                 decoration: BoxDecoration(
                   // color: Colors.white,
                   gradient: LinearGradient(
-                      colors: AppGradients.skyBlueMyAppGradient,
+                      colors: AppGradients.greenGradient,
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight),
                   borderRadius: BorderRadius.circular(15),

@@ -71,7 +71,7 @@ class ReusableChallengesContainer extends StatelessWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: AppGradients.darkBlueGradient,
+                            colors: AppGradients.greenGradient,
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),

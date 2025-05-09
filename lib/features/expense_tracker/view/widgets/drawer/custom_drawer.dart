@@ -42,17 +42,17 @@ class CustomDrawer extends ConsumerWidget {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: AppGradients.skyBlueMyAppGradient),
+                        colors: AppGradients.greenGradient),
                 ),
                 // padding: const EdgeInsets.,
                 child: Column(
                   children: [
                     spacerH(30),
                     const Center(
-                      child: ReusableCircularImage(width: 90,height: 90,image: StaticAssets.appIcon,borderWidth: 1.5,borderColor: Colors.white),
+                      child: ReusableCircularImage(width: 90,height: 90,image: StaticAssets.budgetFlowIcon,borderWidth: 1.5,borderColor: Colors.white),
                     ),
                     spacerH(10),
-                    const Text(Constants.appTitle,style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),
+                    const Text(Constants.budgetFlow,style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                     ),
                   ],

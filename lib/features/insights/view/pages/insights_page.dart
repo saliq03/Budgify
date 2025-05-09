@@ -1,8 +1,6 @@
 import 'package:budgify/shared/view/widgets/currency_picker.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -11,9 +9,13 @@ import 'package:budgify/features/expense_tracker/viewmodel/riverpod/expense_trac
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_gradients.dart';
+import '../../../../core/theme/app_styles.dart';
+import '../../../../shared/view/widgets/buttons/reusable_icon_button.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
 import '../../../../shared/view/widgets/reusable_app_bar.dart';
+import '../../../expense_tracker/view/widgets/more_apps_carousel.dart';
 import '../../../expense_tracker/viewmodel/riverpod/currency_provider.dart';
+import '../widgets/play_store_rating.dart';
 
 class InsightsPage extends ConsumerStatefulWidget {
   const InsightsPage({super.key});
@@ -68,10 +70,12 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                     xValueMapper: (_ChartData data, _) => data.category,
                     yValueMapper: (_ChartData data, _) => data.amount,
                     pointColorMapper: (_ChartData data, _) {
-                      if (data.category.contains('Total Balance'))
+                      if (data.category.contains('Total Balance')) {
                         return AppColors.themeDark;
-                      if (data.category == 'Income')
+                      }
+                      if (data.category == 'Income') {
                         return AppColors.lightGreen;
+                      }
                       if (data.category == 'Expense') return AppColors.lightRed;
                       return Colors.grey;
                     },
@@ -155,10 +159,12 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 ],
               ),
             ),
-            spacerH(),
-            playStoreRating(w),
-            spacerH(),
-            socialMediaConnections(w),
+            spacerH(30),
+            moreAppsCarousel(w: w, context: context, theme: theme),
+            spacerH(30),
+            playStoreRating(w,theme),
+            spacerH(30),
+            socialMediaConnections(w,theme),
             spacerH(80)
           ],
         ),
@@ -166,167 +172,199 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
     );
   }
 
-  ///PlayStore rating widget
-  Widget playStoreRating([final w,])
-  {
-    return Container(
-        width: w,
-        margin: const EdgeInsets.symmetric(horizontal: 15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              "Enjoy BudgetFlow?",
-              style: TextStyle(
-                  fontSize: 26,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: w * 0.75,
-              child: const Text(
-                "Take a minute to provide your review and rating on the Play Store.",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            PlayStoreRatingOrExerciseLevels(
-              url: Constants.budgetFlowUrl,
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            InkWell(
-              onTap: (){
 
-              },
-              child: const Text(
-                "I have already rated",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
+  ///More Apps Carousel
+  Widget moreAppsCarousel(
+      {required double w, required BuildContext context, required theme})
+  {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 30.0),
+          child: Text(
+            "More Apps",
+            style: AppStyles.headingPrimary(
+                context: context,),
+          ),
+        ),
+        spacerH(),
+        ReusableMoreAppsCarousel(
+          w: w,
+        ),
+      ],
+    );
+  }
+
+  ///PlayStore rating widget
+  Widget playStoreRating([final w, final theme]) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Container(
+            width: w,
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: theme.onSecondary,
+              borderRadius: BorderRadius.circular(15),
+              // border: Border.all(
+              //   color: theme.primary,
+              //   width: 2,
+              // ),
             ),
-          ],
-        ));
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Enjoy BudgetFlow?",
+                  style: AppStyles.headingPrimary(
+                    context: context,
+                    fontSize: 26,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                spacerH(15),
+                Text(
+                  "Take a minute to provide your review and rating on the Play Store.",
+                  style: AppStyles.descriptionPrimary(
+                      context: context, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                spacerH(15),
+                PlatyStoreRating(
+                  url: Constants.budgetFlowUrl,
+                ),
+                spacerH(15),
+                InkWell(
+                  onTap: () {
+                    // setState(() {
+                    //   isAlreadyRated = true;
+                    // });
+                    //
+                    // prefsHelper.setBoolValue(PrefsKeys.alreadyRated, true);
+
+                  },
+                  child: Text(
+                    "I have already rated",
+                    style: AppStyles.descriptionPrimary(
+                      context: context,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            )),
+      ),
+    );
   }
 
   ///Social media Connection
-  Widget socialMediaConnections([final w,])
-  {
-    return Container(
-        width: w,
-        margin: const EdgeInsets.symmetric(horizontal: 15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
+  Widget socialMediaConnections([final w, final theme]) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "We're on Social Media",
-              style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700),
+        child: Container(
+            width: w,
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: theme.onSecondary,
+              borderRadius: BorderRadius.circular(15),
+              // border: Border.all(
+              //   color: theme.primary,
+              //   width: 2,
+              // ),
             ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              "Follow us on social media to get the latest updates and offers",
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Column(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SocialMediaIcons(
-                        title: 'Youtube',
-                        icon: FontAwesomeIcons.youtube,
-                        colors:  AppGradients.youtubeGradient,
-                        url: Constants.youtubeLink,
-                        spacerWidth: 15,
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Expanded(
-                      child: SocialMediaIcons(
-                        title: 'Instagram',
-                        icon: FontAwesomeIcons.instagram,
-                        colors: AppGradients.instagramGradient,
-                        url: Constants.instagramLink,
-                      ),
-                    ),
-                  ],
+                Text(
+                  "We're on Social Media",
+                  style: AppStyles.headingPrimary(
+                      context: context,),
                 ),
-                SizedBox(
-                  height: 15,
+                spacerH(10),
+                Text(
+                  "Follow us on social media to get the latest updates and offers",
+                  style: AppStyles.descriptionPrimary(
+                      context: context),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                spacerH(15),
+                Column(
                   children: [
-                    Expanded(
-                      child: SocialMediaIcons(
-                        title: 'Facebook',
-                        icon: FontAwesomeIcons.facebook,
-                        colors: AppGradients.facebookGradient,
-                        url:
-                        "https://www.facebook.com/gravityclassesfoundation",
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ReusableIconButton(
+                            title: 'Youtube',
+                            icon: FontAwesomeIcons.youtube,
+                            colors: AppGradients.youtubeGradient,
+                            url: Constants.youtubeLink,
+                            spacerWidth: 15,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: ReusableIconButton(
+                            title: 'Instagram',
+                            icon: FontAwesomeIcons.instagram,
+                            colors: AppGradients.instagramGradient,
+                            url: Constants.instagramLink,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      width: 15,
+                      height: 15,
                     ),
-                    Expanded(
-                      child: SocialMediaIcons(
-                        title: 'WhatsApp',
-                        icon: FontAwesomeIcons.whatsapp,
-                        colors: AppGradients.greenGradient,
-                        url:
-                        "https://www.linkedin.com/company/gravity-classes/",
-                        socialIconSize: 28,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ReusableIconButton(
+                            title: 'Facebook',
+                            icon: FontAwesomeIcons.facebook,
+                            colors: AppGradients.facebookGradient,
+                            url: Constants.facebookLink,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: ReusableIconButton(
+                            title: 'WhatsApp',
+                            icon: FontAwesomeIcons.whatsapp,
+                            colors: AppGradients.greenGradient,
+                            url:Constants.whatsAppChannelLink,
+                            socialIconSize: 28,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
-            ),
-          ],
-        ));
+            )),
+      ),
+    );
   }
 }
 
@@ -335,136 +373,4 @@ class _ChartData {
 
   final String category;
   final double amount;
-}
-
-class SocialMediaIcons extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String url;
-  final double spacerWidth;
-  final double socialMediaIconFontSize;
-  final double socialIconSize;
-  final List<Color> colors;
-
-  const SocialMediaIcons(
-      {super.key,
-      required this.title,
-      required this.icon,
-      required this.colors,
-      required this.url,
-      this.spacerWidth = 10,
-      this.socialMediaIconFontSize = 16,
-      this.socialIconSize = 25});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: colors),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4), // changes position of shadow
-          )
-        ],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () {
-            openUrl(url: url, context: context);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: socialIconSize,
-                ),
-                SizedBox(
-                  width: spacerWidth,
-                ),
-                Flexible(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PlayStoreRatingOrExerciseLevels extends StatelessWidget {
-  final String url;
-  final int count;
-  final double initialRating;
-  final IconData icon;
-  final double itemSize;
-  final Color color;
-  final bool ignoreGesture;
-
-  const PlayStoreRatingOrExerciseLevels(
-      {super.key,
-      required this.url,
-      this.count = 5,
-      this.initialRating = 0,
-      this.icon = Icons.star_border,
-      this.color = Colors.amber,
-      this.itemSize = 40,
-      this.ignoreGesture = false});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return RatingBar.builder(
-      ignoreGestures: ignoreGesture,
-      initialRating: initialRating,
-      itemSize: itemSize,
-      direction: Axis.horizontal,
-      allowHalfRating: false,
-      itemCount: count,
-      itemPadding: const EdgeInsets.symmetric(horizontal: 5.0),
-      itemBuilder: (context, index) {
-        return Icon(
-          icon,
-          color: color,
-        );
-      },
-      onRatingUpdate: (rating) {
-        if (rating < 5) {
-          IconSnackBar.show(context,
-              duration: const Duration(seconds: 2),
-              label: "Thank you for your feedback",
-              snackBarType: SnackBarType.success);
-        } else {
-          openUrl(url: url, context: context);
-          IconSnackBar.show(context,
-              duration: const Duration(seconds: 2),
-              label: "Thank you for your feedback",
-              snackBarType: SnackBarType.success);
-        }
-      },
-    );
-  }
 }

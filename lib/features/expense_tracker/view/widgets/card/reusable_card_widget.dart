@@ -84,7 +84,7 @@ class ReusableCardWidget extends ConsumerWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: AppGradients.skyBlueMyAppGradient,
+                colors: AppGradients.greenGradient,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
             borderRadius: BorderRadius.circular(15)),

@@ -39,4 +39,11 @@ List<MoreAppsModel> moreAppsContentsList=[
       colors: AppGradients.orangeMyAppGradient,
       url: Constants.noteMasterUrl
   ),
+  MoreAppsModel(
+      title: Constants.budgetFlow,
+      image: StaticAssets.budgetFlowIcon,
+      description: Constants.budgetFlowDescription,
+      colors: AppGradients.greenGradient,
+      url: Constants.budgetFlowUrl
+  ),
 ];

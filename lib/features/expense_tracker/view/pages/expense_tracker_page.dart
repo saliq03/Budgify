@@ -116,9 +116,9 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     final totalBalanceColor = zeroBalance
         ? Colors.white
         : positiveBalance
-            ? AppColors.lightGreen
+            ? AppColors.lightGreen3
             : AppColors.lightRed;
-    final incomeColor = zeroIncome ? Colors.white : AppColors.lightGreen;
+    final incomeColor = zeroIncome ? Colors.white : AppColors.lightGreen3;
     final expenseColor = zeroExpense ? Colors.white : AppColors.lightRed;
 
     return Card(
@@ -131,7 +131,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: AppGradients.skyBlueMyAppGradient,
+                colors: AppGradients.greenGradient,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
             borderRadius: BorderRadius.circular(15)),

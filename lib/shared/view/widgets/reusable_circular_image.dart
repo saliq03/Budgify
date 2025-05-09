@@ -8,7 +8,7 @@ class ReusableCircularImage extends StatelessWidget {
   final double borderWidth;
   final Color? borderColor;
   final BoxFit fit;
-  const ReusableCircularImage({super.key, this.width=50,this.height=50, this.image=StaticAssets.appIcon, this.borderWidth=0.5, this.borderColor , this.fit=BoxFit.cover});
+  const ReusableCircularImage({super.key, this.width=50,this.height=50, this.image=StaticAssets.budgetFlowIcon, this.borderWidth=0.5, this.borderColor , this.fit=BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {

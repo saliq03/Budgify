@@ -32,7 +32,7 @@ class ReusableFoldedCornerContainer extends StatelessWidget {
           width: 16.0,
           height: 16.0,
           decoration: BoxDecoration(
-            color: AppGradients.skyBlueMyAppGradient[1],
+            color: AppGradients.greenGradient[1],
             shape: BoxShape.circle,
             border: Border.all(
               color: theme.onSurface,
@@ -49,7 +49,7 @@ class ReusableFoldedCornerContainer extends StatelessWidget {
         ),
         Expanded(
           child: CustomPaint(
-            painter: FoldedCornerPainter(color: AppGradients.skyBlueMyAppGradient[1]),
+            painter: FoldedCornerPainter(color: AppGradients.greenGradient[1]),
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(

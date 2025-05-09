@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/theme/app_gradients.dart';
 import '../../../../../shared/view/widgets/buttons/reusable_icon_button.dart';
-import '../../../../../shared/view/widgets/global_widgets.dart';
 import 'dialog_widgets.dart';
 
 class ReusableDialogClass {
@@ -71,7 +70,7 @@ class ReusableDialogClass {
           socialIconSize: 20,
           icon: FontAwesomeIcons.youtube,
           colors: AppGradients.youtubeGradient,
-          onTap: () =>openUrl(url: Constants.youtubeLink, context: context)
+          url:  Constants.youtubeLink,
         ),
         dialogRowItem2: ReusableIconButton(
             title: 'Instagram',
@@ -79,7 +78,7 @@ class ReusableDialogClass {
             spacerWidth: 4,
             icon: FontAwesomeIcons.instagram,
             colors: AppGradients.instagramGradient,
-            onTap: () =>openUrl(url: Constants.instagramLink, context: context)
+            url: Constants.instagramLink
         )
       ),
     );

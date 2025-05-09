@@ -22,7 +22,7 @@ Future<void> main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.dark,
-    systemNavigationBarColor: Color.fromRGBO(37, 146, 166, 1),
+    systemNavigationBarColor: Colors.green,
   ));
 
   runApp(
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp(
-      title: Constants.appTitle,
+      title: Constants.budgetFlow,
       debugShowCheckedModeBanner: false,
       theme: theme.light(),
       darkTheme: theme.dark(),
