@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppColors{
   // static const Color themeLight= Colors.green;
-  static const Color themeLight=  Color(0xff4CAF50);
+  static const Color themeLight=  Color(0xff49ad4d);
   // static const Color themeLight=  Color.fromARGB(255, 78, 64, 204);
-  // static const Color themeLight= Color.fromRGBO(37, 146, 166, 1);
+  static const Color skyBlueLight= Color.fromRGBO(37, 146, 166, 1);
   // static const Color themeLightLighter = Color.fromRGBO(92, 182, 197, 1);
   static const Color darkBlue = Color.fromRGBO(38, 18, 125, 1);
-  static const Color themeDark = Color(0xff4CAF50);
+  static const Color themeDark = Color(0xff66af66);
   // static const Color themeDark = Color.fromRGBO(92, 182, 197, 1);
   // static const Color themeDark = Color.fromRGBO(26, 131, 147, 1.0);
   // static const Color themeDark = Color(0xFF25D366);
@@ -31,7 +31,8 @@ class AppColors{
   static const Color lightRed =Color(0xFFFFCDD2);
   static const Color deepPurple = Color(0xFF673AB7);
   static const Color darkGreen = Color(0xFF26B8A1);
-  //Budget Colors
+
+  ///Light Colors
   static const Color lightGreen3= Color(0xFFDBE6DB);
   static const Color lightGreen= Color(0xFFB6E7B8);
   static const Color lightGreen2 = Color(0xFF90D5C7);
@@ -40,5 +41,8 @@ class AppColors{
   static const Color lightPurple = Color(0xFFB29BE3);
   static const Color redOrange = Color(0xffffab91);
   static const Color lightBlue = Color(0xFFBBDEFB);
-
+  //Youtube Colors
+  static const Color youtubeRed = Color.fromARGB(255, 255, 0, 0);
+  static const Color youtubeRedDark = Color.fromARGB(255, 230, 0, 0);
+  static const Color youtubeRedLight = Color.fromARGB(255, 179, 0, 0);
 }

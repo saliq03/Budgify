@@ -29,12 +29,12 @@ class ReusableCardWidget extends ConsumerWidget {
 
   Color getSectionColor(double value) {
     return isTaxPage
-        ? (value > 0 ? AppColors.lightRed : Colors.white)
+        ? (value > 0 ? AppColors.youtubeRed : Colors.black)
         : (value > 0
-            ? AppColors.lightGreen
+            ? AppColors.themeLight
             : (value < 0 ?
-             AppColors.lightRed :
-             Colors.white));
+             AppColors.youtubeRed:
+             Colors.black));
   }
 
   double getSectionValue(String value) {
@@ -83,10 +83,11 @@ class ReusableCardWidget extends ConsumerWidget {
         width: w,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: AppGradients.greenGradient,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight),
+            color: Colors.white,
+            // gradient: LinearGradient(
+            //     colors: AppGradients.greenGradient,
+            //     begin: Alignment.topLeft,
+            //     end: Alignment.bottomRight),
             borderRadius: BorderRadius.circular(15)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +111,7 @@ class ReusableCardWidget extends ConsumerWidget {
                 Expanded(
                   child: ReusableCardDetails(
                     text: section2.name,
-                    color: Colors.white,
+                    color: Colors.black,
                     icon: icon,
                     amount: "$currency${section2Value.abs()}",
                     isShow: false,

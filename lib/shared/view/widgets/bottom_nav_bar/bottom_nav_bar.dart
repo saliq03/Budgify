@@ -2,7 +2,7 @@ import 'package:budgify/features/expense_tracker/view/widgets/dialog/reusable_di
 import 'package:budgify/features/insights/view/pages/insights_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import '../../../../features/emi_and_loans/view/pages/emi_and_loans.dart';
+import '../../../../features/emi_and_loan/view/pages/emi_and_loan.dart';
 import '../../../../features/expense_tracker/view/pages/expense_tracker_home_page.dart';
 import '../../../../features/my_budget/view/pages/my_budget_page.dart';
 
@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     super.initState();
     bottomBarPages = [
       ExpenseTrackerHomePage(),
-      EmiAndLoans(),
+      EmiAndLoan(),
       MyBudgetPage(),
       // BudgetManagementPage(),
       InsightsPage(),
@@ -87,7 +87,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         Icons.account_balance,
       ),
       title: Text(
-        'EMI & Loans',
+        'EMI & Loan',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: bottomNavFontFamily,

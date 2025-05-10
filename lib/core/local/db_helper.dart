@@ -95,8 +95,8 @@ class DBHelper {
   Future<bool> addTrackerData(TrackerModel tracker) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected = await mDB.insert(trackerTableName, tracker.toMap());
-      return rowsEffected > 0;
+      int rowsAffected = await mDB.insert(trackerTableName, tracker.toMap());
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in adding data: $e");
@@ -122,9 +122,9 @@ class DBHelper {
   Future<bool> updateTrackerData(TrackerModel tracker) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected = await mDB.update(trackerTableName, tracker.toMap(),
+      int rowsAffected = await mDB.update(trackerTableName, tracker.toMap(),
           where: "$columnTrackerId = ?", whereArgs: [tracker.id]);
-      return rowsEffected > 0;
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in updating data: $e");
@@ -136,9 +136,9 @@ class DBHelper {
   Future<bool> deleteTrackerData(int id) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected = await mDB.delete(trackerTableName,
+      int rowsAffected = await mDB.delete(trackerTableName,
           where: "$columnTrackerId = ?", whereArgs: [id]);
-      return rowsEffected > 0;
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in deleting data: $e");
@@ -152,9 +152,9 @@ class DBHelper {
   Future<bool> addMyBudgetData(MyBudgetModel myBudget) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected =
+      int rowsAffected =
           await mDB.insert(myBudgetTableName, myBudget.toMap());
-      return rowsEffected > 0;
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in adding data: $e");
@@ -183,9 +183,9 @@ class DBHelper {
   Future<bool> updateMyBudgetData(MyBudgetModel myBudget) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected = await mDB.update(myBudgetTableName, myBudget.toMap(),
+      int rowsAffected = await mDB.update(myBudgetTableName, myBudget.toMap(),
           where: "$columnMyBudgetId = ?", whereArgs: [myBudget.id]);
-      return rowsEffected > 0;
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in updating data: $e");
@@ -197,9 +197,9 @@ class DBHelper {
   Future<bool> deleteMyBudgetData(int id) async {
     try {
       Database mDB = await getDB();
-      int rowsEffected = await mDB.delete(myBudgetTableName,
+      int rowsAffected = await mDB.delete(myBudgetTableName,
           where: "$columnMyBudgetId = ?", whereArgs: [id]);
-      return rowsEffected > 0;
+      return rowsAffected > 0;
     } catch (e) {
       if (kDebugMode) {
         print("Error in deleting data: $e");

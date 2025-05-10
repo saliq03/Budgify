@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
+
 class AppGradients{
   //Gradient List
   static List<Color> blueMyAppGradient=[
@@ -34,16 +36,15 @@ class AppGradients{
   ];
 
   static List<Color> youtubeGradient= [
-    Color.fromARGB(255, 255, 0, 0),
-    Color.fromARGB(255, 230, 0, 0),
-    Color.fromARGB(255, 179, 0, 0),
+    AppColors.youtubeRed,
+    AppColors.youtubeRedDark,
+    AppColors.youtubeRedLight,
   ];
 
   static List<Color> greenGradient=[
-    Color(0xff538a55),
-    Colors.green.shade200,
-    Colors.green,
-    Color(0xff538a55),
+    Color(0xff49ad4d),
+    Colors.green.shade400,
+    Color(0xff66af66),
   ];
 
   static List<Color> skyBlueGradient=[

@@ -108,6 +108,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final theme = Theme.of(context).colorScheme;
     final onChangedValue = ref.read(onChangeValueProvider);
     final onChangedProvider = ref.read(onChangedInvestmentTaxProvider);
+    final isDarkTheme = MediaQuery.of(context).platformBrightness ==
+        Brightness.dark;
 
     return Scaffold(
       appBar: ReusableAppBar(
@@ -312,16 +314,17 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          minimumSize: Size(w, 40),
-                          backgroundColor: Color.fromARGB(255, 34, 95, 216),
+                          elevation: 4,
+                          minimumSize: Size(w, 45),
+                          backgroundColor: isDarkTheme? Colors.white : Colors.black,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         child: Text(
                           selectedText,
                           style: AppStyles.descriptionPrimary(
-                              context: context, color: Colors.white),
+                              context: context, color: isDarkTheme?  Colors.black : Colors.white),
                         ))
                   ],
                 ),
