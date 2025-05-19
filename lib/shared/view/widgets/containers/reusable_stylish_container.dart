@@ -4,7 +4,7 @@ import '../global_widgets.dart';
 
 class ReusableStylishContainer extends StatelessWidget {
   final double w;
-  final double? h;
+  final double h;
   final List<Color> colors;
   final String? title;
   final String description;
@@ -28,7 +28,7 @@ class ReusableStylishContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     // final double w = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: isCarousel? h+25 :h+25,
+      height:  h+25,
       child: Stack(
         alignment: Alignment.topCenter,
         clipBehavior: Clip.none, // Allow overflow
