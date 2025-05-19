@@ -114,12 +114,12 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     final zeroExpense = totalExpense == 0;
     final positiveBalance = totalBalance >= 0;
     final totalBalanceColor = zeroBalance
-        ? Colors.white
+        ? Colors.black
         : positiveBalance
             ? AppColors.themeLight
             : AppColors.youtubeRed;;
-    final incomeColor = zeroIncome ? Colors.white : AppColors.themeLight;
-    final expenseColor = zeroExpense ? Colors.white : AppColors.youtubeRed;
+    final incomeColor = zeroIncome ? Colors.black : AppColors.themeLight;
+    final expenseColor = zeroExpense ? Colors.black : AppColors.youtubeRed;
 
     return Card(
       elevation: 4,

@@ -71,12 +71,18 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
     }
     final dateTimeString = "${dateTime[0]} | ${dateTime[1]}";
 
-    void onBackButtonPressed() {
+    void onBackButtonPressed([bool isBackButton = true]) {
       if (titleController.text.isEmpty && descriptionController.text.isEmpty) {
+
+      if(isBackButton){
+        Navigator.pop(context);
+      }
+      else {
         IconSnackBar.show(context,
             label: "Both title & description are empty!",
             snackBarType: SnackBarType.alert);
-        return;
+      }
+      return;
       }
 
       /// In both add and update mode, current date is used to save in database.
@@ -120,7 +126,7 @@ class _BudgetManagementPageState extends ConsumerState<BudgetManagementPage> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, right: 10,bottom: 2),
                   child: InkWell(
-                      onTap: onBackButtonPressed,
+                      onTap :() => onBackButtonPressed(false),
                       child: Icon(
                         FontAwesomeIcons.check,
                         size: 30,

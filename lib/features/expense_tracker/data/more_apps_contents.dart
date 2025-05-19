@@ -43,7 +43,7 @@ List<MoreAppsModel> moreAppsContentsList=[
       title: Constants.budgetFlow,
       image: StaticAssets.budgetFlowIcon,
       description: Constants.budgetFlowDescription,
-      colors: AppGradients.greenGradient,
+      colors: AppGradients.skyBlueMyAppGradient,
       url: Constants.budgetFlowUrl
   ),
 ];

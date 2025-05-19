@@ -68,7 +68,7 @@ class _MoreAppsPageState extends ConsumerState<MoreAppsPage> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: ReusableStylishContainer(
-                            h: 350,
+                            // h: 350,
                             w: w,
                             colors: e.colors,
                             isCarousel: false,

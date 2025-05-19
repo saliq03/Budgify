@@ -42,7 +42,7 @@ class CustomDrawer extends ConsumerWidget {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: AppGradients.greenGradient),
+                        colors: AppGradients.skyBlueMyAppGradient),
                 ),
                 // padding: const EdgeInsets.,
                 child: Column(

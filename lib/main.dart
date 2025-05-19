@@ -1,4 +1,5 @@
 import 'package:budgify/core/constants/constants.dart';
+import 'package:budgify/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,7 @@ Future<void> main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.green,
+    systemNavigationBarColor: AppColors.themeLight,
   ));
 
   runApp(

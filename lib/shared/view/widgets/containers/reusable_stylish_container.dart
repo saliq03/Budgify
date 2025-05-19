@@ -4,7 +4,7 @@ import '../global_widgets.dart';
 
 class ReusableStylishContainer extends StatelessWidget {
   final double w;
-  final double h;
+  final double? h;
   final List<Color> colors;
   final String? title;
   final String description;
