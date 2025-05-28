@@ -26,9 +26,7 @@ Future<void> main() async {
     systemNavigationBarColor: AppColors.themeLight,
   ));
 
-  runApp(
-    ProviderScope(child: const MyApp()),
-  );
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 Future<void> _loadFonts() async {
