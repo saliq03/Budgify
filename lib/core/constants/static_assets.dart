@@ -3,6 +3,7 @@ class StaticAssets {
 
 
   // Icons
+  static const String userProfile ="assets/icons/profile.png";
   static const String crossCloseIcon = 'assets/icons/cross_close_icon.png';
 
   //All apps Icons

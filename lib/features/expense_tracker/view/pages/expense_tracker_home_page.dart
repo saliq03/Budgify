@@ -7,6 +7,8 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:scroll_date_picker/scroll_date_picker.dart';
+import '../../../../core/constants/static_assets.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_gradients.dart';
@@ -28,18 +30,23 @@ import '../widgets/filters/transaction_filter.dart';
 import '../widgets/reusable_card_details.dart';
 import '../widgets/transaction_history/reusable_info.dart';
 import '../widgets/transaction_history/transaction_info.dart';
+
 part 'expense_tracker_page.dart';
+
 part 'investment_page.dart';
+
 part 'tax_page.dart';
 
 class ExpenseTrackerHomePage extends ConsumerStatefulWidget {
   const ExpenseTrackerHomePage({super.key});
 
   @override
-  ConsumerState<ExpenseTrackerHomePage> createState() => _ExpenseTrackerHomePageState();
+  ConsumerState<ExpenseTrackerHomePage> createState() =>
+      _ExpenseTrackerHomePageState();
 }
 
-class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage> with SingleTickerProviderStateMixin {
+class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -64,50 +71,128 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: CustomDrawer(h: h, w: w * 0.7),
-      appBar: ReusableAppBar(
-        text: 'Expense Tracker',
-        // text: 'Profile',
-        isCenterText: false,
-        isMenu: true,
-        onPressed: () {
-          _scaffoldKey.currentState!.openEndDrawer();
-        },
-      ),
-      body: Column(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: AppGradients.skyBlueMyAppGradient,),
+              ),
+              child: appBar(theme))),
+      backgroundColor: theme.surface,
+      body: Stack(
         children: [
-          // spacerH(),
-          // Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          //     child: DateFilter()),
-          // spacerH(10),
-          // CurrencyPicker(),
-          // spacerH(10),
+          Positioned.fill(
 
-          TabBar(
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorColor: theme.primary,
-              labelStyle: AppStyles.headingPrimary(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  context: context,
-                  color: theme.primary),
-              tabs: [
-                Tab(text: 'All'),
-                Tab(text: 'Investment'),
-                Tab(text: 'Tax'),
-              ]),
+              child: Container(
+            height: 100,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: AppGradients.skyBlueMyAppGradient),
+            ),
+          )),
 
-          Expanded(child: TabBarView(
-              controller: _tabController,
-              children: [
-                ExpenseTrackerPage(),
-                InvestmentPage(),
-                TaxPage(),
-              ]))
+
+          Positioned.fill(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: theme.surface,
+                  ),
+                  child: Column(
+                    children: [
+                      TabBar(
+                          controller: _tabController,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicatorColor: theme.primary,
+                          labelStyle: AppStyles.headingPrimary(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              context: context,
+                              color: theme.primary),
+                          tabs: [
+                            Tab(text: 'All'),
+                            Tab(text: 'Investment'),
+                            Tab(text: 'Tax'),
+                          ]),
+                      Expanded(
+                          child: TabBarView(controller: _tabController, children: [
+                        ExpenseTrackerPage(),
+                        InvestmentPage(),
+                        TaxPage(),
+                      ]))
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
         ],
       ),
     );
   }
+
+  ///AppBar
+  Widget appBar(final ColorScheme theme) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 5,bottom: 15),
+      child: SafeArea(
+        child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundImage: AssetImage(StaticAssets.userProfile),
+              ),
+              spacerW(10),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Hi,",
+                      style: AppStyles.descriptionPrimary(
+                          context: context, fontSize: 14, color: Colors.white)),
+                  spacerH(2),
+                  Text("User",
+                      style: AppStyles.headingPrimary(
+                          context: context, fontSize: 16, color: Colors.white)),
+                ],
+              ),
+              const Spacer(),
+              InkWell(
+                onTap: () {
+                  _scaffoldKey.currentState?.openEndDrawer();
+                },
+                child: Icon(
+                  FontAwesomeIcons.barsStaggered,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+
+
+            ]),
+      ),
+    );
+  }
 }
+
+// ReusableAppBar(
+// text: 'Expense Tracker',
+// text: 'Profile',
+// isCenterText: false,
+// isMenu: true,
+// onPressed: () {
+// _scaffoldKey.currentState!.openEndDrawer();
+// },
+// ),
+
+// spacerH(),
+// Padding(
+//     padding: const EdgeInsets.symmetric(horizontal: 15.0),
+//     child: DateFilter()),
+// spacerH(10),
+// CurrencyPicker(),
+// spacerH(10),
