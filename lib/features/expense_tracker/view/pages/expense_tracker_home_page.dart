@@ -7,7 +7,6 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:scroll_date_picker/scroll_date_picker.dart';
 import '../../../../core/constants/static_assets.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,7 +14,6 @@ import '../../../../core/theme/app_gradients.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../shared/view/widgets/date_filter.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
-import '../../../../shared/view/widgets/reusable_app_bar.dart';
 import '../../model/currency_model.dart';
 import '../../model/tracker_model.dart';
 import '../../viewmodel/riverpod/currency_provider.dart';
@@ -30,11 +28,8 @@ import '../widgets/filters/transaction_filter.dart';
 import '../widgets/reusable_card_details.dart';
 import '../widgets/transaction_history/reusable_info.dart';
 import '../widgets/transaction_history/transaction_info.dart';
-
 part 'expense_tracker_page.dart';
-
 part 'investment_page.dart';
-
 part 'tax_page.dart';
 
 class ExpenseTrackerHomePage extends ConsumerStatefulWidget {
@@ -135,6 +130,18 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
 
   ///AppBar
   Widget appBar(final ColorScheme theme) {
+    String timeString = DateTime.now().toString().split(" ")[1];
+    // Parse the hour part
+    int hour = int.parse(timeString.split(":")[0]);
+
+    String greeting;
+    if (hour >= 5 && hour < 12) {
+      greeting = "Good Morning!";
+    } else if (hour >= 12 && hour < 17) {
+      greeting = "Good Afternoon!";
+    } else {
+      greeting = "Good Evening!";
+    }
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 5,bottom: 15),
       child: SafeArea(
@@ -155,9 +162,9 @@ class _ExpenseTrackerHomePageState extends ConsumerState<ExpenseTrackerHomePage>
                       style: AppStyles.descriptionPrimary(
                           context: context, fontSize: 14, color: Colors.white)),
                   spacerH(2),
-                  Text("User",
+                  Text(greeting,
                       style: AppStyles.headingPrimary(
-                          context: context, fontSize: 16, color: Colors.white)),
+                          context: context, fontSize: 18, color: Colors.white,fontWeight: FontWeight.w800)),
                 ],
               ),
               const Spacer(),

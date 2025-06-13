@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 
 void openUrl(
     {required String url,
-    required BuildContext context,
-    bool isExternal = false,
-    String label = "Unable to open!"}) async {
+      required BuildContext context,
+      bool isExternal = false,
+      String label = "Unable to open!"}) async {
   try {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri) || isExternal) {

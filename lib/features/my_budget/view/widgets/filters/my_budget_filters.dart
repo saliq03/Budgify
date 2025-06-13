@@ -19,7 +19,6 @@ class _MyBudgetFiltersState extends ConsumerState<MyBudgetFilters> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
     final filterRProvider = ref.read(budgetFilterProvider.notifier);
     final filterWProvider = ref.watch(budgetFilterProvider);
     final double w = MediaQuery.of(context).size.width;
@@ -43,10 +42,19 @@ class _MyBudgetFiltersState extends ConsumerState<MyBudgetFilters> {
                     isSelected = !isSelected;
                   });
                 },
-                child: Icon(
-                  Icons.filter_list,
-                  color: theme.onSurface,
-                ),
+                //Method 1:
+                // child:Transform.rotate(
+                //   angle: isSelected? 3.1416 :0, // 180 degrees in radians
+                //   child: Icon(Icons.filter_list),
+                // )
+                  //Method 2:
+                  child: AnimatedRotation(
+                    turns: isSelected ? 0.5 : 0.0, // 0.5 = 180 degrees
+                    duration: Duration(milliseconds: 300),
+                    child: Icon(Icons.filter_list),
+                  )
+
+
               ),
             ],
           ),

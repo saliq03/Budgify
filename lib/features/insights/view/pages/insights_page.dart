@@ -16,6 +16,7 @@ import '../../../../shared/view/widgets/reusable_app_bar.dart';
 import '../../../expense_tracker/view/widgets/more_apps_carousel.dart';
 import '../../../expense_tracker/viewmodel/riverpod/currency_provider.dart';
 import '../widgets/play_store_rating.dart';
+import 'dart:math';
 
 class InsightsPage extends ConsumerStatefulWidget {
   const InsightsPage({super.key});
@@ -28,8 +29,26 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
   @override
   Widget build(BuildContext context) {
     final expenseData = ref.watch(expenseTrackerProvider);
-    final totalBalance = expenseData.trackerCategory.totalIncome -
-        expenseData.trackerCategory.totalExpense;
+    var totalBalance = (expenseData.trackerCategory.totalIncome -
+            expenseData.trackerCategory.totalExpense) -
+        expenseData.trackerCategory.tax +
+        expenseData.trackerCategory.investment;
+
+    final totalIncome = expenseData.trackerCategory.totalIncome;
+
+    totalBalance = totalBalance < 0 ? 0 : totalBalance;
+    final totalInvestment = expenseData.trackerCategory.investment < 0
+        ? expenseData.trackerCategory.investment * -1
+        : expenseData.trackerCategory.investment;
+
+    final totalExpense = expenseData.trackerCategory.totalExpense < 0
+        ? expenseData.trackerCategory.totalExpense * -1
+        : expenseData.trackerCategory.totalExpense;
+
+    final totalTax = expenseData.trackerCategory.tax < 0
+        ? expenseData.trackerCategory.tax * -1
+        : expenseData.trackerCategory.tax;
+
     final currencySymbol = ref.watch(currencyProvider).symbol;
     final theme = Theme.of(context).colorScheme;
     final double w = MediaQuery.of(context).size.width;
@@ -45,38 +64,89 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
               child: CurrencyPicker(),
             ),
             spacerH(),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: DateFilter(),
-            ),
-            spacerH(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            if (expenseData.trackerCategory.investment != 0 ||
+                expenseData.trackerCategory.tax != 0 ||
+                expenseData.trackerCategory.totalIncome != 0 ||
+                expenseData.trackerCategory.totalExpense != 0)
+              reportSection(
+                w: w,
+                context: context,
+                currencySymbol: currencySymbol,
+                totalBalance: totalBalance,
+                totalIncome: totalIncome,
+                totalInvestment: totalInvestment,
+                totalExpense: totalExpense,
+                totalTax: totalTax,
+                theme: theme,
+              ),
+            moreAppsCarousel(w: w, context: context, theme: theme),
+            spacerH(30),
+            playStoreRating(w, theme),
+            spacerH(30),
+            socialMediaConnections(w, theme),
+            spacerH(80)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget reportSection(
+      {required double w,
+      required BuildContext context,
+      required String currencySymbol,
+      required double totalBalance,
+      required double totalIncome,
+      required double totalInvestment,
+      required double totalExpense,
+      required double totalTax,
+      required ColorScheme theme}) {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: DateFilter(),
+        ),
+        spacerH(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
               child: SfCircularChart(
-                borderColor: theme.onSurface,
-                backgroundColor: theme.secondary,
+                // borderColor: theme.primary,
+                backgroundColor: theme.onSecondary,
                 borderWidth: 1,
-                title: ChartTitle(text: 'Expense Summary'),
+                title: ChartTitle(
+                    text: 'Expense Summary',
+                    textStyle: AppStyles.headingPrimary(
+                        context: context, fontSize: 16,)),
                 legend: Legend(isVisible: true),
                 series: <CircularSeries>[
                   PieSeries<_ChartData, String>(
                     dataSource: [
-                      _ChartData('$currencySymbol Total Balance', totalBalance),
-                      _ChartData(
-                          'Income', expenseData.trackerCategory.totalIncome),
-                      _ChartData(
-                          'Expense', expenseData.trackerCategory.totalExpense),
+                      _ChartData('$currencySymbol Total Bal', totalBalance),
+                      _ChartData('Invest', totalInvestment),
+                      _ChartData('Tax', totalTax),
+                      _ChartData('Income', totalIncome),
+                      _ChartData('Expense', totalExpense),
                     ],
                     xValueMapper: (_ChartData data, _) => data.category,
                     yValueMapper: (_ChartData data, _) => data.amount,
                     pointColorMapper: (_ChartData data, _) {
-                      if (data.category.contains('Total Balance')) {
-                        return AppColors.themeDark;
-                      }
-                      if (data.category == 'Income') {
+                      if (data.category.contains('Total Bal')) {
+                        return AppColors.themeLight;
+                      } else if (data.category == 'Income') {
                         return AppColors.lightGreen;
+                      } else if (data.category == 'Expense') {
+                        return AppColors.lightRed;
+                      } else if (data.category == 'Invest') {
+                        return AppColors.darkGreen;
+                      } else if (data.category == 'Tax') {
+                        return Colors.orange.withValues(alpha: 0.5);
                       }
-                      if (data.category == 'Expense') return AppColors.lightRed;
                       return Colors.grey;
                     },
                     dataLabelSettings: const DataLabelSettings(
@@ -90,93 +160,167 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 600,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: BarChart(
-                  BarChartData(
-                    titlesData: FlTitlesData(show: true),
-                    borderData: FlBorderData(show: true),
-                    gridData: FlGridData(show: true),
-                    barGroups: [
-                      BarChartGroupData(
-                        x: 0,
-                        barRods: [
-                          BarChartRodData(
-                            toY: expenseData.trackerCategory.totalIncome,
-                            color: Colors.green,
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                      BarChartGroupData(
-                        x: 1,
-                        barRods: [
-                          BarChartRodData(
-                            toY: expenseData.trackerCategory.totalExpense,
-                            color: Colors.red,
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                      BarChartGroupData(
-                        x: 2,
-                        barRods: [
-                          BarChartRodData(
-                            toY: totalBalance,
-                            color: Colors.blue,
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Container(
+              width: w,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: theme.onSecondary,
+                borderRadius: BorderRadius.circular(10),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis: NumericAxis(),
-                title:
-                    ChartTitle(text: 'Income, Expense, and Balance Over Time'),
-                series: [
-                  LineSeries<_ChartData, String>(
-                    dataSource: [
-                      _ChartData(
-                          'Jan', expenseData.trackerCategory.totalIncome),
-                      _ChartData(
-                          'Feb', expenseData.trackerCategory.totalExpense),
-                      _ChartData('Mar', totalBalance),
+              child: Column(
+                children: [
+                  SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(),
+                    title: ChartTitle(
+                      text: 'Income, Investment, Expense, Tax & Total Balance',
+                      textStyle: AppStyles.headingPrimary(
+                        context: context,
+                        fontSize: 16,
+                      ),
+                    ),
+                    series: [
+                      SplineSeries<_ChartData, String>(
+                        // LineSeries<_ChartData, String>(
+                        dataSource: [
+                          _ChartData('Income', totalIncome),
+                          _ChartData('Invest', totalInvestment),
+                          _ChartData('Expense', totalExpense),
+                          _ChartData('Tax', totalTax),
+                          _ChartData('Total Bal', totalBalance),
+                        ],
+                        xValueMapper: (_ChartData data, _) => data.category,
+                        yValueMapper: (_ChartData data, _) => data.amount,
+                        color: Colors.blue,
+                        name: 'Income/Expense/Investment/Tax/Balance',
+                      ),
                     ],
-                    xValueMapper: (_ChartData data, _) => data.category,
-                    yValueMapper: (_ChartData data, _) => data.amount,
-                    color: Colors.blue,
-                    name: 'Income/Expense/Balance',
                   ),
+                  spacerH(),
+                  SizedBox(
+                    height: 550,
+                    width: w,
+                    child: BarChart(
+                      BarChartData(
+                        maxY: [
+                              totalTax,
+                              totalIncome,
+                              totalInvestment,
+                              totalExpense,
+                              totalBalance
+                            ].map((e) => e < 0 ? -e : e).reduce(max) +
+                            500,
+                        titlesData: FlTitlesData(show: true),
+                        borderData: FlBorderData(show: true),
+                        gridData: FlGridData(show: true),
+                        barGroups: [
+                          BarChartGroupData(
+                            x: 0,
+                            barRods: [
+                              BarChartRodData(
+                                toY: totalIncome,
+                                color: Colors.greenAccent,
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          BarChartGroupData(
+                            x: 1,
+                            barRods: [
+                              BarChartRodData(
+                                toY: totalInvestment,
+                                color: Colors.green,
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          BarChartGroupData(
+                            x: 2,
+                            barRods: [
+                              BarChartRodData(
+                                toY: totalExpense,
+                                color: Colors.red,
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          BarChartGroupData(
+                            x: 3,
+                            barRods: [
+                              BarChartRodData(
+                                toY: totalTax,
+                                color: Colors.orange,
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                          BarChartGroupData(
+                            x: 4,
+                            barRods: [
+                              BarChartRodData(
+                                toY: totalBalance,
+                                color: Colors.blue,
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  spacerH(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Wrap(
+                      runSpacing: 10,
+                      spacing: 15,
+                      children: chartInfo.map((e) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: e.color,
+                              ),
+                            ),
+                            spacerW(5),
+                            Text(
+                              e.title,
+                              style: AppStyles.descriptionPrimary(
+                                context: context,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  spacerH(),
                 ],
               ),
             ),
-            spacerH(30),
-            moreAppsCarousel(w: w, context: context, theme: theme),
-            spacerH(30),
-            playStoreRating(w,theme),
-            spacerH(30),
-            socialMediaConnections(w,theme),
-            spacerH(80)
-          ],
+          ),
         ),
-      ),
+        spacerH(30),
+      ],
     );
   }
 
-
   ///More Apps Carousel
   Widget moreAppsCarousel(
-      {required double w, required BuildContext context, required theme})
-  {
+      {required double w, required BuildContext context, required theme}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +330,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
           child: Text(
             "More Apps",
             style: AppStyles.headingPrimary(
-                context: context,),
+              context: context,
+            ),
           ),
         ),
         spacerH(),
@@ -249,7 +394,6 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                     // });
                     //
                     // prefsHelper.setBoolValue(PrefsKeys.alreadyRated, true);
-
                   },
                   child: Text(
                     "I have already rated",
@@ -293,13 +437,13 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 Text(
                   "We're on Social Media",
                   style: AppStyles.headingPrimary(
-                      context: context,),
+                    context: context,
+                  ),
                 ),
                 spacerH(10),
                 Text(
                   "Follow us on social media to get the latest updates and offers",
-                  style: AppStyles.descriptionPrimary(
-                      context: context),
+                  style: AppStyles.descriptionPrimary(context: context),
                 ),
                 spacerH(15),
                 Column(
@@ -353,7 +497,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                             title: 'WhatsApp',
                             icon: FontAwesomeIcons.whatsapp,
                             colors: AppGradients.greenGradient,
-                            url:Constants.whatsAppChannelLink,
+                            url: Constants.whatsAppChannelLink,
                             socialIconSize: 28,
                           ),
                         ),
@@ -374,3 +518,21 @@ class _ChartData {
   final String category;
   final double amount;
 }
+
+class CharInfo {
+  final String title;
+  final Color color;
+
+  CharInfo({
+    required this.title,
+    required this.color,
+  });
+}
+
+List<CharInfo> chartInfo = [
+  CharInfo(title: "Income", color: Colors.greenAccent),
+  CharInfo(title: "Investment", color: Colors.green),
+  CharInfo(title: "Expense", color: Colors.red),
+  CharInfo(title: "Tax", color: Colors.orange),
+  CharInfo(title: "Total Balance", color: Colors.blue),
+];

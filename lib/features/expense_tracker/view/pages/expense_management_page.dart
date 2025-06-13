@@ -297,7 +297,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           } else {
                             trackerRProvider.addData(
                               title: titleController.text.isEmpty
-                                  ? "Reason unavailable"
+                                  ? ""
                                   : titleController.text,
                               date: dateRef.selectedDate ??
                                   formatDate(DateTime.now()),

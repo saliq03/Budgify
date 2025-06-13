@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     super.initState();
     bottomBarPages = [
       ExpenseTrackerHomePage(),
-      EmiAndLoan(),
+      // EmiAndLoan(),
       MyBudgetPage(),
       // BudgetManagementPage(),
       InsightsPage(),
@@ -81,19 +81,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ),
           ),
         ),
-    SalomonBottomBarItem(
-      selectedColor: Theme.of(context).colorScheme.primary,
-      icon: const Icon(
-        Icons.account_balance,
-      ),
-      title: Text(
-        'EMI & Loan',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: bottomNavFontFamily,
-        ),
-      ),
-    ),
+    // SalomonBottomBarItem(
+    //   selectedColor: Theme.of(context).colorScheme.primary,
+    //   icon: const Icon(
+    //     Icons.account_balance,
+    //   ),
+    //   title: Text(
+    //     'EMI & Loan',
+    //     textAlign: TextAlign.center,
+    //     style: TextStyle(
+    //       fontFamily: bottomNavFontFamily,
+    //     ),
+    //   ),
+    // ),
 
 
         SalomonBottomBarItem(

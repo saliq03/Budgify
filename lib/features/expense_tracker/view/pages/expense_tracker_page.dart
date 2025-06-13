@@ -8,7 +8,6 @@ class ExpenseTrackerPage extends ConsumerStatefulWidget {
 }
 
 class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
-
   @override
   void initState() {
     super.initState();
@@ -70,7 +69,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ReusableFloatingActionButton(
-              iconSize: 30,
+                iconSize: 30,
                 onTap: () {
                   Navigator.pushNamed(context, Paths.expenseManagementPage,
                       arguments: TrackerModel(
@@ -97,8 +96,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                 icon: Icons.arrow_circle_up_outlined,
                 colors: AppGradients.greenGradient),
           ],
-        )
-    );
+        ));
   }
 
   Widget cardSection(
@@ -117,7 +115,8 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         ? Colors.black
         : positiveBalance
             ? AppColors.themeLight
-            : AppColors.youtubeRed;;
+            : AppColors.youtubeRed;
+    ;
     final incomeColor = zeroIncome ? Colors.black : AppColors.themeLight;
     final expenseColor = zeroExpense ? Colors.black : AppColors.youtubeRed;
 
@@ -130,7 +129,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         width: w,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+            color: Colors.white,
             // gradient: LinearGradient(
             //     colors: AppGradients.greenGradient,
             //     begin: Alignment.topLeft,
@@ -139,37 +138,54 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Total Balance",
-              style: AppStyles.descriptionPrimary(
-                  context: context, color: totalBalanceColor),
-            ),
-            spacerH(5),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (!zeroBalance)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Icon(
-                      positiveBalance ? Icons.add : Icons.remove,
-                      color: totalBalanceColor,
-                      size: 20,
-                    ),
-                  ),
-                spacerW(2),
                 Flexible(
-                    child: InkWell(
-                  onTap: showCurrencyPickerDialog,
-                  child: Text(
-                    "$currency${totalBalance.abs()}",
-                    style: AppStyles.headingPrimary(
-                        context: context,
-                        fontSize: 30,
-                        color: totalBalanceColor),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Total Balance",
+                        style: AppStyles.descriptionPrimary(
+                            context: context, color: totalBalanceColor),
+                      ),
+                      spacerH(5),
+                      Flexible(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!zeroBalance)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Icon(
+                                  positiveBalance ? Icons.add : Icons.remove,
+                                  color: totalBalanceColor,
+                                  size: 20,
+                                ),
+                              ),
+                            spacerW(2),
+                            Flexible(
+                                child: InkWell(
+                              onTap: showCurrencyPickerDialog,
+                              child: Text(
+                                "$currency${totalBalance.abs()}",
+                                style: AppStyles.headingPrimary(
+                                    context: context,
+                                    fontSize: 30,
+                                    color: totalBalanceColor),
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                )),
+                ),
+                spacerW(),
+                staticImage(assetName: StaticAssets.budgetFlowIcon,height: 80,width: 80),
               ],
             ),
             spacerH(),

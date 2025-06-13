@@ -35,51 +35,76 @@ class _MyBudgetPageState extends ConsumerState<MyBudgetPage> {
 
     final theme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: theme.surface,
       appBar: ReusableAppBar(text: 'My Budget'),
-      body: Column(
+      body: Stack(
         children: [
-          spacerH(),
-          MyBudgetFilters(),
-          spacerH(10),
-          Expanded(
-            child: Center(
-              child: myBudgetList.isEmpty
-                  ? Text(
-                      'No Budget Found',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: theme.onSurface,
+
+          Positioned(
+              child: Container(
+             height: 200,
+            color: theme.primary,
+          )),
+          
+          Positioned(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: theme.surface,
+                ),
+                child: Column(
+                  children: [
+                    spacerH(),
+                    MyBudgetFilters(),
+                    spacerH(10),
+                    Expanded(
+                      child: Center(
+                        child: myBudgetList.isEmpty
+                            ? Text(
+                                'No Budget Found',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: theme.onSurface,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: myBudgetList.length,
+                                padding: const EdgeInsets.only(top: 10, bottom: 80),
+                                itemBuilder: (context, index) {
+                                  final budget = myBudgetList[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, top: 10, bottom: 10),
+                                    child: ReusableFoldedCornerContainer2(
+                                      id: budget.id!,
+                                      title: budget.title,
+                                      description: budget.description,
+                                      date: budget.date,
+                                      color: budget.color,
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, Paths.budgetManagementPage,
+                                            arguments: MyBudgetModel(
+                                              id: budget.id!,
+                                              title: budget.title,
+                                              description: budget.description,
+                                              date: budget.date,
+                                              color: budget.color,
+                                            ));
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: myBudgetList.length,
-                      padding: const EdgeInsets.only(top: 10, bottom: 80),
-                      itemBuilder: (context, index) {
-                        final budget = myBudgetList[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 15, top: 10, bottom: 10),
-                          child: ReusableFoldedCornerContainer2(
-                            id: budget.id!,
-                            title: budget.title,
-                            description: budget.description,
-                            date: budget.date,
-                            color: budget.color,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, Paths.budgetManagementPage,
-                                  arguments: MyBudgetModel(
-                                    id: budget.id!,
-                                    title: budget.title,
-                                    description: budget.description,
-                                    date: budget.date,
-                                    color: budget.color,
-                                  ));
-                            },
-                          ),
-                        );
-                      },
                     ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
