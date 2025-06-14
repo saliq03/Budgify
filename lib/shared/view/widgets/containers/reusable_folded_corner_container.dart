@@ -1,5 +1,3 @@
-import 'package:budgify/core/theme/app_colors.dart';
-import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/theme/app_styles.dart';
@@ -50,7 +48,7 @@ class ReusableFoldedCornerContainer extends StatelessWidget {
         ),
         Expanded(
           child: CustomPaint(
-            painter: FoldedCornerPainter(color: Colors.grey.shade500),
+            painter: FoldedCornerPainter(color: theme.primary),
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(

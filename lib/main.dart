@@ -3,8 +3,6 @@ import 'package:budgify/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'core/routes/app_routes.dart';
 import 'core/routes/paths.dart';
 import 'core/theme/app_theme.dart';
@@ -14,8 +12,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //Hive Database
-  var directory = await getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
+  // var directory = await getApplicationDocumentsDirectory();
+  // Hive.init(directory.path);
 
   await _loadFonts();
 

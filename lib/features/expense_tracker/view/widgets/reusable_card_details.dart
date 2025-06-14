@@ -28,12 +28,12 @@ class ReusableCardDetails extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: iconSize,
-            ),
-            spacerW(5),
+            // Icon(
+            //   icon,
+            //   color: color,
+            //   size: iconSize,
+            // ),
+            // spacerW(5),
             Flexible(
               child: Text(
                 text,

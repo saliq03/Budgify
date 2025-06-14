@@ -15,7 +15,6 @@ import '../widgets/transaction_history/reusable_info.dart';
 
 class InvestmentTaxHistoryPage extends StatelessWidget {
   final bool isTaxPage;
-
   const InvestmentTaxHistoryPage({super.key, this.isTaxPage = false});
 
   @override

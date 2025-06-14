@@ -38,8 +38,9 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
+    final double w = MediaQuery.of(context).size.width;
     final currency = ref.watch(currencyProvider).symbol;
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
         body: SingleChildScrollView(
           child: Padding(
@@ -52,7 +53,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                 spacerH(10),
                 // CurrencyPicker(),
                 // spacerH(10),
-                cardSection(w, context, currency),
+                cardSection(w, context, currency,theme),
                 spacerH(10),
                 DateFilter(),
                 spacerH(),
@@ -100,7 +101,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
   }
 
   Widget cardSection(
-      final double w, final BuildContext context, final currency) {
+      final double w, final BuildContext context, final currency,final ColorScheme theme) {
     final transactionInfo =
         ref.watch(filteredTransactionProvider).transactionModel;
     double totalBalance = getDoubleValue(transactionInfo.totalBalance),
@@ -114,10 +115,9 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
     final totalBalanceColor = zeroBalance
         ? Colors.black
         : positiveBalance
-            ? AppColors.themeLight
+            ? Colors.green
             : AppColors.youtubeRed;
-    ;
-    final incomeColor = zeroIncome ? Colors.black : AppColors.themeLight;
+    final incomeColor = zeroIncome ? Colors.black : Colors.green;
     final expenseColor = zeroExpense ? Colors.black : AppColors.youtubeRed;
 
     return Card(
@@ -129,7 +129,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
         width: w,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color:  Color.fromARGB(255, 184, 241, 240).withValues(alpha: 0.3),
             // gradient: LinearGradient(
             //     colors: AppGradients.greenGradient,
             //     begin: Alignment.topLeft,
@@ -141,7 +141,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -184,12 +184,29 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                     ],
                   ),
                 ),
-                spacerW(),
-                staticImage(assetName: StaticAssets.budgetFlowIcon,height: 80,width: 80),
+                spacerW(15),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(StaticAssets.budgetFlowHomeIcon),
+                      fit: BoxFit.cover,
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: theme.primary,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                spacerW(5),
+
               ],
             ),
             spacerH(),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(

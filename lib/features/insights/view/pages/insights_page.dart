@@ -1,3 +1,4 @@
+import 'package:budgify/core/constants/static_assets.dart';
 import 'package:budgify/shared/view/widgets/currency_picker.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
@@ -64,25 +65,28 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
               child: CurrencyPicker(),
             ),
             spacerH(),
-            if (expenseData.trackerCategory.investment != 0 ||
-                expenseData.trackerCategory.tax != 0 ||
-                expenseData.trackerCategory.totalIncome != 0 ||
-                expenseData.trackerCategory.totalExpense != 0)
-              reportSection(
-                w: w,
-                context: context,
-                currencySymbol: currencySymbol,
-                totalBalance: totalBalance,
-                totalIncome: totalIncome,
-                totalInvestment: totalInvestment,
-                totalExpense: totalExpense,
-                totalTax: totalTax,
-                theme: theme,
-              ),
+            (expenseData.trackerCategory.investment != 0 ||
+                    expenseData.trackerCategory.tax != 0 ||
+                    expenseData.trackerCategory.totalIncome != 0 ||
+                    expenseData.trackerCategory.totalExpense != 0)
+                ? reportSection(
+                    w: w,
+                    context: context,
+                    currencySymbol: currencySymbol,
+                    totalBalance: totalBalance,
+                    totalIncome: totalIncome,
+                    totalInvestment: totalInvestment,
+                    totalExpense: totalExpense,
+                    totalTax: totalTax,
+                    theme: theme,
+                  )
+                : noDataFoundSection(
+                    w: w,
+                    theme: theme,
+                  ),
             moreAppsCarousel(w: w, context: context, theme: theme),
-            spacerH(30),
             playStoreRating(w, theme),
-            spacerH(30),
+            spacerH(25),
             socialMediaConnections(w, theme),
             spacerH(80)
           ],
@@ -91,6 +95,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
     );
   }
 
+  /// Report Section
   Widget reportSection(
       {required double w,
       required BuildContext context,
@@ -112,9 +117,9 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Material(
             elevation: 4,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(15),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(15),
               child: SfCircularChart(
                 // borderColor: theme.primary,
                 backgroundColor: theme.onSecondary,
@@ -122,7 +127,9 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 title: ChartTitle(
                     text: 'Expense Summary',
                     textStyle: AppStyles.headingPrimary(
-                        context: context, fontSize: 16,)),
+                      context: context,
+                      fontSize: 16,
+                    )),
                 legend: Legend(isVisible: true),
                 series: <CircularSeries>[
                   PieSeries<_ChartData, String>(
@@ -162,6 +169,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
             ),
           ),
         ),
+        spacerH(10),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Card(
@@ -170,10 +178,10 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Container(
               width: w,
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: theme.onSecondary,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
                 children: [
@@ -206,7 +214,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                   ),
                   spacerH(),
                   SizedBox(
-                    height: 550,
+                    height: 400,
                     width: w,
                     child: BarChart(
                       BarChartData(
@@ -315,6 +323,28 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
         ),
         spacerH(30),
       ],
+    );
+  }
+
+  /// No Data Found Section
+  Widget noDataFoundSection({required final double w, required final theme}) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.only(bottom: 30,top: 5, left: 20, right: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Container(
+        width: w,
+        height: 280,
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(StaticAssets.noDataFoundImage),
+            fit: BoxFit.cover,
+          ),
+          color: theme.onSecondary,
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
     );
   }
 

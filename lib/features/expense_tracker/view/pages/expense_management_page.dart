@@ -3,7 +3,6 @@ import 'package:budgify/features/expense_tracker/model/date_model.dart';
 import 'package:budgify/features/expense_tracker/viewmodel/riverpod/on_changed_value_provider.dart';
 import 'package:budgify/shared/view/widgets/containers/reusable_folded_corner_container.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
-import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:budgify/core/theme/app_styles.dart';
 import 'package:budgify/shared/view/widgets/global_widgets.dart';
 import 'package:budgify/shared/view/widgets/reusable_app_bar.dart';
@@ -108,18 +107,21 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final theme = Theme.of(context).colorScheme;
     final onChangedValue = ref.read(onChangeValueProvider);
     final onChangedProvider = ref.read(onChangedInvestmentTaxProvider);
-    final isDarkTheme = MediaQuery.of(context).platformBrightness ==
-        Brightness.dark;
+    // final isDarkTheme = MediaQuery.of(context).platformBrightness ==
+    //     Brightness.dark;
 
     return Scaffold(
+      backgroundColor: theme.secondary,
       appBar: ReusableAppBar(
-        text: 'Expense Management',
+        text: selectedText,
         isCenterText: false,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            spacerH(40),
+
+            isShowReturn?
+            spacerH(40) : spacerH(),
             Visibility(
                 visible: isShowReturn,
                 child: Padding(
@@ -147,59 +149,82 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                   ),
                 )),
             spacerH(),
-            Card(
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Container(
-                width: w,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  // color: Colors.white,
-                  gradient: LinearGradient(
-                      colors: AppGradients.greenGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      selectedText,
-                      style: AppStyles.headingPrimary(
-                          context: context, color: Colors.white),
-                    ),
-                    spacerH(15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  // Text(
+                  //   selectedText,
+                  //   style: AppStyles.headingPrimary(
+                  //       context: context, color: Colors.white),
+                  // ),
+                  // spacerH(15),
+                  ReusableTextField(
+                    maxLines: 5,
+                    controller: titleController,
+                    hintText: "Enter Title",
+                    prefixIcon: Icons.title_outlined,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                  spacerH(),
+                  ReusableTextField(
+                    prefixText: currency,
+                    onTapPrefix: () {
+                      showCurrencyPicker(
+                        context: context,
+                        showFlag: true,
+                        showCurrencyName: true,
+                        showCurrencyCode: true,
+                        onSelect: (Currency currency) {
+                          rProvider.state = CurrencyModel.fromJson(currency);
+                          // print(currency.name);
+                        },
+                      );
+                    },
+                    controller: amountController,
+                    hintText: "Enter Amount",
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d*')),
+                      // FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (value) {
+                      ref.read(onChangeValueProvider.notifier).state =
+                          onChangedValue.copyWith(
+                        beforeOperationAmount: value,
+                        percentage: percentageController.text,
+                        isTaxPage: isTaxPage,
+                      );
+                    },
+                  ),
+                  spacerH(),
+                  SizedBox(
+                    height: 55,
+                    // height: 40,
+                    child: CustomDropDown(
+                        icon: Icons.arrow_drop_down_rounded,
+                        categories:
+                            ExpenseType.values.map((e) => e.value).toList(),
+                        onChanged: (newValue) {
+                          if (newValue != null) {
+                            ref.read(selectedValueProvider.notifier).state =
+                                newValue;
+                          }
+                        },
+                        selectedValue: selectedValue),
+                  ),
+                  spacerH(),
+                  if (isShowReturn)
                     ReusableTextField(
-                      maxLines: 5,
-                      controller: titleController,
-                      hintText: "Enter Title",
-                      prefixIcon: Icons.title_outlined,
-                      keyboardType: TextInputType.multiline,
-                    ),
-                    spacerH(),
-                    ReusableTextField(
-                      prefixText: currency,
-                      onTapPrefix: () {
-                        showCurrencyPicker(
-                          context: context,
-                          showFlag: true,
-                          showCurrencyName: true,
-                          showCurrencyCode: true,
-                          onSelect: (Currency currency) {
-                            rProvider.state = CurrencyModel.fromJson(currency);
-                            // print(currency.name);
-                          },
-                        );
-                      },
-                      controller: amountController,
-                      hintText: "Enter Amount",
+                      prefixIcon: Icons.percent,
+                      controller: percentageController,
+                      hintText: "0",
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*')),
+                          RegExp(r'^-?\d*\.?\d*'),
+                        ),
                         // FilteringTextInputFormatter.digitsOnly,
                       ],
                       onChanged: (value) {
@@ -211,123 +236,84 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         );
                       },
                     ),
-                    spacerH(),
-                    SizedBox(
-                      height: 55,
-                      // height: 40,
-                      child: CustomDropDown(
-                          icon: Icons.arrow_drop_down_rounded,
-                          categories:
-                              ExpenseType.values.map((e) => e.value).toList(),
-                          onChanged: (newValue) {
-                            if (newValue != null) {
-                              ref.read(selectedValueProvider.notifier).state =
-                                  newValue;
-                            }
-                          },
-                          selectedValue: selectedValue),
-                    ),
-                    spacerH(),
-                    if (isShowReturn)
-                      ReusableTextField(
-                        prefixIcon: Icons.percent,
-                        controller: percentageController,
-                        hintText: "0",
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^-?\d*\.?\d*'),
-                          ),
-                          // FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        onChanged: (value) {
-                          ref.read(onChangeValueProvider.notifier).state =
-                              onChangedValue.copyWith(
-                            beforeOperationAmount: value,
-                            percentage: percentageController.text,
-                            isTaxPage: isTaxPage,
+                  if (isShowReturn) spacerH(),
+                  selectDate(w, context, theme, dateRef),
+                  spacerH(),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (amountController.text.isEmpty) {
+                          IconSnackBar.show(
+                            context,
+                            label: "Please enter amount!",
+                            snackBarType: SnackBarType.alert,
                           );
-                        },
-                      ),
-                    if (isShowReturn) spacerH(),
-                    selectDate(w, context, theme, dateRef),
-                    spacerH(),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (amountController.text.isEmpty) {
-                            IconSnackBar.show(
-                              context,
-                              label: "Please enter amount!",
-                              snackBarType: SnackBarType.alert,
-                            );
-                            return;
-                          }
+                          return;
+                        }
 
-                          if(isTaxPage && percentageValue < 0.0) {
-                            // percentageValue =percentageValue.abs();
-                            // percentageController.text = percentageValue.toString();
-                            IconSnackBar.show(
-                              context,
-                              label: "Tax cannot be negative!",
-                              snackBarType: SnackBarType.alert,
-                            );
-                            return;
-                          }
+                        if(isTaxPage && percentageValue < 0.0) {
+                          // percentageValue =percentageValue.abs();
+                          // percentageController.text = percentageValue.toString();
+                          IconSnackBar.show(
+                            context,
+                            label: "Tax cannot be negative!",
+                            snackBarType: SnackBarType.alert,
+                          );
+                          return;
+                        }
 
 
 
-                          ///It is a special condition because when we add value then while navigating amount will always be null and if we update value then amount can not be possibly null.
-                          if (widget.trackerModel!.amount != null) {
-                            trackerRProvider.updateData(
-                              id: widget.trackerModel!.id ?? 0,
-                              title: titleController.text.isEmpty
-                                  ? "Reason unavailable"
-                                  : titleController.text,
-                              percentage: double.parse(
-                                  percentageController.text.isEmpty
-                                      ? "0"
-                                      : percentageController.text),
-                              date: dateRef.selectedDate ??
-                                  formatDate(DateTime.now()),
-                              amount: double.parse(amountController.text),
-                              trackerCategory: ExpenseType.values
-                                  .firstWhere((e) => e.value == selectedValue)
-                                  .intValue,
-                            );
-                          } else {
-                            trackerRProvider.addData(
-                              title: titleController.text.isEmpty
-                                  ? ""
-                                  : titleController.text,
-                              date: dateRef.selectedDate ??
-                                  formatDate(DateTime.now()),
-                              percentage: double.parse(
-                                  percentageController.text.isEmpty
-                                      ? "0"
-                                      : percentageController.text),
-                              amount: double.parse(amountController.text),
-                              trackerCategory: ExpenseType.values
-                                  .firstWhere((e) => e.value == selectedValue)
-                                  .intValue,
-                            );
-                          }
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 4,
-                          minimumSize: Size(w, 45),
-                          backgroundColor: isDarkTheme? Colors.white : Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        ///It is a special condition because when we add value then while navigating amount will always be null and if we update value then amount can not be possibly null.
+                        if (widget.trackerModel!.amount != null) {
+                          trackerRProvider.updateData(
+                            id: widget.trackerModel!.id ?? 0,
+                            title: titleController.text.isEmpty
+                                ? "Reason unavailable"
+                                : titleController.text,
+                            percentage: double.parse(
+                                percentageController.text.isEmpty
+                                    ? "0"
+                                    : percentageController.text),
+                            date: dateRef.selectedDate ??
+                                formatDate(DateTime.now()),
+                            amount: double.parse(amountController.text),
+                            trackerCategory: ExpenseType.values
+                                .firstWhere((e) => e.value == selectedValue)
+                                .intValue,
+                          );
+                        } else {
+                          trackerRProvider.addData(
+                            title: titleController.text.isEmpty
+                                ? ""
+                                : titleController.text,
+                            date: dateRef.selectedDate ??
+                                formatDate(DateTime.now()),
+                            percentage: double.parse(
+                                percentageController.text.isEmpty
+                                    ? "0"
+                                    : percentageController.text),
+                            amount: double.parse(amountController.text),
+                            trackerCategory: ExpenseType.values
+                                .firstWhere((e) => e.value == selectedValue)
+                                .intValue,
+                          );
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 4,
+                        minimumSize: Size(w, 45),
+                        backgroundColor: theme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
-                          selectedText,
-                          style: AppStyles.descriptionPrimary(
-                              context: context, color: isDarkTheme?  Colors.black : Colors.white),
-                        ))
-                  ],
-                ),
+                      ),
+                      child: Text(
+                        selectedText,
+                        style: AppStyles.descriptionPrimary(
+                            context: context, color:  Colors.white),
+                      ))
+                ],
               ),
             ),
             spacerH(40),

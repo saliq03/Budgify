@@ -5,6 +5,7 @@ class StaticAssets {
   // Icons
   static const String userProfile ="assets/icons/profile.png";
   static const String crossCloseIcon = 'assets/icons/cross_close_icon.png';
+  static const String budgetFlowHomeIcon = 'assets/icons/budget_flow_home_icon.png';
 
   //All apps Icons
   static const String brainBoosterIcon =
@@ -19,4 +20,8 @@ class StaticAssets {
       'assets/icons/my_app_icons/note_master_icon.png';
   static const String budgetFlowIcon =
       'assets/icons/my_app_icons/budget_flow_icon.png';
+
+
+  //Images
+  static const String noDataFoundImage = 'assets/images/no_data_found_image.png';
 }
