@@ -8,6 +8,17 @@ class InvestmentSummary {
     required this.trackerModel,
     required this.investmentModel,
   });
+
+  // Add this static method
+  static InvestmentSummary empty() {
+    return InvestmentSummary(
+        trackerModel: [],
+        investmentModel: InvestmentModel(
+            currentAmount: '0.00',
+            investedAmount: '0.00',
+            totalReturns: '0.00',
+            returnsPercentage: '0.00'));
+  }
 }
 
 class InvestmentModel {

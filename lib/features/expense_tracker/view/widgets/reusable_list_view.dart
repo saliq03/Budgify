@@ -111,11 +111,13 @@ class ReusableListView extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  if(tl.title.isNotEmpty ||tl.title !="")
                                   Text(
                                     tl.title,
                                     style: AppStyles.headingPrimary(
                                         context: context, fontSize: 17),
                                   ),
+                                  if(tl.title.isNotEmpty ||tl.title !="")
                                   spacerH(2),
                                   transactionsDetails(
                                       title: isTax
@@ -164,12 +166,39 @@ class ReusableListView extends StatelessWidget {
                 : ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(icon, color: colors[0], size: 40),
-                    title: Text(
+                    title: tl.title.isNotEmpty ||tl.title !="" ? Text(
                       tl.title,
                       style: AppStyles.headingPrimary(
                           context: context, fontSize: 17),
+                    ) : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Icon(
+                            (tl.trackerCategory == ExpenseType.tax.intValue ||
+                                tl.trackerCategory ==
+                                    ExpenseType.expense.intValue)
+                                ? Icons.remove
+                                : Icons.add,
+                            color: colors[0],
+                            size: 20,
+                          ),
+                        ),
+                        spacerW(2),
+                        Flexible(
+                            child: Text(
+                              "$currency${tl.amount}",
+                              style: AppStyles.headingPrimary(
+                                context: context,
+                                fontSize: 17,
+                                color: colors[0],
+                              ),
+                            )),
+                      ],
                     ),
-                    subtitle: Row(
+                    subtitle: tl.title.isEmpty ||tl.title =="" ? null : Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [

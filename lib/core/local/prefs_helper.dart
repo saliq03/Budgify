@@ -27,9 +27,9 @@ class PrefsHelper {
     await _prefs?.setBool(key, value);
   }
 
-  Future<String> getStringValue(String key) async {
+  Future<String?> getStringValue(String key) async {
     await init();
-    return _prefs?.getString(key) ?? '';
+    return _prefs?.getString(key);
   }
 
   Future<void> setStringValue(String key, String value) async {

@@ -8,6 +8,17 @@ class TaxSummary {
     required this.trackerModel,
     required this.taxModel,
   });
+
+  // Add this static method
+  static TaxSummary empty() {
+    return TaxSummary(
+        trackerModel: [],
+        taxModel: TaxModel(
+            netAmountAfterTax: '0.00',
+            taxableAmount: '0.00',
+            totalTax: '0.00',
+            taxPercentage: '0.00'));
+  }
 }
 
 /// A data model representing tax-related information.

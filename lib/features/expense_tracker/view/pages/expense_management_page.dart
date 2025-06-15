@@ -268,7 +268,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           trackerRProvider.updateData(
                             id: widget.trackerModel!.id ?? 0,
                             title: titleController.text.isEmpty
-                                ? "Reason unavailable"
+                                ? ""
                                 : titleController.text,
                             percentage: double.parse(
                                 percentageController.text.isEmpty

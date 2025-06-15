@@ -8,6 +8,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:budgify/features/expense_tracker/viewmodel/riverpod/expense_tracker_notifier.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/prefs_keys.dart';
+import '../../../../core/local/prefs_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_gradients.dart';
 import '../../../../core/theme/app_styles.dart';
@@ -27,6 +29,22 @@ class InsightsPage extends ConsumerStatefulWidget {
 }
 
 class _InsightsPageState extends ConsumerState<InsightsPage> {
+  PrefsHelper? prefsHelper;
+  bool isAlreadyRated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initPreference();
+  }
+
+  Future<void> initPreference() async {
+    prefsHelper = PrefsHelper();
+    isAlreadyRated = await prefsHelper!.getBoolValue(PrefsKeys.alreadyRated);
+    setState(() {});
+    // print("Already Rated: $isAlreadyRated");
+  }
+
   @override
   Widget build(BuildContext context) {
     final expenseData = ref.watch(expenseTrackerProvider);
@@ -85,8 +103,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                     theme: theme,
                   ),
             moreAppsCarousel(w: w, context: context, theme: theme),
-            playStoreRating(w, theme),
-            spacerH(25),
+            if (!isAlreadyRated) playStoreRating(w, theme, prefsHelper),
+            if (!isAlreadyRated) spacerH(25),
             socialMediaConnections(w, theme),
             spacerH(80)
           ],
@@ -330,7 +348,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
   Widget noDataFoundSection({required final double w, required final theme}) {
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.only(bottom: 30,top: 5, left: 20, right: 20),
+      margin: const EdgeInsets.only(bottom: 30, top: 5, left: 20, right: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         width: w,
@@ -373,7 +391,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
   }
 
   ///PlayStore rating widget
-  Widget playStoreRating([final w, final theme]) {
+  Widget playStoreRating([final w, final theme, final prefsHelper]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Card(
@@ -419,11 +437,11 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                 spacerH(15),
                 InkWell(
                   onTap: () {
-                    // setState(() {
-                    //   isAlreadyRated = true;
-                    // });
-                    //
-                    // prefsHelper.setBoolValue(PrefsKeys.alreadyRated, true);
+                    setState(() {
+                      isAlreadyRated = true;
+                    });
+
+                    prefsHelper.setBoolValue(PrefsKeys.alreadyRated, true);
                   },
                   child: Text(
                     "I have already rated",

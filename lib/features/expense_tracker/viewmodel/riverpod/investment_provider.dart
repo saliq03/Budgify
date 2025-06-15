@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/prefs_keys.dart';
+import '../../../../core/local/prefs_helper.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/investment_summary.dart';
 import '../../model/tracker_model.dart';
@@ -7,13 +9,36 @@ import '../../utils/expense_type.dart';
 import '../../utils/investment_type.dart';
 import 'expense_tracker_notifier.dart';
 
+// final investmentProvider =
+// StateProvider<String>((ref) => InvestmentType.investmentLatestFirst.value);
+
+
+class InvestmentAsyncNotifier extends AsyncNotifier<String> {
+  final prefsHelper = PrefsHelper();
+
+  @override
+  Future<String> build() async {
+    final saved = await prefsHelper.getStringValue(PrefsKeys.investmentFilter);
+    return saved ?? InvestmentType.investmentLatestFirst.value;
+  }
+
+  Future<void> setFilter(String newValue) async {
+    await prefsHelper.setStringValue(PrefsKeys.investmentFilter, newValue);
+    state = AsyncValue.data(newValue);
+  }
+}
+
 final investmentProvider =
-StateProvider<String>((ref) => InvestmentType.investmentLatestFirst.value);
+AsyncNotifierProvider<InvestmentAsyncNotifier, String>(InvestmentAsyncNotifier.new);
 
 
 
 final filteredInvestmentProvider = Provider<InvestmentSummary>((ref) {
-  final filter = ref.watch(investmentProvider);
+  final investmentAsync = ref.watch(investmentProvider);
+
+return investmentAsync.when(
+data: (filter) {
+
   final allData = ref.watch(expenseTrackerProvider).trackers;
 
   List<TrackerModel> filteredList = [];
@@ -68,4 +93,11 @@ final filteredInvestmentProvider = Provider<InvestmentSummary>((ref) {
           investedAmount: investedAmount.toStringAsFixed(2),
           totalReturns: totalReturns.toStringAsFixed(2),
           returnsPercentage: returnsPercentage.toStringAsFixed(2)));
+},
+  loading: () => InvestmentSummary.empty(),
+  error: (err, stack) {
+    // log or handle the error as needed
+    return InvestmentSummary.empty();
+  },
+);
 });

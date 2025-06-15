@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/prefs_keys.dart';
+import '../../../../core/local/prefs_helper.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tax_summary.dart';
 import '../../model/tracker_model.dart';
@@ -6,11 +8,36 @@ import '../../utils/expense_type.dart';
 import '../../utils/tax_type.dart';
 import 'expense_tracker_notifier.dart';
 
+// final taxProvider =
+// StateProvider<String>((ref) => TaxType.taxLatestFirst.value);
+
+class TaxAsyncNotifier extends AsyncNotifier<String> {
+  final prefsHelper = PrefsHelper();
+
+  @override
+  Future<String> build() async {
+    final saved = await prefsHelper.getStringValue(PrefsKeys.taxFilter);
+    return saved ?? TaxType.taxLatestFirst.value;
+  }
+
+  Future<void> setFilter(String newValue) async {
+    await prefsHelper.setStringValue(PrefsKeys.taxFilter, newValue);
+    state = AsyncValue.data(newValue);
+  }
+}
+
 final taxProvider =
-StateProvider<String>((ref) => TaxType.taxLatestFirst.value);
+AsyncNotifierProvider<TaxAsyncNotifier, String>(TaxAsyncNotifier.new);
+
+
 
 final filteredTaxProvider = Provider<TaxSummary>((ref) {
-  final filter = ref.watch(taxProvider);
+  final taxAsync = ref.watch(taxProvider);
+return taxAsync.when(
+data: (filter) {
+
+
+
   final allData = ref.watch(expenseTrackerProvider).trackers;
 
   List<TrackerModel> filteredList = [];
@@ -25,6 +52,9 @@ final filteredTaxProvider = Provider<TaxSummary>((ref) {
 
   /// The percentage rate used to calculate the tax.
   double taxPercentage = 0.0;
+
+
+
 
   if (filter == TaxType.taxLatestFirst.value) {
     filteredList = allData
@@ -68,5 +98,14 @@ final filteredTaxProvider = Provider<TaxSummary>((ref) {
           netAmountAfterTax: netAmountAfterTax.toStringAsFixed(2),
           taxableAmount: taxableAmount.toStringAsFixed(2),
           totalTax: totalTax.toStringAsFixed(2),
-          taxPercentage: taxPercentage.toStringAsFixed(2)));
+          taxPercentage: taxPercentage.toStringAsFixed(2)
+  ),
+  );
+},
+  loading: () => TaxSummary.empty(),
+  error: (err, stack) {
+    // log or handle the error as needed
+    return TaxSummary.empty();
+  },
+);
 });

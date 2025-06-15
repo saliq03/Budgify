@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/prefs_keys.dart';
+import '../../../../core/local/prefs_helper.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
 import '../../model/tracker_model.dart';
 import '../../model/transaction_summary.dart';
@@ -6,87 +8,126 @@ import '../../utils/expense_type.dart';
 import '../../utils/transaction_type.dart';
 import 'expense_tracker_notifier.dart';
 
+// final transactionProvider =
+// StateProvider<String>((ref) => TransactionType.allTransactions.value);
+
+
+// final transactionProvider = FutureProvider<String>((ref) async {
+//   final prefsHelper = PrefsHelper();
+//   String? savedFilter = await prefsHelper.getStringValue(PrefsKeys.allFilter);
+//   return savedFilter ?? TransactionType.allTransactions.value;
+// });
+
+
+class TransactionAsyncNotifier extends AsyncNotifier<String> {
+  final prefsHelper = PrefsHelper();
+
+  @override
+  Future<String> build() async {
+    final saved = await prefsHelper.getStringValue(PrefsKeys.allFilter);
+    return saved ?? TransactionType.allTransactions.value;
+  }
+
+  Future<void> setFilter(String newValue) async {
+    await prefsHelper.setStringValue(PrefsKeys.allFilter, newValue);
+    state = AsyncValue.data(newValue);
+  }
+}
+
 final transactionProvider =
-StateProvider<String>((ref) => TransactionType.allTransactions.value);
+AsyncNotifierProvider<TransactionAsyncNotifier, String>(TransactionAsyncNotifier.new);
+
+
 
 final filteredTransactionProvider = Provider<TransactionSummary>((ref) {
-  final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
+  final transactionAsync = ref.watch(transactionProvider);
 
-  double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
-  final isExcludeInvestmentAndTax = ref.watch(transactionProvider) ==
-      TransactionType.excludingInvestmentAndTax.value;
+  return transactionAsync.when(
+    data: (transactionTypeValue) {
+      final wProvider = ref.watch(expenseTrackerProvider).trackerCategory;
 
-  if (isExcludeInvestmentAndTax) {
-    totalBalance = wProvider.totalIncome - wProvider.totalExpense;
-    totalIncome = wProvider.totalIncome;
-    totalExpense = wProvider.totalExpense;
-  } else {
-    totalBalance = wProvider.totalIncome -
-        wProvider.totalExpense +
-        wProvider.investment -
-        wProvider.tax;
-    if (wProvider.investment > 0) {
-      totalIncome += wProvider.investment + wProvider.totalIncome;
-      totalExpense += wProvider.totalExpense - wProvider.tax;
-    } else {
-      totalIncome += wProvider.totalIncome;
-      totalExpense +=
-          wProvider.totalExpense - wProvider.tax - wProvider.investment;
-    }
-  }
+      double totalBalance = 0.0, totalIncome = 0.0, totalExpense = 0.0;
+      final isExcludeInvestmentAndTax =
+          transactionTypeValue == TransactionType.excludingInvestmentAndTax.value;
 
+      if (isExcludeInvestmentAndTax) {
+        totalBalance = wProvider.totalIncome - wProvider.totalExpense;
+        totalIncome = wProvider.totalIncome;
+        totalExpense = wProvider.totalExpense;
+      } else {
+        totalBalance = wProvider.totalIncome -
+            wProvider.totalExpense +
+            wProvider.investment -
+            wProvider.tax;
+        if (wProvider.investment > 0) {
+          totalIncome += wProvider.investment + wProvider.totalIncome;
+          totalExpense += wProvider.totalExpense - wProvider.tax;
+        } else {
+          totalIncome += wProvider.totalIncome;
+          totalExpense +=
+              wProvider.totalExpense - wProvider.tax - wProvider.investment;
+        }
+      }
 
-  final filter = ref.watch(transactionProvider);
-  final allData = ref.watch(expenseTrackerProvider).trackers;
+      final allData = ref.watch(expenseTrackerProvider).trackers;
+      List<TrackerModel> filteredList = [];
 
-  List<TrackerModel> filteredList = [];
+      if (transactionTypeValue == TransactionType.mostExpensive.value) {
+        filteredList = allData
+            .where((tracker) =>
+        tracker.trackerCategory == ExpenseType.expense.intValue)
+            .toList()
+          ..sort((a, b) => b.amount!.compareTo(a.amount!));
+      } else if (transactionTypeValue ==
+          TransactionType.excludingInvestmentAndTax.value) {
+        filteredList = allData
+            .where((tracker) =>
+        (tracker.trackerCategory != ExpenseType.investment.intValue) &&
+            (tracker.trackerCategory != ExpenseType.tax.intValue))
+            .toList();
+      } else if (transactionTypeValue == TransactionType.leastExpensive.value) {
+        filteredList = allData
+            .where((tracker) =>
+        tracker.trackerCategory == ExpenseType.expense.intValue)
+            .toList()
+          ..sort((a, b) => a.amount!.compareTo(b.amount!));
+      } else if (transactionTypeValue ==
+          TransactionType.transactionsNewestToOldest.value) {
+        filteredList = allData.toList()
+          ..sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date)));
+      } else if (transactionTypeValue == TransactionType.mostIncome.value) {
+        filteredList = allData
+            .where((tracker) =>
+        tracker.trackerCategory == ExpenseType.income.intValue)
+            .toList()
+          ..sort((a, b) => b.amount!.compareTo(a.amount!));
+      } else if (transactionTypeValue == TransactionType.leastIncome.value) {
+        filteredList = allData
+            .where((tracker) =>
+        tracker.trackerCategory == ExpenseType.income.intValue)
+            .toList()
+          ..sort((a, b) => a.amount!.compareTo(b.amount!));
+      } else if (transactionTypeValue ==
+          TransactionType.transactionsOldestToNewest.value) {
+        filteredList = allData.toList()
+          ..sort((a, b) => parseDate(a.date).compareTo(parseDate(b.date)));
+      } else {
+        filteredList = allData;
+      }
 
-  if (filter == TransactionType.mostExpensive.value) {
-    filteredList = allData
-        .where((tracker) =>
-    tracker.trackerCategory == ExpenseType.expense.intValue)
-        .toList()
-      ..sort((a, b) => b.amount!.compareTo(a.amount!));
-  } else if (filter == TransactionType.excludingInvestmentAndTax.value) {
-    filteredList = allData
-        .where((tracker) =>
-    (tracker.trackerCategory != ExpenseType.investment.intValue) &&
-        (tracker.trackerCategory != ExpenseType.tax.intValue))
-        .toList();
-  } else if (filter == TransactionType.leastExpensive.value) {
-    filteredList = allData
-        .where((tracker) =>
-    tracker.trackerCategory == ExpenseType.expense.intValue)
-        .toList()
-      ..sort((a, b) => a.amount!.compareTo(b.amount!));
-  } else if (filter == TransactionType.transactionsNewestToOldest.value) {
-    filteredList = allData.toList()
-      ..sort((a, b) =>
-          parseDate(b.date).compareTo(parseDate(a.date))); // Newest to Oldest
-  } else if (filter == TransactionType.mostIncome.value) {
-    filteredList = allData
-        .where(
-            (tracker) => tracker.trackerCategory == ExpenseType.income.intValue)
-        .toList()
-      ..sort((a, b) => b.amount!.compareTo(a.amount!));
-  } else if (filter == TransactionType.leastIncome.value) {
-    filteredList = allData
-        .where(
-            (tracker) => tracker.trackerCategory == ExpenseType.income.intValue)
-        .toList()
-      ..sort((a, b) => a.amount!.compareTo(b.amount!));
-  } else if (filter == TransactionType.transactionsOldestToNewest.value) {
-    filteredList = allData.toList()
-      ..sort((a, b) =>
-          parseDate(a.date).compareTo(parseDate(b.date))); // Oldest to Newest
-  } else {
-    filteredList = allData;
-  }
-  return TransactionSummary(
-      trackerModel: filteredList,
-      transactionModel: TransactionModel(
-        income: totalIncome.toStringAsFixed(2),
-        expense: totalExpense.toStringAsFixed(2),
-        totalBalance: totalBalance.toStringAsFixed(2),
-      ));
+      return TransactionSummary(
+        trackerModel: filteredList,
+        transactionModel: TransactionModel(
+          income: totalIncome.toStringAsFixed(2),
+          expense: totalExpense.toStringAsFixed(2),
+          totalBalance: totalBalance.toStringAsFixed(2),
+        ),
+      );
+    },
+    loading: () => TransactionSummary.empty(),
+    error: (err, stack) {
+      // log or handle the error as needed
+      return TransactionSummary.empty();
+    },
+  );
 });
