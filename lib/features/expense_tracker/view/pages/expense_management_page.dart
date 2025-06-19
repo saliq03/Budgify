@@ -1,3 +1,4 @@
+import 'package:budgify/core/constants/constants.dart';
 import 'package:budgify/features/expense_tracker/model/card_model.dart';
 import 'package:budgify/features/expense_tracker/model/date_model.dart';
 import 'package:budgify/features/expense_tracker/viewmodel/riverpod/on_changed_value_provider.dart';
@@ -66,10 +67,92 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
       // print("Selected Expense Type: ${selectedExpenseType}");
 
       ref.read(selectedValueProvider.notifier).state = selectedExpenseType;
+      ref.read(chooseCategoryProvider.notifier).state = widget.trackerModel!.chooseCategory;
       if (widget.trackerModel!.percentage != 0.0) {
         percentageController.text = widget.trackerModel!.percentage.toString();
       }
     }
+  }
+
+  void chooseCategoryBottomSheet(
+      {required final double w,
+      required final chooseCategory,
+      required final ColorScheme theme}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.all(15),
+            width: w,
+            child: Column(
+              children: [
+                spacerH(10),
+                Text("Choose Category",
+                    style: AppStyles.headingPrimary(
+                        context: context,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20)),
+                spacerH(10),
+                Expanded(
+                  child: GridView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      itemCount: Constants.mCat.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4),
+                      itemBuilder: (_, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            ref.read(chooseCategoryProvider.notifier).state =
+                                index;
+                            // setState(() {
+                            //   selectedCatIndex = index;
+                            // });
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: chooseCategory == index
+                                  ? theme.primary.withValues(alpha: 0.05)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                              // shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1.5,
+                                color: chooseCategory == index
+                                    ? theme.primary
+                                    : Colors.transparent,
+                              ),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      Constants.mCat[index]["catImage"],
+                                    ),
+                                    backgroundColor:
+                                        theme.primary.withValues(alpha: 0.4),
+                                    radius: 22,
+                                  ),
+                                  spacerH(5),
+                                  Text(
+                                    Constants.mCat[index]["catName"],
+                                    style: AppStyles.descriptionPrimary(
+                                        context: context, fontSize: 10),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   @override
@@ -89,8 +172,9 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
     final isTaxPage = selectedValue == ExpenseType.tax.value;
     final isShowReturn = selectedValue == ExpenseType.investment.value ||
         selectedValue == ExpenseType.tax.value;
-    var percentageValue =
-        double.tryParse(percentageController.text) ?? 0.0;
+    var percentageValue = double.tryParse(percentageController.text) ?? 0.0;
+
+    final chooseCategory = ref.watch(chooseCategoryProvider);
 
     final String selectedText;
     if (selectedValue == ExpenseType.income.value) {
@@ -119,9 +203,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
-            isShowReturn?
-            spacerH(40) : spacerH(),
+            isShowReturn ? spacerH(40) : spacerH(),
             Visibility(
                 visible: isShowReturn,
                 child: Padding(
@@ -153,12 +235,6 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  // Text(
-                  //   selectedText,
-                  //   style: AppStyles.headingPrimary(
-                  //       context: context, color: Colors.white),
-                  // ),
-                  // spacerH(15),
                   ReusableTextField(
                     maxLines: 5,
                     controller: titleController,
@@ -185,8 +261,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                     hintText: "Enter Amount",
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d*')),
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                       // FilteringTextInputFormatter.digitsOnly,
                     ],
                     onChanged: (value) {
@@ -214,6 +289,62 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                         },
                         selectedValue: selectedValue),
                   ),
+
+                  spacerH(),
+                  InkWell(
+                    onTap: () => chooseCategoryBottomSheet(
+                        w: w, chooseCategory: chooseCategory, theme: theme),
+                    child: Container(
+                      width: w,
+                      height: 55,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: theme.surface,
+                        border: Border.all(
+                          width: 1,
+                          color: theme.onSurface,
+                        ),
+                      ),
+                      child: AbsorbPointer(
+                        child: Row(children: [
+                          Row(
+                            children: [
+                              chooseCategory != -1
+                                  ? CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                        Constants.mCat[chooseCategory]
+                                            ["catImage"],
+                                      ),
+                                      backgroundColor:
+                                          theme.primary.withValues(alpha: 0.4),
+                                      radius: 22,
+                                    )
+                                  : staticImage(
+                                      assetName: "assets/icons/categories.png",
+                                      width: 25,
+                                      height: 25),
+                              spacerW(10),
+                              Text(
+                                chooseCategory != -1
+                                    ? Constants.mCat[chooseCategory]["catName"]
+                                    : "Choose Category",
+                                style: AppStyles.descriptionPrimary(
+                                    context: context),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.arrow_drop_down_rounded,
+                            color: theme.onSurface,
+                          ),
+                        ]),
+                      ),
+                    ),
+                  ),
+
                   spacerH(),
                   if (isShowReturn)
                     ReusableTextField(
@@ -250,9 +381,7 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           return;
                         }
 
-                        if(isTaxPage && percentageValue < 0.0) {
-                          // percentageValue =percentageValue.abs();
-                          // percentageController.text = percentageValue.toString();
+                        if (isTaxPage && percentageValue < 0.0) {
                           IconSnackBar.show(
                             context,
                             label: "Tax cannot be negative!",
@@ -261,11 +390,21 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           return;
                         }
 
-
+                        if (chooseCategory == -1) {
+                          IconSnackBar.show(
+                            context,
+                            label: "Please choose a category!",
+                            snackBarType: SnackBarType.alert,
+                          );
+                          return;
+                        }
 
                         ///It is a special condition because when we add value then while navigating amount will always be null and if we update value then amount can not be possibly null.
-                        if (widget.trackerModel!.amount != null) {
+                        if (widget.trackerModel!.amount != null &&
+                            chooseCategory != -1) {
                           trackerRProvider.updateData(
+                            chooseCategory: chooseCategory,
+                            // Default value for chooseCategory
                             id: widget.trackerModel!.id ?? 0,
                             title: titleController.text.isEmpty
                                 ? ""
@@ -283,6 +422,8 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                           );
                         } else {
                           trackerRProvider.addData(
+                            chooseCategory: chooseCategory,
+                            // Default value for chooseCategory
                             title: titleController.text.isEmpty
                                 ? ""
                                 : titleController.text,
@@ -311,12 +452,11 @@ class _ExpenseManagementPageState extends ConsumerState<ExpenseManagementPage> {
                       child: Text(
                         selectedText,
                         style: AppStyles.descriptionPrimary(
-                            context: context, color:  Colors.white),
+                            context: context, color: Colors.white),
                       ))
                 ],
               ),
             ),
-            spacerH(40),
             spacerH(80),
           ],
         ),

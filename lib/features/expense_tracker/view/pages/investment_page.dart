@@ -14,7 +14,14 @@ class InvestmentPage extends ConsumerWidget {
             child: Column(
               children: [
                 spacerH(),
-                InvestmentFilter(),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 3,child: InvestmentFilter()),
+                    spacerW(10),
+                    Expanded(child: FilterButton())
+                  ],
+                ),
                 spacerH(10),
                 ReusableCardWidget(
                   isTaxPage: false,
@@ -49,6 +56,7 @@ class InvestmentPage extends ConsumerWidget {
             onTap: () {
               Navigator.pushNamed(context, Paths.expenseManagementPage,
                   arguments: TrackerModel(
+                      chooseCategory: 15,
                       title: '',
                       date: '',
                       amount: null,

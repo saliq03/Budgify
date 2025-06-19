@@ -15,6 +15,7 @@ class DBHelper {
   static const String columnTrackerAmount = "t_amount";
   static const String columnTrackerCategory = "t_category";
   static const String columnTrackerPercentage = "t_percentage";
+  static const String columnTrackerChooseCategory = "t_choose_category";
 
   ///Table 2:
   // static const String investmentTableName = "emi_loans";
@@ -60,6 +61,7 @@ class DBHelper {
             $columnTrackerDate TEXT,
             $columnTrackerAmount REAL,
             $columnTrackerCategory INTEGER,
+            $columnTrackerChooseCategory INTEGER,
             $columnTrackerPercentage REAL
           )
         ''');

@@ -46,6 +46,7 @@ class InvestmentTaxHistoryPage extends StatelessWidget {
             ? ReusableFloatingActionButton(onTap: () {
           Navigator.pushNamed(context, Paths.expenseManagementPage,
               arguments: TrackerModel(title: '',
+                  chooseCategory: 0,
                   date: '',
                   amount: null,
                   trackerCategory: ExpenseType.tax.intValue,
@@ -58,6 +59,7 @@ class InvestmentTaxHistoryPage extends StatelessWidget {
                       title: '',
                       date: '',
                       amount: null,
+                      chooseCategory: 0,
                       trackerCategory: ExpenseType.investment.intValue,
                       percentage: 0));
             },

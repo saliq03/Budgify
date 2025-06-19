@@ -2,6 +2,7 @@ import 'package:budgify/core/theme/app_gradients.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/routes/paths.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../shared/view/widgets/global_widgets.dart';
@@ -198,32 +199,60 @@ class ReusableListView extends StatelessWidget {
                             )),
                       ],
                     ),
-                    subtitle: tl.title.isEmpty ||tl.title =="" ? null : Row(
+                    subtitle: tl.title.isEmpty ||tl.title =="" ? null : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3),
-                          child: Icon(
-                            (tl.trackerCategory == ExpenseType.tax.intValue ||
-                                    tl.trackerCategory ==
-                                        ExpenseType.expense.intValue)
-                                ? Icons.remove
-                                : Icons.add,
-                            color: colors[0],
-                            size: 20,
-                          ),
+                       Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                          CircleAvatar(
+                             backgroundImage: AssetImage(
+                               Constants.mCat[tl.chooseCategory]
+                               ["catImage"],
+                             ),
+                             backgroundColor:
+                             theme.primary.withValues(alpha: 0.4),
+                             radius: 10,
+                           ),
+                           spacerW(5),
+                           Text(
+                            Constants.mCat[tl.chooseCategory]["catName"],
+                             style: AppStyles.descriptionPrimary(
+                                 context: context),
+                             overflow: TextOverflow.ellipsis,
+                           ),
+                         ],
+                       ),
+                        spacerH(2),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Icon(
+                                (tl.trackerCategory == ExpenseType.tax.intValue ||
+                                        tl.trackerCategory ==
+                                            ExpenseType.expense.intValue)
+                                    ? Icons.remove
+                                    : Icons.add,
+                                color: colors[0],
+                                size: 20,
+                              ),
+                            ),
+                            spacerW(2),
+                            Flexible(
+                                child: Text(
+                              "$currency${tl.amount}",
+                              style: AppStyles.headingPrimary(
+                                context: context,
+                                fontSize: 17,
+                                color: colors[0],
+                              ),
+                            )),
+                          ],
                         ),
-                        spacerW(2),
-                        Flexible(
-                            child: Text(
-                          "$currency${tl.amount}",
-                          style: AppStyles.headingPrimary(
-                            context: context,
-                            fontSize: 17,
-                            color: colors[0],
-                          ),
-                        )),
                       ],
                     ),
                     trailing: reusableTrailingContent(

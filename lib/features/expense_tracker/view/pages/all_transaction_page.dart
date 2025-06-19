@@ -47,6 +47,7 @@ class AllTransactionPage extends StatelessWidget {
                       arguments: TrackerModel(
                           title: '',
                           date: '',
+                          chooseCategory: 0,
                           amount: null,
                           trackerCategory: ExpenseType.expense.intValue,
                           percentage: 0));
@@ -62,6 +63,7 @@ class AllTransactionPage extends StatelessWidget {
                           title: '',
                           date: '',
                           amount: null,
+                          chooseCategory: 0,
                           trackerCategory: ExpenseType.income.intValue,
                           percentage: 0));
                 },

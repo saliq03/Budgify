@@ -6,6 +6,7 @@ class TrackerModel {
   String date;
   double? amount;
   int trackerCategory;
+  int chooseCategory;
   double percentage;
 
   TrackerModel({
@@ -14,6 +15,7 @@ class TrackerModel {
     required this.date,
     required this.amount,
     required this.trackerCategory,
+    required this.chooseCategory,
     required this.percentage,
   });
 
@@ -24,6 +26,7 @@ class TrackerModel {
         date: map[DBHelper.columnTrackerDate],
         amount: map[DBHelper.columnTrackerAmount],
         trackerCategory: map[DBHelper.columnTrackerCategory],
+        chooseCategory: map[DBHelper.columnTrackerChooseCategory],
         percentage: map[DBHelper.columnTrackerPercentage] ?? 0.0,
     );
   }
@@ -33,6 +36,7 @@ class TrackerModel {
       DBHelper.columnTrackerTitle: title,
       DBHelper.columnTrackerDate: date,
       DBHelper.columnTrackerAmount: amount,
+      DBHelper.columnTrackerChooseCategory: chooseCategory,
       DBHelper.columnTrackerCategory: trackerCategory,
       DBHelper.columnTrackerPercentage: percentage,
     };

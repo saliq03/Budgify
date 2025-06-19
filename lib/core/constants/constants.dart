@@ -46,4 +46,87 @@ class Constants {
       "https://www.facebook.com/share/1C6RSPZgnq/";
   static const String whatsAppChannelLink =
       "https://whatsapp.com/channel/0029Vb1Se9gKrWR1TBGlCs1x";
+
+  static const List<Map<String, dynamic>> mCat = [
+    {
+      "catId": 0,
+      "catName": "Bills",
+      'catImage': "assets/icons/category/bills.png"
+    },
+    {
+      "catId": 1,
+      "catName": "Food",
+      'catImage': "assets/icons/category/food.png"
+    },
+    {
+      "catId": 2,
+      "catName": "Grocery",
+      'catImage': "assets/icons/category/grocery.png"
+    },
+    {
+      "catId": 3,
+      "catName": "Luxury Items",
+      'catImage': "assets/icons/category/luxury_items.png"
+    },
+    {
+      "catId": 4,
+      "catName": "Medical",
+      'catImage': "assets/icons/category/medical.png"
+    },
+    {
+      "catId": 5,
+      "catName": "Shopping",
+      'catImage': "assets/icons/category/shopping.png"
+    },
+    {
+      "catId": 6,
+      "catName": "Makeup",
+      'catImage': "assets/icons/category/makeup.png"
+    },
+    {
+      "catId": 7,
+      "catName": "Entertainment",
+      'catImage': "assets/icons/category/entertainment.png"
+    },
+    {
+      "catId": 8,
+      "catName": "Petrol",
+      'catImage': "assets/icons/category/petrol.png"
+    },
+    {
+      "catId": 9,
+      "catName": "Recharge",
+      'catImage': "assets/icons/category/recharge.png"
+    },
+    {
+      "catId": 10,
+      "catName": "Servicing",
+      'catImage': "assets/icons/category/servicing.png"
+    },
+    {
+      "catId": 11,
+      "catName": "Subscriptions",
+      'catImage': "assets/icons/category/subscriptions.png"
+    },
+    {
+      "catId": 12,
+      "catName": "Travelling",
+      'catImage': "assets/icons/category/travelling.png"
+    },
+    {
+      "catId": 13,
+      "catName": "Health",
+      'catImage': "assets/icons/category/health.png"
+    },
+    {
+      "catId": 14,
+      "catName": "Salary/Bonus",
+      'catImage': "assets/icons/category/salary_bonus.png"
+    },
+    {
+      "catId": 15,
+      "catName": "Others",
+      'catImage': "assets/icons/category/others.png"
+    },
+  ];
 }

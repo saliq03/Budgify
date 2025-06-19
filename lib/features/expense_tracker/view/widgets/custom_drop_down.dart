@@ -49,24 +49,36 @@ class _CustomDropDownState extends State<CustomDropDown> {
                   color:widget.borderColor ??color,
                 ),
                 color: theme.surface,
-                borderRadius: BorderRadius.circular(15)),
+                borderRadius: BorderRadius.circular(20)),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                spacerW(5),
-                Icon(
-                  widget.leadingIcon ??
-                      (isExpense
-                          ? Icons.arrow_circle_down_outlined
-                          : Icons.arrow_circle_up_outlined),
-                  color: color,
-                  size: widget.leadingIconSize,
+                
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      spacerW(5),
+                      Icon(
+                        widget.leadingIcon ??
+                            (isExpense
+                                ? Icons.arrow_circle_down_outlined
+                                : Icons.arrow_circle_up_outlined),
+                        color: color,
+                        size: widget.leadingIconSize,
+                      ),
+                      spacerW(10),
+                      Flexible(
+                        child: Text(widget.selectedValue,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppStyles.descriptionPrimary(
+                                context: context, color: color)),
+                      ),
+                      spacerW(10),
+                    ],
+                  ),
                 ),
-                spacerW(15),
-                Text(widget.selectedValue,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.descriptionPrimary(
-                        context: context, color: color)),
-                Spacer(),
+
                 Icon(
                   widget.icon,
                 )

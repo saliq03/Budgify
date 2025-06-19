@@ -19,12 +19,12 @@ final dateProvider = StateProvider<DateModel>((ref) {
 
 // Expense Notifier
 class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
-  ExpenseTrackerNotifier()
-      : super([]);
+  ExpenseTrackerNotifier() : super([]);
 
   bool isLoading = false;
   DBHelper dbHelper = DBHelper();
   Database? database;
+
   // double totalIncome = 0.0;
   // double totalExpense = 0.0;
   // double totalBalance = 0.0;
@@ -48,11 +48,13 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
       required String date,
       required double amount,
       required int trackerCategory,
+      required int chooseCategory,
       required double percentage}) async {
     bool isValueAdded = await dbHelper.addTrackerData(TrackerModel(
         title: title,
         date: date,
         amount: amount,
+        chooseCategory: chooseCategory,
         trackerCategory: trackerCategory,
         percentage: percentage));
     if (isValueAdded) {
@@ -66,6 +68,7 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
       required String date,
       required double amount,
       required int trackerCategory,
+      required int chooseCategory,
       required double percentage}) async {
     bool isValueUpdated = await dbHelper.updateTrackerData(TrackerModel(
         id: id,
@@ -73,6 +76,7 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
         date: date,
         amount: amount,
         trackerCategory: trackerCategory,
+        chooseCategory: chooseCategory,
         percentage: percentage));
     if (isValueUpdated) {
       fetchData();
@@ -122,7 +126,7 @@ class ExpenseTrackerNotifier extends StateNotifier<List<TrackerModel>> {
 
 // Create a provider for the ExpenseTrackerNotifier
 final expenseTrackerProviderOriginal =
-    StateNotifierProvider<ExpenseTrackerNotifier,List<TrackerModel>>(
+    StateNotifierProvider<ExpenseTrackerNotifier, List<TrackerModel>>(
   (ref) => ExpenseTrackerNotifier(),
   // (ref) => ExpenseTrackerNotifier()..init(),
 );

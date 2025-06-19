@@ -49,7 +49,13 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 spacerH(),
-                TransactionFilter(),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: TransactionFilter(),),
+                    spacerW(10),
+                    Expanded(child: FilterButton())
+                  ],
+                ),
                 spacerH(10),
                 // CurrencyPicker(),
                 // spacerH(10),
@@ -77,6 +83,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                           title: '',
                           date: '',
                           amount: null,
+                          chooseCategory: -1,
                           trackerCategory: ExpenseType.expense.intValue,
                           percentage: 0));
                 },
@@ -91,6 +98,7 @@ class _ExpenseTrackerPageState extends ConsumerState<ExpenseTrackerPage> {
                           title: '',
                           date: '',
                           amount: null,
+                          chooseCategory: 14,
                           trackerCategory: ExpenseType.income.intValue,
                           percentage: 0));
                 },
